@@ -1,0 +1,23 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - develop
+    - main
+    - feature/*
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- script: dotnet build FreeEnterprise.Api/FreeEnterprise.Api.csproj --configuration $(buildConfiguration)
+- script: dotnet test FreeEnterprise.Api.UnitTests/FreeEnterprise.Api.UnitTests.csproj
+  displayName: 'dotnet build $(buildConfiguration)'

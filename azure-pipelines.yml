@@ -19,4 +19,5 @@ variables:
 
 steps:
 - script: dotnet build FreeEnterprise.Api/FreeEnterprise.Api.csproj --configuration $(buildConfiguration)
+- script: dotnet test FreeEnterprise.Api.UnitTests/FreeEnterprise.Api.UnitTests.csproj
   displayName: 'dotnet build $(buildConfiguration)'

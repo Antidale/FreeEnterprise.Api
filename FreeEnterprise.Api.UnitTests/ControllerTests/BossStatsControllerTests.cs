@@ -41,5 +41,11 @@ namespace FreeEnterprise.Api.UnitTets.ControllerTests
 			Assert.AreEqual((HttpStatusCode)(response.Result as StatusCodeResult).StatusCode, responseCode);
 
 		}
+
+		[Test]
+		public void FailedTest()
+		{
+			Assert.Fail("This test is for testing that the build pipeline works as expected");
+		}
 	}
 }

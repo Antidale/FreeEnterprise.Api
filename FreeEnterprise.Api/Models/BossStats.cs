@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace FreeEnterprise.Api.Models
 {
 	public class BossStat
@@ -22,9 +24,6 @@ namespace FreeEnterprise.Api.Models
 		public int MinSpeed { get; set; }
 		public int MaxSpeed { get; set; }
 		public int SpellPower { get; set; }
-		public string ScriptValue1 { get; set; }
-		public string ScriptValue2 { get; set; }
-		public string ScriptValue3 { get; set; }
-		public string ScriptValue4 { get; set; }
+		public IEnumerable<string> ScriptValues { get; set; }
 	}
 }

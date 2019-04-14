@@ -18,6 +18,8 @@ namespace FreeEnterprise.Api.BossStats
 {
 	public class Startup
 	{
+		readonly string _allowedOrigins = "_allowedOrigins";
+
 		public Startup(IConfiguration configuration)
 		{
 			Configuration = configuration;
@@ -28,7 +30,17 @@ namespace FreeEnterprise.Api.BossStats
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+			services.AddCors(opt =>
+			{
+				opt.AddPolicy(_allowedOrigins, builder =>
+				{
+					builder.WithOrigins("http://localhost:3000")
+						.AllowAnyHeader();
+				});
+			});
+
+			services.AddMvc()
+				.SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
 			services.AddSingleton<IBattleLocationsRepository, BattleLocationsRepository>();
 			services.AddSingleton<IConnectionProvider, ConnectionProvider>();
@@ -49,8 +61,10 @@ namespace FreeEnterprise.Api.BossStats
 				app.UseHsts();
 			}
 
+			app.UseCors(_allowedOrigins);
 			app.UseHttpsRedirection();
 			app.UseMvc();
+
 		}
 	}
 }

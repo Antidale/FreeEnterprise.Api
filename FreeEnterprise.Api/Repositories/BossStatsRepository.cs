@@ -42,10 +42,7 @@ namespace FreeEnterprise.Api.Repositories
 							, s.min_speed as {nameof(BossStat.MinSpeed)}
 							, s.max_speed as {nameof(BossStat.MaxSpeed)}
 							, s.spell_power as {nameof(BossStat.SpellPower)}
-							, s.script_value_1 as {nameof(BossStat.ScriptValue1)}
-							, s.script_value_2 as {nameof(BossStat.ScriptValue2)}
-							, s.script_value_3 as {nameof(BossStat.ScriptValue3)}
-							, s.script_value_4 as {nameof(BossStat.ScriptValue4)}
+							, s.script_values as {nameof(BossStat.ScriptValues)}
 						from stats.bosses s
 						join encounters.boss_fights e
 							on s.battle_id = e.id
@@ -53,7 +50,8 @@ namespace FreeEnterprise.Api.Repositories
 							on s.location_id = l.id
 						where (location_id = @locationId or @locationId = 0)
 						and (battle_id = @battleId or @battleId = 0);",
-						new { locationId = request.LocationId, battleId = request.BattleId });
+					new { locationId = request.LocationId, battleId = request.BattleId }
+				);
 			}
 		}
 	}

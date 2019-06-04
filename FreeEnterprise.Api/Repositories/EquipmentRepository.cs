@@ -12,7 +12,7 @@ namespace FreeEnterprise.Api.Repositories
 	{
 		private readonly IConnectionProvider _connectionProvider;
 
-		public EquipmentRepository(ConnectionProvider connectionProvider)
+		public EquipmentRepository(IConnectionProvider connectionProvider)
 		{
 			_connectionProvider = connectionProvider;
 		}

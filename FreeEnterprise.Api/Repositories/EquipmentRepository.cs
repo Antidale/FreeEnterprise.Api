@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using FreeEnterprise.Api.Models;
 using Dapper;
 using System.Threading.Tasks;
+using System;
 
 namespace FreeEnterprise.Api.Repositories
 {
@@ -28,7 +29,7 @@ namespace FreeEnterprise.Api.Repositories
 							, item_name as {nameof(Equipment.Name)}
 							, equipment_type as {nameof(Equipment.EquipmentType)}
 							, category as {nameof(Equipment.Category)}
-							, str  as {nameof(Equipment.Str)}
+							, str as {nameof(Equipment.Str)}
 							, agi as {nameof(Equipment.Agi)}
 							, vit as {nameof(Equipment.Vit)}
 							, wil as {nameof(Equipment.Wil)}
@@ -39,6 +40,16 @@ namespace FreeEnterprise.Api.Repositories
 						from equipment.base"
 				);
 			}
+		}
+
+		public Task<IEnumerable<Armor>> GetArmorAsync()
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IEnumerable<Weapon>> GetWeaponsAsync()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

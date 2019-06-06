@@ -46,6 +46,7 @@ namespace FreeEnterprise.Api.BossStats
 			services.AddSingleton<IConnectionProvider, ConnectionProvider>();
 			services.AddSingleton<IBossBattlesRepository, BossBattlesRepository>();
 			services.AddSingleton<IBossStatsRepository, BossStatsRepository>();
+			services.AddSingleton<IEquipmentRepository, EquipmentRepository>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

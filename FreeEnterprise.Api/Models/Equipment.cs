@@ -16,5 +16,7 @@ namespace FreeEnterprise.Api.Models
 		public int Vit { get; set; }
 		public int Wis { get; set; }
 		public int Wil { get; set; }
+		public string Icon { get; set; }
+		public string Notes { get; set; }
 	}
 }

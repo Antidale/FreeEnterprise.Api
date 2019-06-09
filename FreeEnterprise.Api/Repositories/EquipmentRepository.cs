@@ -37,6 +37,8 @@ namespace FreeEnterprise.Api.Repositories
 							, strong_vs as {nameof(Equipment.StrongAgainst)}
 							, magnetic as {nameof(Equipment.Magnetic)}
 							, can_equip as {nameof(Equipment.CanEquip)}
+							, icon as {nameof(Equipment.Icon)}
+							, notes as {nameof(Equipment.Notes)}
 						from equipment.base"
 				);
 			}

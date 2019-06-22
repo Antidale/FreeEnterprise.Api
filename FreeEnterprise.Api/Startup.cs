@@ -28,17 +28,19 @@ namespace FreeEnterprise.Api.BossStats
 			{
 				opt.AddPolicy(_allowedOrigins, builder =>
 				{
-					builder.WithOrigins("http://localhost:3000")
+					builder.WithOrigins("http://localhost:3000", "https://antidale.github.io")
 						.AllowAnyHeader();
 				});
 			});
 
 			services.AddMvc()
 				.SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
 			services.AddSwaggerGen(c =>
-					{
-						c.SwaggerDoc("v1", new Info { Title = "Free Enterprise Info API", Version = "v1" });
-					});
+			{
+				c.SwaggerDoc("v1", new Info { Title = "Free Enterprise Info API", Version = "v1" });
+			});
+
 			services.AddSingleton<IBattleLocationsRepository, BattleLocationsRepository>();
 			services.AddSingleton<IConnectionProvider, ConnectionProvider>();
 			services.AddSingleton<IBossBattlesRepository, BossBattlesRepository>();
@@ -61,11 +63,13 @@ namespace FreeEnterprise.Api.BossStats
 
 			app.UseCors(_allowedOrigins);
 			app.UseHttpsRedirection();
+
 			app.UseSwagger();
 			app.UseSwaggerUI(x =>
 			{
 				x.SwaggerEndpoint("/swagger/v1/swagger.json", "Free Enterprise Info API");
 			});
+
 			app.UseMvc();
 
 		}

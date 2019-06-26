@@ -28,7 +28,13 @@ namespace FreeEnterprise.Api.BossStats
 			{
 				opt.AddPolicy(_allowedOrigins, builder =>
 				{
-					builder.WithOrigins("http://localhost:3000", "https://antidale.github.io")
+					builder
+						.WithOrigins
+						(
+							"http://localhost:3000",
+							"https://antidale.github.io",
+							"https://ff4-fe-info.rubrics-cubed.com"
+						)
 						.AllowAnyHeader();
 				});
 			});

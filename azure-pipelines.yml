@@ -4,7 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-  batch: true
+  batch: 'true'
   branches:
     include:
     - develop
@@ -18,6 +18,17 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- script: dotnet build FreeEnterprise.Api/FreeEnterprise.Api.csproj --configuration $(buildConfiguration)
-- script: dotnet test FreeEnterprise.Api.UnitTests/FreeEnterprise.Api.UnitTests.csproj
-  displayName: 'dotnet build $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build $(buildConfiguration)'
+  inputs:
+    command: 'build'
+    projects: 'FreeEnterprise.Api/FreeEnterprise.Api.csproj'
+    arguments: 'configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: Run Tests
+  inputs:
+    command: 'test'
+    projects: 'FreeEnterprise.Api.UnitTests/FreeEnterprise.Api.UnitTests.csproj'
+  

@@ -16,6 +16,7 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
+  system.debug: 'true'
 
 steps:
 
@@ -23,11 +24,11 @@ steps:
   displayName: 'Build $(buildConfiguration)'
   inputs:
     command: 'build'
-    projects: 'FreeEnterprise.Api/FreeEnterprise.Api.csproj'
+    projects: FreeEnterprise.Api/FreeEnterprise.Api.csproj
     arguments: 'configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
   displayName: Run Tests
   inputs:
     command: 'test'
-    projects: 'FreeEnterprise.Api.UnitTests/FreeEnterprise.Api.UnitTests.csproj'
+    projects: FreeEnterprise.Api.UnitTests/FreeEnterprise.Api.UnitTests.csproj

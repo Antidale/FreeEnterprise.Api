@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,7 @@ namespace FreeEnterprise.Api.Controllers
 		public async Task<ActionResult<IEnumerable<BossBattle>>> Search(BossStatsSearchRequest request)
 		{
 			if (request.BattleId == 0 && request.LocationId == 0)
-				return BadRequest();
+				return BadRequest(new ArgumentException("Both Battle and Location cannot be 'All'"));
 
 			return Ok(await _bossStatsRepository.SearchAsync(request));
 		}

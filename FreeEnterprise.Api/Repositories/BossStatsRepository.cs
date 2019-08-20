@@ -27,7 +27,6 @@ namespace FreeEnterprise.Api.Repositories
 							, e.Battle
 							, l.battle_location as {nameof(BossStat.Location)}
 							, s.enemy
-							, s.Level
 							, s.hit_points as {nameof(BossStat.HitPoints)}
 							, s.experience_points as {nameof(BossStat.ExperiencePoints)}
 							, s.gil
@@ -49,7 +48,8 @@ namespace FreeEnterprise.Api.Repositories
 						join locations.boss_fights l
 							on s.location_id = l.id
 						where (location_id = @locationId or @locationId = 0)
-						and (battle_id = @battleId or @battleId = 0);",
+						and (battle_id = @battleId or @battleId = 0)
+						order by Battle, battle_location;",
 					new { locationId = request.LocationId, battleId = request.BattleId }
 				);
 			}

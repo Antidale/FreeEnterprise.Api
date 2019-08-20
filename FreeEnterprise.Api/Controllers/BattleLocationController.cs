@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using FreeEnterprise.Api.Models;
@@ -20,6 +21,7 @@ namespace FreeEnterprise.Api.Controllers
 		public async Task<ActionResult<IEnumerable<BattleLocation>>> Get()
 		{
 			var locations = await _battleLocationsRepository.GetBattleLocationsAsync();
+			locations = locations.Concat(new List<BattleLocation> { new BattleLocation { Id = 0, Name = "All" } }).OrderBy(x => x.Name);
 			return Ok(locations);
 		}
 	}

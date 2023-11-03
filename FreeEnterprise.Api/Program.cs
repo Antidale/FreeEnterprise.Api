@@ -1,22 +1,33 @@
-﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+﻿using FreeEnterprise.Api.Interfaces;
+using FreeEnterprise.Api.Providers;
+using FreeEnterprise.Api.Repositories;
 
-namespace FreeEnterprise.Api.BossStats
+var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables(prefix: "FE_");
+// Add services to the container.
+builder.Services.AddSingleton<IBattleLocationsRepository, BattleLocationsRepository>();
+builder.Services.AddSingleton<IConnectionProvider, ConnectionProvider>();
+builder.Services.AddSingleton<IBossBattlesRepository, BossBattlesRepository>();
+builder.Services.AddSingleton<IBossStatsRepository, BossStatsRepository>();
+builder.Services.AddSingleton<IEquipmentRepository, EquipmentRepository>();
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
 {
-	public class Program
-	{
-		public static void Main(string[] args)
-		{
-			CreateWebHostBuilder(args).Build().Run();
-		}
-
-		public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-				WebHost.CreateDefaultBuilder(args)
-						.ConfigureAppConfiguration((hostingContext, config) =>
-						{
-							config.AddEnvironmentVariables(prefix: "FE_");
-						})
-						.UseStartup<Startup>();
-	}
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();

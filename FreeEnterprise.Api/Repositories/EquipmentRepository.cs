@@ -105,7 +105,7 @@ namespace FreeEnterprise.Api.Repositories
 							, status_protected as {nameof(Armor.StatusProtected)}
 						from equipment.armor
 						where id = @id", armorId
-				);
+				) ?? new Armor();
 			}
 		}
 
@@ -167,7 +167,7 @@ namespace FreeEnterprise.Api.Repositories
 							, notes as {nameof(Equipment.Notes)}
 						from equipment.weapons
 						where id = @id", weaponId
-				);
+				) ?? new Weapon();
 			}
 		}
 	}

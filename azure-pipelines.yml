@@ -4,7 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-  batch: true
+  batch: 'true'
   branches:
     include:
     - develop
@@ -12,12 +12,26 @@ trigger:
     - feature/*
 
 pool:
-  vmImage: 'Ubuntu-16.04'
+  vmImage: 'ubuntu-latest'
 
 variables:
   buildConfiguration: 'Release'
+  system.debug: 'true'
 
 steps:
-- script: dotnet build FreeEnterprise.Api/FreeEnterprise.Api.csproj --configuration $(buildConfiguration)
-- script: dotnet test FreeEnterprise.Api.UnitTests/FreeEnterprise.Api.UnitTests.csproj
-  displayName: 'dotnet build $(buildConfiguration)'
+- task: UseDotNet@2
+  inputs:
+    version: '7.x'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build $(buildConfiguration)'
+  inputs:
+    command: 'build'
+    projects: FreeEnterprise.Api/FreeEnterprise.Api.csproj
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: Run Tests
+  inputs:
+    command: 'test'
+    projects: FreeEnterprise.Api.UnitTests/FreeEnterprise.Api.UnitTests.csproj

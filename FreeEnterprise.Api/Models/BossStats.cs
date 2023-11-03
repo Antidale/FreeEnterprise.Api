@@ -1,13 +1,11 @@
-using System.Collections.Generic;
-
 namespace FreeEnterprise.Api.Models
 {
 	public class BossStat
 	{
 		public int Id { get; set; }
-		public string Location { get; set; }
-		public string Battle { get; set; }
-		public string Enemy { get; set; }
+		public string Location { get; set; } = string.Empty;
+		public string Battle { get; set; } = string.Empty;
+		public string Enemy { get; set; } = string.Empty;
 		public int Level { get; set; }
 		public int HitPoints { get; set; }
 		public int ExperiencePoints { get; set; }
@@ -24,6 +22,6 @@ namespace FreeEnterprise.Api.Models
 		public int MinSpeed { get; set; }
 		public int MaxSpeed { get; set; }
 		public int SpellPower { get; set; }
-		public IEnumerable<string> ScriptValues { get; set; }
+		public IEnumerable<string> ScriptValues { get; set; } = Enumerable.Empty<string>();
 	}
 }

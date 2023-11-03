@@ -12,13 +12,16 @@ trigger:
     - feature/*
 
 pool:
-  vmImage: 'Ubuntu-16.04'
+  vmImage: 'ubuntu-latest'
 
 variables:
   buildConfiguration: 'Release'
   system.debug: 'true'
 
 steps:
+- task: UseDotNet@2
+  inputs:
+    version: '7.x'
 
 - task: DotNetCoreCLI@2
   displayName: 'Build $(buildConfiguration)'

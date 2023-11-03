@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 
 namespace FreeEnterprise.Api.Models
 {
@@ -8,6 +7,6 @@ namespace FreeEnterprise.Api.Models
 		public int MagicDefense { get; set; }
 		public int Evade { get; set; }
 		public int MagicEvade { get; set; }
-		public IEnumerable<string> StatusProtected { get; set; }
+		public IEnumerable<string> StatusProtected { get; set; } = Enumerable.Empty<string>();
 	}
 }

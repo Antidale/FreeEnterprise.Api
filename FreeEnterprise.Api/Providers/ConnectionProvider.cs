@@ -1,9 +1,6 @@
 using FreeEnterprise.Api.Interfaces;
-using Microsoft.Extensions.Configuration;
 using Npgsql;
-using System;
 using System.Data;
-using System.Data.SqlClient;
 
 namespace FreeEnterprise.Api.Providers
 {
@@ -18,13 +15,11 @@ namespace FreeEnterprise.Api.Providers
 
 		public IDbConnection GetConnection()
 		{
-			var connectionString = _connectionString;
-
 			return new NpgsqlConnection(_connectionString);
 		}
 
 		private string _connectionString => $"HOST={_getConfigValue("PGHOST", "localhost")};Port={_getConfigValue("PGPORT")};Database={_getConfigValue("PGDATABASE")};User Id={_getConfigValue("PGUSER")};Password={_getConfigValue("PGPASS")};";
 
-		private string _getConfigValue(string name, string defaultValue = "") => _configuration.GetValue(name, defaultValue);
+		private string _getConfigValue(string name, string defaultValue = "") => _configuration.GetValue(name, defaultValue) ?? string.Empty;
 	}
 }

@@ -1,14 +1,10 @@
-using FreeEnterprise.Api.Interfaces;
-using FreeEnterprise.Api.Providers;
-using System.Collections.Generic;
-using FreeEnterprise.Api.Models;
 using Dapper;
-using System.Threading.Tasks;
-using System;
+using FreeEnterprise.Api.Interfaces;
+using FreeEnterprise.Api.Models;
 
 namespace FreeEnterprise.Api.Repositories
 {
-	public class EquipmentRepository : IEquipmentRepository
+    public class EquipmentRepository : IEquipmentRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 

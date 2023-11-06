@@ -1,13 +1,11 @@
 using Dapper;
-using FreeEnterprise.Api.Models;
 using FreeEnterprise.Api.Interfaces;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+using FreeEnterprise.Api.Models;
 using FreeEnterprise.Api.Requests;
 
 namespace FreeEnterprise.Api.Repositories
 {
-	public class BossStatsRepository : IBossStatsRepository
+    public class BossStatsRepository : IBossStatsRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 

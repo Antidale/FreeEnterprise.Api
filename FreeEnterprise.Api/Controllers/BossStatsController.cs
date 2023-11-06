@@ -1,13 +1,11 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using FreeEnterprise.Api.Models;
 using FreeEnterprise.Api.Interfaces;
+using FreeEnterprise.Api.Models;
 using FreeEnterprise.Api.Requests;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FreeEnterprise.Api.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 	public class BossStatsController : ControllerBase
 	{

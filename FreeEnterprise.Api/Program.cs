@@ -3,6 +3,15 @@ using FreeEnterprise.Api.Providers;
 using FreeEnterprise.Api.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    });
+});
+
 builder.Configuration.AddEnvironmentVariables(prefix: "FE_");
 // Add services to the container.
 builder.Services.AddSingleton<IBattleLocationsRepository, BattleLocationsRepository>();
@@ -25,9 +34,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseRouting();
+app.UseCors();
 
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.Run();

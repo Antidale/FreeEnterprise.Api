@@ -1,4 +1,3 @@
-
 namespace FreeEnterprise.Api.Models
 {
 	public class Weapon : Equipment

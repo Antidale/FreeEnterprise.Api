@@ -1,13 +1,10 @@
+using Dapper;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
-using Dapper;
 
 namespace FreeEnterprise.Api.Repositories
 {
-	public class BossBattlesRepository : IBossBattlesRepository
+    public class BossBattlesRepository : IBossBattlesRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 

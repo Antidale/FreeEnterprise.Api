@@ -16,5 +16,7 @@ namespace FreeEnterprise.Api.Models
 		public int Wil { get; set; }
 		public string Icon { get; set; } = string.Empty;
 		public string Notes { get; set; } = string.Empty;
+		public string Tier { get; set;} = string.Empty;
+		public int Price { get; set; }
 	}
 }

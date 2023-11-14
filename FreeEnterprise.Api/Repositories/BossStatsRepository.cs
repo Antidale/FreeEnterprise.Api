@@ -16,11 +16,10 @@ namespace FreeEnterprise.Api.Repositories
 
 		public async Task<IEnumerable<BossStat>> SearchAsync(BossStatsSearchRequest request)
 		{
-			using (var connection = _connectionProvider.GetConnection())
-			{
-				connection.Open();
-				return await connection.QueryAsync<BossStat>(
-					$@"select
+            using var connection = _connectionProvider.GetConnection();
+            connection.Open();
+            return await connection.QueryAsync<BossStat>(
+                $@"select
 							  s.id
 							, e.Battle
 							, l.battle_location as {nameof(BossStat.Location)}
@@ -40,7 +39,7 @@ namespace FreeEnterprise.Api.Repositories
 							, s.min_speed as {nameof(BossStat.MinSpeed)}
 							, s.max_speed as {nameof(BossStat.MaxSpeed)}
 							, s.spell_power as {nameof(BossStat.SpellPower)}
-							, s.script_values as {nameof(BossStat.ScriptValues)}
+							, s.notes as {nameof(BossStat.Notes)}
 						from stats.bosses s
 						join encounters.boss_fights e
 							on s.battle_id = e.id
@@ -48,9 +47,8 @@ namespace FreeEnterprise.Api.Repositories
 							on s.location_id = l.id
 						where (location_id = @locationId or @locationId = 0)
 						and (battle_id = @battleId or @battleId = 0);",
-					new { locationId = request.LocationId, battleId = request.BattleId }
-				);
-			}
-		}
+                new { locationId = request.LocationId, battleId = request.BattleId }
+            );
+        }
 	}
 }

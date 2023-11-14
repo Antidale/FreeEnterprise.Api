@@ -22,6 +22,6 @@ namespace FreeEnterprise.Api.Models
 		public int MinSpeed { get; set; }
 		public int MaxSpeed { get; set; }
 		public int SpellPower { get; set; }
-		public IEnumerable<string> ScriptValues { get; set; } = Enumerable.Empty<string>();
+		public string Notes { get; set; } = string.Empty;
 	}
 }

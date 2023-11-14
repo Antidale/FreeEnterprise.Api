@@ -15,12 +15,11 @@ namespace FreeEnterprise.Api.Repositories
 
 		public async Task<IEnumerable<Equipment>> GetEquipmentAsync()
 		{
-			using (var connection = _connectionProvider.GetConnection())
-			{
-				connection.Open();
-				return await connection.QueryAsync<Equipment>
-				(
-					$@"select
+            using var connection = _connectionProvider.GetConnection();
+            connection.Open();
+            return await connection.QueryAsync<Equipment>
+            (
+                $@"select
 								id
 							, item_name as {nameof(Armor.Name)}
 							, equipment_type as {nameof(Armor.EquipmentType)}
@@ -36,18 +35,16 @@ namespace FreeEnterprise.Api.Repositories
 							, icon as {nameof(Armor.Icon)}
 							, notes as {nameof(Armor.Notes)}
 						from equipment.base"
-				);
-			}
-		}
+            );
+        }
 
 		public async Task<IEnumerable<Armor>> GetArmorAsync()
 		{
-			using (var connection = _connectionProvider.GetConnection())
-			{
-				connection.Open();
-				return await connection.QueryAsync<Armor>
-				(
-					$@"select
+            using var connection = _connectionProvider.GetConnection();
+            connection.Open();
+            return await connection.QueryAsync<Armor>
+            (
+                $@"select
 								id
 							, item_name as {nameof(Weapon.Name)}
 							, equipment_type as {nameof(Weapon.EquipmentType)}
@@ -68,18 +65,16 @@ namespace FreeEnterprise.Api.Repositories
 							, magic_evade as {nameof(Armor.MagicEvade)}
 							, status_protected as {nameof(Armor.StatusProtected)}
 						from equipment.armor"
-				);
-			}
-		}
+            );
+        }
 
 		public async Task<Armor> GetArmorAsync(int armorId)
 		{
-			using (var connection = _connectionProvider.GetConnection())
-			{
-				connection.Open();
-				return await connection.QueryFirstOrDefaultAsync<Armor>
-				(
-					$@"select
+            using var connection = _connectionProvider.GetConnection();
+            connection.Open();
+            return await connection.QueryFirstOrDefaultAsync<Armor>
+            (
+                $@"select
 								id
 							, item_name as {nameof(Weapon.Name)}
 							, equipment_type as {nameof(Weapon.EquipmentType)}
@@ -101,18 +96,16 @@ namespace FreeEnterprise.Api.Repositories
 							, status_protected as {nameof(Armor.StatusProtected)}
 						from equipment.armor
 						where id = @id", armorId
-				) ?? new Armor();
-			}
-		}
+            ) ?? new Armor();
+        }
 
 		public async Task<IEnumerable<Weapon>> GetWeaponsAsync()
 		{
-			using (var connection = _connectionProvider.GetConnection())
-			{
-				connection.Open();
-				return await connection.QueryAsync<Weapon>
-				(
-					$@"select
+            using var connection = _connectionProvider.GetConnection();
+            connection.Open();
+            return await connection.QueryAsync<Weapon>
+            (
+                $@"select
 								id
 							, item_name as {nameof(Equipment.Name)}
 							, equipment_type as {nameof(Equipment.EquipmentType)}
@@ -135,18 +128,16 @@ namespace FreeEnterprise.Api.Repositories
 							, long_range as {nameof(Weapon.LongRange)}
 							, two_handed as {nameof(Weapon.TwoHanded)}
 						from equipment.weapons"
-				);
-			}
-		}
+            );
+        }
 
 		public async Task<Weapon> GetWeaponAsync(int weaponId)
 		{
-			using (var connection = _connectionProvider.GetConnection())
-			{
-				connection.Open();
-				return await connection.QueryFirstOrDefaultAsync<Weapon>
-				(
-					$@"select
+            using var connection = _connectionProvider.GetConnection();
+            connection.Open();
+            return await connection.QueryFirstOrDefaultAsync<Weapon>
+            (
+                $@"select
 								id
 							, item_name as {nameof(Equipment.Name)}
 							, equipment_type as {nameof(Equipment.EquipmentType)}
@@ -163,8 +154,7 @@ namespace FreeEnterprise.Api.Repositories
 							, notes as {nameof(Equipment.Notes)}
 						from equipment.weapons
 						where id = @id", weaponId
-				) ?? new Weapon();
-			}
-		}
+            ) ?? new Weapon();
+        }
 	}
 }

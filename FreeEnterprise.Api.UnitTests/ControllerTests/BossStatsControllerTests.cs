@@ -1,6 +1,6 @@
 using System.Net;
-using NUnit.Framework;
-using Moq;
+using Xunit;
+using NSubstitute;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Controllers;
 using FreeEnterprise.Api.Requests;
@@ -13,32 +13,25 @@ namespace FreeEnterprise.Api.UnitTets.ControllerTests
 {
 	public class BossStatsControllerTests
 	{
-		Mock<IBossStatsRepository> bossStatsRepositoryMock;
+		IBossStatsRepository bossStatsRepositoryMock;
 
-		[SetUp]
-		public void SetUp()
+		[Fact]
+		public async Task BossStatsController_Requires_ValidRequest()
 		{
-			bossStatsRepositoryMock = new Mock<IBossStatsRepository>();
+            var request = new BossStatsSearchRequest
+            {
+                LocationId = 1,
+                BattleId = 1
+            };
 
-		}
+            bossStatsRepositoryMock = Substitute.For<IBossStatsRepository>();
+            bossStatsRepositoryMock.SearchAsync(Arg.Any<BossStatsSearchRequest>()).Returns(new List<BossStat>());
 
-		[TestCase(0, 0, HttpStatusCode.BadRequest)]
-		public async Task BossStatsController_Requires_ValidRequest(int locationId, int battleId, HttpStatusCode responseCode)
-		{
-			bossStatsRepositoryMock
-				.Setup(x => x.SearchAsync(It.IsAny<BossStatsSearchRequest>()))
-				.ReturnsAsync(new List<BossStat>());
-
-			var sut = new BossStatsController(bossStatsRepositoryMock.Object);
-
-			var request = new BossStatsSearchRequest
-			{
-				LocationId = locationId,
-				BattleId = battleId
-			};
+			var sut = new BossStatsController(bossStatsRepositoryMock);
 
 			var response = await sut.Search(request);
-			Assert.AreEqual((HttpStatusCode)(response.Result as StatusCodeResult).StatusCode, responseCode);
+			
+			Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)(response.Result as StatusCodeResult).StatusCode);
 
 		}
 	}

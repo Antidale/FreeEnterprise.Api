@@ -1,6 +1,6 @@
 using System.Net;
-using Xunit;
-using NSubstitute;
+using NUnit.Framework;
+using Moq;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Controllers;
 using FreeEnterprise.Api.Requests;
@@ -8,31 +8,39 @@ using FreeEnterprise.Api.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FreeEnterprise.Api.UnitTets.ControllerTests
 {
-	public class BossStatsControllerTests
-	{
-		IBossStatsRepository bossStatsRepositoryMock;
+    public class BossStatsControllerTests
+    {
+        Mock<IBossStatsRepository> bossStatsRepositoryMock;
 
-		[Fact]
-		public async Task BossStatsController_Requires_ValidRequest()
-		{
+        [SetUp]
+        public void SetUp()
+        {
+            bossStatsRepositoryMock = new Mock<IBossStatsRepository>();
+
+        }
+
+        [TestCase(0, 0, HttpStatusCode.BadRequest)]
+        public async Task BossStatsController_Requires_ValidRequest(int locationId, int battleId, HttpStatusCode responseCode)
+        {
+            bossStatsRepositoryMock
+                .Setup(x => x.SearchAsync(It.IsAny<BossStatsSearchRequest>()))
+                .ReturnsAsync(new List<BossStat>());
+
+            var sut = new BossStatsController(bossStatsRepositoryMock.Object);
+
             var request = new BossStatsSearchRequest
             {
-                LocationId = 1,
-                BattleId = 1
+                LocationId = locationId,
+                BattleId = battleId
             };
 
-            bossStatsRepositoryMock = Substitute.For<IBossStatsRepository>();
-            bossStatsRepositoryMock.SearchAsync(Arg.Any<BossStatsSearchRequest>()).Returns(new List<BossStat>());
+            var response = await sut.Search(request);
+            Assert.AreEqual((HttpStatusCode)(response.Result as StatusCodeResult).StatusCode, responseCode);
 
-			var sut = new BossStatsController(bossStatsRepositoryMock);
-
-			var response = await sut.Search(request);
-			
-			Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)(response.Result as StatusCodeResult).StatusCode);
-
-		}
-	}
+        }
+    }
 }

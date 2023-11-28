@@ -1,14 +1,13 @@
-using System.Net;
-using NUnit.Framework;
-using Moq;
-using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Controllers;
-using FreeEnterprise.Api.Requests;
+using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Models;
-using System.Threading.Tasks;
+using FreeEnterprise.Api.Requests;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
+using NUnit.Framework;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace FreeEnterprise.Api.UnitTets.ControllerTests
 {
@@ -39,7 +38,7 @@ namespace FreeEnterprise.Api.UnitTets.ControllerTests
             };
 
             var response = await sut.Search(request);
-            Assert.AreEqual((HttpStatusCode)(response.Result as StatusCodeResult).StatusCode, responseCode);
+            Assert.Equals((HttpStatusCode)(response.Result as StatusCodeResult).StatusCode, responseCode);
 
         }
     }

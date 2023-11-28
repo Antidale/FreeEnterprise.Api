@@ -21,7 +21,7 @@ namespace FreeEnterprise.Api.Controllers
 			return Ok();
 		}
 
-		[HttpPost]
-		public async Task<>
+		//[HttpPost]
+		//public async Task<>
 	}
 }

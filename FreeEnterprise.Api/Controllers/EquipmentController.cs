@@ -6,16 +6,11 @@ namespace FreeEnterprise.Api.Controllers
 {
     [Route("api/[controller]")]
 	[ApiController]
-	public class EquipmentController : ControllerBase
+	public class EquipmentController(IEquipmentRepository equipmentRepository) : ControllerBase
 	{
-		private readonly IEquipmentRepository _equipmentRepository;
+		private readonly IEquipmentRepository _equipmentRepository = equipmentRepository;
 
-		public EquipmentController(IEquipmentRepository equipmentRepository)
-		{
-			_equipmentRepository = equipmentRepository;
-		}
-
-		[HttpGet]
+        [HttpGet]
 		public async Task<ActionResult<IEnumerable<Equipment>>> Get()
 		{
 			var equipment = await _equipmentRepository.GetEquipmentAsync();

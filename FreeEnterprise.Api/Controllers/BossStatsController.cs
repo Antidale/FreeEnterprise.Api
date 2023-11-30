@@ -7,15 +7,11 @@ namespace FreeEnterprise.Api.Controllers
 {
     [Route("api/[controller]")]
 	[ApiController]
-	public class BossStatsController : ControllerBase
+	public class BossStatsController(IBossStatsRepository bossStatsRepository) : ControllerBase
 	{
-		private readonly IBossStatsRepository _bossStatsRepository;
-		public BossStatsController(IBossStatsRepository bossStatsRepository)
-		{
-			_bossStatsRepository = bossStatsRepository;
-		}
+		private readonly IBossStatsRepository _bossStatsRepository = bossStatsRepository;
 
-		[HttpPost]
+        [HttpPost]
 		public async Task<ActionResult<IEnumerable<BossBattle>>> Search(BossStatsSearchRequest request)
 		{
 			if (request.BattleId == 0 && request.LocationId == 0)

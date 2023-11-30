@@ -6,15 +6,11 @@ namespace FreeEnterprise.Api.Controllers
 {
     [Route("api/[controller]")]
 	[ApiController]
-	public class BossBattleController : ControllerBase
+	public class BossBattleController(IBossBattlesRepository bossBattlesRepository) : ControllerBase
 	{
-		private readonly IBossBattlesRepository _bossBattlesRepository;
-		public BossBattleController(IBossBattlesRepository bossBattlesRepository)
-		{
-			_bossBattlesRepository = bossBattlesRepository;
-		}
+		private readonly IBossBattlesRepository _bossBattlesRepository = bossBattlesRepository;
 
-		[HttpGet]
+        [HttpGet]
 		public async Task<ActionResult<IEnumerable<BossBattle>>> Get()
 		{
 			var locations = await _bossBattlesRepository.GetBossBattlesAsync();

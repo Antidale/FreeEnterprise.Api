@@ -1,6 +1,6 @@
 using Dapper;
+using FeInfo.Common.DTOs;
 using FreeEnterprise.Api.Interfaces;
-using FreeEnterprise.Api.Models;
 
 namespace FreeEnterprise.Api.Repositories
 {
@@ -63,7 +63,7 @@ namespace FreeEnterprise.Api.Repositories
             );
         }
 
-        public async Task<Armor> GetArmorAsync(int armorId)
+        public async Task<Armor?> GetArmorAsync(int armorId)
         {
             using var connection = _connectionProvider.GetConnection();
             connection.Open();
@@ -90,8 +90,8 @@ namespace FreeEnterprise.Api.Repositories
 					, magic_evade as {nameof(Armor.MagicEvade)}
 					, status_protected as {nameof(Armor.StatusProtected)}
 				from equipment.armor
-				where id = @id", armorId
-            ) ?? new Armor();
+				where id = @id", new { id = armorId }
+            );
         }
 
         public async Task<IEnumerable<Weapon>> GetWeaponsAsync()
@@ -126,7 +126,7 @@ namespace FreeEnterprise.Api.Repositories
             );
         }
 
-        public async Task<Weapon> GetWeaponAsync(int weaponId)
+        public async Task<Weapon?> GetWeaponAsync(int weaponId)
         {
             using var connection = _connectionProvider.GetConnection();
             connection.Open();
@@ -148,8 +148,8 @@ namespace FreeEnterprise.Api.Repositories
 					, icon as {nameof(Equipment.Icon)}
 					, notes as {nameof(Equipment.Notes)}
 				from equipment.weapons
-				where id = @id", weaponId
-            ) ?? new Weapon();
+				where id = @id", new { id = weaponId }
+            );
         }
     }
 }

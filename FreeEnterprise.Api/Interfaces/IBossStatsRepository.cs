@@ -1,4 +1,4 @@
-using FreeEnterprise.Api.Models;
+using FeInfo.Common.DTOs;
 using FreeEnterprise.Api.Requests;
 
 namespace FreeEnterprise.Api.Interfaces

@@ -1,5 +1,5 @@
+using FeInfo.Common.DTOs;
 using FreeEnterprise.Api.Interfaces;
-using FreeEnterprise.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FreeEnterprise.Api.Controllers
@@ -11,7 +11,7 @@ namespace FreeEnterprise.Api.Controllers
 		private readonly IBattleLocationsRepository _battleLocationsRepository = battleLocationsRepository;
 
         [HttpGet]
-		public async Task<ActionResult<IEnumerable<BattleLocation>>> Get()
+		public async Task<ActionResult<IEnumerable<NameWithId>>> Get()
 		{
 			var locations = await _battleLocationsRepository.GetBattleLocationsAsync();
 			return Ok(locations);

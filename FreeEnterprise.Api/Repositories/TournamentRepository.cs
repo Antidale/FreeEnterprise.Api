@@ -6,7 +6,7 @@ using FreeEnterprise.Api.Classes;
 using FreeEnterprise.Api.Constants;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Models;
-using Microsoft.OpenApi.Services;
+using System.Data;
 using System.Net;
 
 namespace FreeEnterprise.Api.Repositories
@@ -20,7 +20,7 @@ namespace FreeEnterprise.Api.Repositories
             _connectionProvider = connectionProvider;
         }
 
-        public async Task<Response<RegistrationPeriodChangeResponse>> UpdateRegistrationWindow(RegistrationPeriodStatusChange request)
+        public async Task<Response<ChangeRegistrationPeriodResponse>> UpdateRegistrationWindow(ChangeRegistrationPeriod request)
         {
             using var connection = _connectionProvider.GetConnection();
             connection.Open();
@@ -41,7 +41,7 @@ namespace FreeEnterprise.Api.Repositories
                         ? $"No tournaments can have their registration {request.NewStatus}"
                         : $"There are multiple tournaments that could be {request.NewStatus}, please specify a tournament name";
 
-                    return new Response<RegistrationPeriodChangeResponse>().SetError(message, HttpStatusCode.BadRequest);
+                    return new Response<ChangeRegistrationPeriodResponse>().SetError(message, HttpStatusCode.BadRequest);
                 }
 
                 var tournament = searchResult.First();
@@ -53,15 +53,15 @@ namespace FreeEnterprise.Api.Repositories
                 _ = ulong.TryParse(tournament.tracking_channel_id, out var channelId);
                 _ = ulong.TryParse(tournament.tracking_message_id, out var messageId);
 
-                return new Response<RegistrationPeriodChangeResponse>(
-                    new RegistrationPeriodChangeResponse(channelId, messageId, request.NewStatus),
+                return new Response<ChangeRegistrationPeriodResponse>(
+                    new ChangeRegistrationPeriodResponse(channelId, messageId, request.NewStatus),
                     success: true
                 );
 
             }
             catch (Exception ex)
             {
-                return new Response<RegistrationPeriodChangeResponse>().SetError(ex.Message, HttpStatusCode.InternalServerError);
+                return new Response<ChangeRegistrationPeriodResponse>().SetError(ex.Message, HttpStatusCode.InternalServerError);
             }
         }
 
@@ -104,29 +104,14 @@ Values(@GuildId, @GuildName, @ChannelId, @MessageId, @TournamentName, @RoleId, @
             }
         }
 
-        public async Task<Response<RegistrationResponse>> RegisterPlayerAsync(Registration request)
+        public async Task<Response<ChangeRegistrationResponse>> RegisterPlayerAsync(ChangeRegistration request)
         {
             using var connection = _connectionProvider.GetConnection();
             connection.Open();
             try
             {
-                var tournamentSearchSql = TournamentRegistrationConstants.SearchTournamentsForRegistration;
-                var searchObject = new
-                {
-                    GuildId = request.GuildId.ToString(),
-                    request.TournamentName
-                };
+                var tournaments = await GetOpenTournaments(connection, request.GuildId.ToString(), request.TournamentName);
 
-                var searchResult = (await connection.QueryAsync<Tournament>(tournamentSearchSql, searchObject)).ToList();
-
-                if (searchResult.Count != 1)
-                {
-                    var message = searchResult.Count == 0
-                        ? $"No tournaments accepting registration found"
-                        : $"There are multiple tournaments with open registration, please specify a tournament name";
-
-                    return new Response<RegistrationResponse>().SetError(message, HttpStatusCode.BadRequest);
-                }
 
                 var entrant = connection.QueryFirstOrDefaultAsync<Entrant>(
 $@"select
@@ -148,19 +133,65 @@ Returning id;
             }
             catch(Exception ex) 
             { 
-                return new Response<RegistrationResponse>().SetError(ex.Message, HttpStatusCode.InternalServerError);
+                return new Response<ChangeRegistrationResponse>().SetError(ex.Message, HttpStatusCode.InternalServerError);
             }
 
 
-            var stuff = new Response<RegistrationResponse>();
+            var stuff = new Response<ChangeRegistrationResponse>();
                 throw new NotImplementedException();
         }
 
 
-        public Task<Response<RegistrationResponse>> DropPlayerAsync(Registration registration)
+        public async Task<Response<ChangeRegistrationResponse>> DropPlayerAsync(ChangeRegistration request)
         {
+            using var connection = _connectionProvider.GetConnection();
+            connection.Open();
+            try
+            {
+//                var sql =
+//@"select t.tournament_name, r.* 
+//from tournaments.registrations r 
+//join tournaments.entrants e on r.user_id = e.id
+//join tournaments.tournaments t on t.id = r.tournament_id
+//where e.user_id = @UserId
+//and t.registration_end < now()
+//and (t.tournament_name = @TournamentName or @TournamentName = '');";
+
+
+                ////var registrations = await connection.QueryAsync<(string tournament_name)>(sql, new { request.UserId, request.TournamentName });
+
+                //var tournaments = await GetOpenTournaments(connection, request.GuildId.ToString(), request.TournamentName);
+
+                //if (tournaments.Count != 1)
+                //{
+                //    var message = tournaments.Count == 0
+                //        ? $"No tournaments can have their registration {request.NewStatus}"
+                //        : $"There are multiple tournaments that could be {request.NewStatus}, please specify a tournament name";
+
+                //    return new Response<RegistrationPeriodChangeResponse>().SetError(message, HttpStatusCode.BadRequest);
+                //}
+            }
+            catch (Exception)
+            {
+
+            }
+
+            await Task.Delay(1);
             throw new NotImplementedException();
         }
+
+        public async Task<List<Tournament>> GetOpenTournaments(IDbConnection connection, string guildId = "", string tournamentName = "")
+        {
+            var tournamentSearchSql = TournamentRegistrationConstants.SearchTournamentsForRegistration;
+            var searchObject = new
+            {
+                GuildId = guildId.ToString(),
+                TournamentName = tournamentName
+            };
+
+            return (await connection.QueryAsync<Tournament>(tournamentSearchSql, searchObject)).ToList();
+        }
+
 
         private static string GetRegistrationStatusChangeSql(RegistrationPeriodStatus desiredStatus)
         {

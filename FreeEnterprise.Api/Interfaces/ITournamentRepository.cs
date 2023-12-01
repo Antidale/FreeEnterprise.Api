@@ -7,8 +7,8 @@ namespace FreeEnterprise.Api.Interfaces
     public interface ITournamentRepository
     {
         Task<Response<int>> CreateTournamentAsync(CreateTournament createTournament);
-        Task<Response<RegistrationPeriodChangeResponse>> UpdateRegistrationWindow(RegistrationPeriodStatusChange registrationPeriodStatusChange);
-        Task<Response<RegistrationResponse>> RegisterPlayerAsync(Registration registration);
-        Task<Response<RegistrationResponse>> DropPlayerAsync(Registration registration);
+        Task<Response<ChangeRegistrationPeriodResponse>> UpdateRegistrationWindow(ChangeRegistrationPeriod registrationPeriodStatusChange);
+        Task<Response<ChangeRegistrationResponse>> RegisterPlayerAsync(ChangeRegistration registration);
+        Task<Response<ChangeRegistrationResponse>> DropPlayerAsync(ChangeRegistration registration);
     }
 }

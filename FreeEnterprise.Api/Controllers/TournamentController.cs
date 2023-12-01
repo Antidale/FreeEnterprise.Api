@@ -26,21 +26,21 @@ namespace FreeEnterprise.Api.Controllers
 		}
 
 		[HttpPatch("UpdateRegistrationWindow")]
-		public async Task<ActionResult> UpdateRegistrationWindow(RegistrationPeriodStatusChange request)
+		public async Task<ActionResult> UpdateRegistrationWindow(ChangeRegistrationPeriod request)
 		{
             var result = await _tournamentRepository.UpdateRegistrationWindow(request);
             return result.GetRequestResponse();
         }
 
         [HttpPost("Register")]
-		public async Task<ActionResult<RegistrationResponse>> RegisterPlayer(Registration request)
+		public async Task<ActionResult<ChangeRegistrationResponse>> RegisterPlayer(ChangeRegistration request)
 		{
             var result = await _tournamentRepository.RegisterPlayerAsync(request);
             return result.GetRequestResponse();
         }
 
         [HttpPost("Drop")]
-        public async Task<ActionResult<RegistrationResponse>> DropPlayer(Registration request)
+        public async Task<ActionResult<ChangeRegistrationResponse>> DropPlayer(ChangeRegistration request)
         {
             var result = await _tournamentRepository.DropPlayerAsync(request);
 			return result.GetRequestResponse();

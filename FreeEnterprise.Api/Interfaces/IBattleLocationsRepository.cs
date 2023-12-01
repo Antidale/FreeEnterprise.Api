@@ -1,9 +1,9 @@
-using FreeEnterprise.Api.Models;
+using FeInfo.Common.DTOs;
 
 namespace FreeEnterprise.Api.Interfaces
 {
     public interface IBattleLocationsRepository
 	{
-		Task<IEnumerable<BattleLocation>> GetBattleLocationsAsync();
+		Task<IEnumerable<NameWithId>> GetBattleLocationsAsync();
 	}
 }

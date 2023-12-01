@@ -1,5 +1,5 @@
 using FreeEnterprise.Api.Interfaces;
-using FreeEnterprise.Api.Models;
+using FeInfo.Common.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FreeEnterprise.Api.Controllers
@@ -11,7 +11,7 @@ namespace FreeEnterprise.Api.Controllers
 		private readonly IBossBattlesRepository _bossBattlesRepository = bossBattlesRepository;
 
         [HttpGet]
-		public async Task<ActionResult<IEnumerable<BossBattle>>> Get()
+		public async Task<ActionResult<IEnumerable<NameWithId>>> Get()
 		{
 			var locations = await _bossBattlesRepository.GetBossBattlesAsync();
 			return Ok(locations);

@@ -1,5 +1,5 @@
+using FeInfo.Common.DTOs;
 using FreeEnterprise.Api.Interfaces;
-using FreeEnterprise.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FreeEnterprise.Api.Controllers
@@ -28,7 +28,7 @@ namespace FreeEnterprise.Api.Controllers
 		public async Task<ActionResult<Armor>> GetArmor(int id)
 		{
 			var armor = await _equipmentRepository.GetArmorAsync(id);
-			return Ok(armor);
+			return armor == null ? NotFound() : Ok(armor);
 		}
 
 		[HttpGet("Weapons")]
@@ -42,7 +42,7 @@ namespace FreeEnterprise.Api.Controllers
 		public async Task<ActionResult<Weapon>> GetWeapon(int id)
 		{
 			var weapon = await _equipmentRepository.GetWeaponAsync(id);
-			return Ok(weapon);
+			return weapon == null ? NotFound() : Ok(weapon);
 		}
 	}
 }

@@ -1,6 +1,6 @@
+using FeInfo.Common.DTOs;
 using FreeEnterprise.Api.Controllers;
 using FreeEnterprise.Api.Interfaces;
-using FreeEnterprise.Api.Models;
 using FreeEnterprise.Api.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -19,7 +19,6 @@ namespace FreeEnterprise.Api.UnitTets.ControllerTests
         public void SetUp()
         {
             bossStatsRepositoryMock = new Mock<IBossStatsRepository>();
-
         }
 
         [TestCase(0, 0, HttpStatusCode.BadRequest)]
@@ -39,7 +38,6 @@ namespace FreeEnterprise.Api.UnitTets.ControllerTests
 
             var response = await sut.Search(request);
             Assert.Equals((HttpStatusCode)(response.Result as StatusCodeResult).StatusCode, responseCode);
-
         }
     }
 }

@@ -19,14 +19,16 @@ namespace FreeEnterprise.Api.Controllers
 			return Ok();
 		}
 
-		[HttpPost]
+        [ApiKey]
+        [HttpPost]
 		public async Task<ActionResult> Create(CreateTournament createTournament)
 		{
 			var result = await _tournamentRepository.CreateTournamentAsync(createTournament);
 			return result.GetRequestResponse();
 		}
 
-		[HttpPatch("UpdateRegistrationWindow")]
+        [ApiKey]
+        [HttpPatch("UpdateRegistrationWindow")]
 		public async Task<ActionResult> UpdateRegistrationWindow(ChangeRegistrationPeriod request)
 		{
             var result = await _tournamentRepository.UpdateRegistrationWindow(request);
@@ -41,6 +43,7 @@ namespace FreeEnterprise.Api.Controllers
             return result.GetRequestResponse();
         }
 
+        [ApiKey]
         [HttpPost("Drop")]
         public async Task<ActionResult<ChangeRegistrationResponse>> DropPlayer(ChangeRegistration request)
         {

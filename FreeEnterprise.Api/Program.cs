@@ -13,13 +13,17 @@ builder.Services.AddCors(options =>
 });
 
 builder.Configuration.AddEnvironmentVariables(prefix: "FE_");
+
 // Add services to the container.
 builder.Services.AddSingleton<IBattleLocationsRepository, BattleLocationsRepository>();
 builder.Services.AddSingleton<IConnectionProvider, ConnectionProvider>();
 builder.Services.AddSingleton<IBossBattlesRepository, BossBattlesRepository>();
 builder.Services.AddSingleton<IBossStatsRepository, BossStatsRepository>();
 builder.Services.AddSingleton<IEquipmentRepository, EquipmentRepository>();
+builder.Services.AddSingleton<ITournamentRepository, TournamentRepository>();
+
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

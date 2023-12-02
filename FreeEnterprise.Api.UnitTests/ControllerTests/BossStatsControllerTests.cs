@@ -37,7 +37,7 @@ namespace FreeEnterprise.Api.UnitTets.ControllerTests
             };
 
             var response = await sut.Search(request);
-            Assert.Equals((HttpStatusCode)(response.Result as StatusCodeResult).StatusCode, responseCode);
+            Assert.That((HttpStatusCode)(response.Result as StatusCodeResult).StatusCode, Is.EqualTo(responseCode));
         }
     }
 }

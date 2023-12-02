@@ -1,5 +1,6 @@
 using FeInfo.Common.Requests;
 using FeInfo.Common.Responses;
+using FreeEnterprise.Api.Attributes;
 using FreeEnterprise.Api.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,6 +33,7 @@ namespace FreeEnterprise.Api.Controllers
             return result.GetRequestResponse();
         }
 
+		[ApiKey]
         [HttpPost("Register")]
 		public async Task<ActionResult<ChangeRegistrationResponse>> RegisterPlayer(ChangeRegistration request)
 		{

@@ -48,23 +48,19 @@ namespace FreeEnterprise.Api.Classes
         }
 
         /// <summary>
-        /// Controllers use this to return to the extneral caller
+        /// Controllers use this to return mostly reasonable status codes and data/messages back to external callers
         /// </summary>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public ObjectResult GetRequestResponse()
+        public ObjectResult GetRequestResponse() => (Success, ErrorStatusCode) switch
         {
-            if (Success) { return new OkObjectResult(Data); }
-
-            return ErrorStatusCode switch
-            {
-                HttpStatusCode.BadRequest => new BadRequestObjectResult(ErrorMessage),
-                HttpStatusCode.Unauthorized => new UnauthorizedObjectResult(ErrorMessage),
-                HttpStatusCode.NotFound => new NotFoundObjectResult(ErrorMessage),
-
-                HttpStatusCode.InternalServerError => throw new InvalidOperationException(ErrorMessage),
-                _ => new UnprocessableEntityObjectResult(ErrorMessage),
-            };
-        }
+            (true, _) => new OkObjectResult(Data),
+            (false, HttpStatusCode.BadRequest) => new BadRequestObjectResult(ErrorMessage),
+            (false, HttpStatusCode.Unauthorized) => new UnauthorizedObjectResult(ErrorMessage),
+            (false, HttpStatusCode.NotFound) => new NotFoundObjectResult(ErrorMessage),
+            (false, HttpStatusCode.Conflict) => new ConflictObjectResult(ErrorMessage),
+            (false, HttpStatusCode.InternalServerError) => throw new InvalidOperationException(ErrorMessage),
+            _ => new UnprocessableEntityObjectResult(ErrorMessage),
+        };
     }
 }

@@ -1,6 +1,6 @@
 using Dapper;
+using FeInfo.Common.DTOs;
 using FreeEnterprise.Api.Interfaces;
-using FreeEnterprise.Api.Models;
 
 namespace FreeEnterprise.Api.Repositories
 {
@@ -11,12 +11,12 @@ namespace FreeEnterprise.Api.Repositories
 		{
 			_connectionProvider = connectionProvider;
 		}
-		public async Task<IEnumerable<BattleLocation>> GetBattleLocationsAsync()
+		public async Task<IEnumerable<NameWithId>> GetBattleLocationsAsync()
 		{
 			using (var connection = _connectionProvider.GetConnection())
 			{
 				connection.Open();
-				return await connection.QueryAsync<BattleLocation>(
+				return await connection.QueryAsync<NameWithId>(
 					"Select battle_location as Name, id as Id from locations.boss_fights;"
 				);
 			};

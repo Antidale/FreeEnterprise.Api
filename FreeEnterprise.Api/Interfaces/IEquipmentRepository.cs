@@ -1,4 +1,4 @@
-using FreeEnterprise.Api.Models;
+using FeInfo.Common.DTOs;
 
 namespace FreeEnterprise.Api.Interfaces
 {
@@ -6,8 +6,8 @@ namespace FreeEnterprise.Api.Interfaces
 	{
 		Task<IEnumerable<Equipment>> GetEquipmentAsync();
 		Task<IEnumerable<Armor>> GetArmorAsync();
-		Task<Armor> GetArmorAsync(int armorId);
+		Task<Armor?> GetArmorAsync(int armorId);
 		Task<IEnumerable<Weapon>> GetWeaponsAsync();
-		Task<Weapon> GetWeaponAsync(int weaponId);
+		Task<Weapon?> GetWeaponAsync(int weaponId);
 	}
 }

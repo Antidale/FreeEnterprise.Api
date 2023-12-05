@@ -17,8 +17,8 @@ namespace FreeEnterprise.Api.Repositories
 			{
 				connection.Open();
 				return await connection.QueryAsync<NameWithId>(
-					"Select battle_location as Name, id as Id from locations.boss_fights;"
-				);
+                    "Select id as Id, battle_location as Name from locations.boss_fights;"
+                );
 			};
 		}
 	}

@@ -1,21 +1,15 @@
 using Dapper;
 using FeInfo.Common.DTOs;
 using FreeEnterprise.Api.Interfaces;
-using FreeEnterprise.Api.Models;
 using FreeEnterprise.Api.Requests;
 
 namespace FreeEnterprise.Api.Repositories
 {
-    public class BossStatsRepository : IBossStatsRepository
+    public class BossStatsRepository(IConnectionProvider connectionProvider) : IBossStatsRepository
 	{
-		private readonly IConnectionProvider _connectionProvider;
+		private readonly IConnectionProvider _connectionProvider = connectionProvider;
 
-		public BossStatsRepository(IConnectionProvider connectionProvider)
-		{
-			_connectionProvider = connectionProvider;
-		}
-
-		public async Task<IEnumerable<BossStat>> SearchAsync(BossStatsSearchRequest request)
+        public async Task<IEnumerable<BossStat>> SearchAsync(BossStatsSearchRequest request)
 		{
             using var connection = _connectionProvider.GetConnection();
             connection.Open();

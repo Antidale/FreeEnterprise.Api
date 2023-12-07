@@ -11,8 +11,8 @@
         public required string guild_name { get; init; }
         public int tournament_id { get; init; }
         public required string tournament_name { get; init; }
-        public DateTimeOffset? registration_start { get; init; }
-        public DateTimeOffset? registration_end { get; init; }
+        public DateTimeOffset registration_start { get; init; }
+        public DateTimeOffset registration_end { get; init; }
         public int? entrant_id { get; init; }
         public string user_id { get; init; } = string.Empty;
         public string user_name { get; init; } = string.Empty;

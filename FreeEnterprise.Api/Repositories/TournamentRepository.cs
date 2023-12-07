@@ -233,7 +233,22 @@ and (registration_end is null or registration_end < now())
             return (await connection.QueryAsync<Tournament>(tournamentSearchSql, searchObject)).ToList();
         }
 
-        //public async Task<List<TournamentRegistration>> GetTournamentRegistrationsAsync(IDbConnection connection, string )
+
+        public async Task<Response<List<TournamentSummary>>> GetTournamentSummariesAsync()
+        {
+            using var connection = _connectionProvider.GetConnection();
+            connection.Open();
+
+            try
+            {
+                var summaries = await connection.QueryAsync<TournamentSummary>(TournamentRegistrationConstants.GetTournamentSummarySql);
+                return new Response<List<TournamentSummary>>().SetSuccess(summaries.ToList());
+            }
+            catch (Exception ex)
+            {
+                return new Response<List<TournamentSummary>>().SetError(ex.Message, HttpStatusCode.InternalServerError);
+            }
+        }
 
         private async Task<int> UpsertEntrantAsync(IDbConnection connection, Entrant entrant)
         {
@@ -272,7 +287,6 @@ and (registration_end is null or registration_end < now())
         {
             return await connection.QueryFirstOrDefaultAsync<Entrant>(TournamentRegistrationConstants.GetEntrantByUserId, new { userId });
         }
-
 
         private static string GetRegistrationStatusChangeSql(RegistrationPeriodStatus desiredStatus)
         {

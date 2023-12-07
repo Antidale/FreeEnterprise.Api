@@ -58,5 +58,28 @@ VALUES
 (@UserId, @UserName, @Pronouns)
 Returning id;
 ";
+
+        public const string GetTournamentSummarySql =
+@"WITH registration_counts AS (
+    select tournament_id, count(*) as entrant_count
+    from tournament.tournament_registrations
+    where entrant_id is not null
+    group by tournament_id
+)
+
+select 
+      t.id as TournamentId
+    , t.guild_name as GuildName
+    , t.tournament_name as TournamentName
+    , t.registration_start as RegistrationStart
+    , t.registration_end as RegistrationEnd
+    , COALESCE(entrant_count, 0) as EntrantCount
+from tournament.tournaments t
+left join registration_counts r on t.id = r.tournament_id;";
+
+        public const string DropPlayerSql =
+@"delete from tournament.registrations
+where tournament_id = @tournament_id
+and entrant_id = @entrant_id;";
     }
 }

@@ -174,27 +174,37 @@ VALUES
             }
             catch (Exception ex)
             {
-                return new Response<ChangeRegistrationResponse>().SetError(ex.Message, HttpStatusCode.InternalServerError);
+                return new Response<ChangeRegistrationResponse>().InternalServerError(ex.Message);
             }
         }
 
         public async Task<Response<ChangeRegistrationResponse>> DropPlayerAsync(ChangeRegistration request)
         {
-            await Task.Delay(1);
-            throw new NotImplementedException();
+            //await Task.Delay(1);
+            //throw new NotImplementedException();
 
             using var connection = _connectionProvider.GetConnection();
             connection.Open();
             try
             {
                 var sql =
-@"select * 
+@"select 
+      guild_id
+    , guild_name
+    , tournament_id
+    , tournament_name
+    , registration_start
+    , registration_end
+    , entrant_id
+    , user_id
+    , user_name
+    , pronouns
+    , registered_on
 from tournament.tournament_registrations 
 where user_id = @UserId
 and guild_id = @GuildId
 and (tournament_name = @TournamentName or @TournamentName = '')
-and registration_start >= now()
-and (registration_end is null or registration_end < now())
+and registration_end < now()
 ;";
 
                 var registrations = (await connection.QueryAsync<TournamentRegistration>(sql, new { request.UserId, request.TournamentName, GuildId = request.GuildId.ToString() })).ToList();

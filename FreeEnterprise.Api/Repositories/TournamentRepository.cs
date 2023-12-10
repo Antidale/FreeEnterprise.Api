@@ -1,5 +1,5 @@
 using Dapper;
-using FeInfo.Common.Emums;
+using FeInfo.Common.Enums;
 using FeInfo.Common.Requests;
 using FeInfo.Common.Responses;
 using FreeEnterprise.Api.Classes;
@@ -125,7 +125,7 @@ Values(@GuildId, @GuildName, @ChannelId, @MessageId, @TournamentName, @RoleId, @
 
                 var openTournamentIds = tournaments.Select(x => x.id).ToList();
 
-                var registrations = (await connection.QueryAsync<Models.Registration>("select * from tournament.registrations where entrant_id = @entrantId and tournament_id = Any(@openTournamentIds);",
+                var registrations = (await connection.QueryAsync<Registration>("select * from tournament.registrations where entrant_id = @entrantId and tournament_id = Any(@openTournamentIds);",
                     new { entrantId, openTournamentIds })).ToList();
                 var registrationTournamentIds = registrations.Select(x => x.tournament_id).ToList();
 

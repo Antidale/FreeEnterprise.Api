@@ -39,13 +39,23 @@ namespace FreeEnterprise.Api.Classes
             return this;
         }
 
-        public Response<T> SetError(string errorMessage, HttpStatusCode errorStatusCode = HttpStatusCode.InternalServerError)
+        private Response<T> SetError(string errorMessage, HttpStatusCode errorStatusCode = HttpStatusCode.InternalServerError)
         {
             ErrorMessage = errorMessage;
             Success = false;
             ErrorStatusCode = errorStatusCode;
             return this;
         }
+
+        public Response<T> BadRequest(string errorMessage) => SetError(errorMessage, HttpStatusCode.BadRequest);
+
+        public Response<T> Unauthorized(string errorMessage) => SetError(errorMessage, HttpStatusCode.Unauthorized);
+
+        public Response<T> NotFound(string errorMessage) => SetError(errorMessage, HttpStatusCode.NotFound);
+
+        public Response<T> Conflict(string errorMessage) => SetError(errorMessage, HttpStatusCode.Conflict);
+
+        public Response<T> InternalServerError(string errorMessage) => SetError(errorMessage, HttpStatusCode.InternalServerError);
 
         /// <summary>
         /// Controllers use this to return mostly reasonable status codes and data/messages back to external callers

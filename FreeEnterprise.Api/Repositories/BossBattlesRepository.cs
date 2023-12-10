@@ -4,16 +4,11 @@ using FreeEnterprise.Api.Interfaces;
 
 namespace FreeEnterprise.Api.Repositories
 {
-    public class BossBattlesRepository : IBossBattlesRepository
+    public class BossBattlesRepository(IConnectionProvider connectionProvider) : IBossBattlesRepository
 	{
-		private readonly IConnectionProvider _connectionProvider;
+		private readonly IConnectionProvider _connectionProvider = connectionProvider;
 
-		public BossBattlesRepository(IConnectionProvider connectionProvider)
-		{
-			_connectionProvider = connectionProvider;
-		}
-
-		public async Task<IEnumerable<NameWithId>> GetBossBattlesAsync()
+        public async Task<IEnumerable<NameWithId>> GetBossBattlesAsync()
 		{
 			using (var connection = _connectionProvider.GetConnection())
 			{

@@ -2,6 +2,7 @@ using FeInfo.Common.Requests;
 using FeInfo.Common.Responses;
 using FreeEnterprise.Api.Attributes;
 using FreeEnterprise.Api.Interfaces;
+using FreeEnterprise.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FreeEnterprise.Api.Controllers
@@ -12,11 +13,11 @@ namespace FreeEnterprise.Api.Controllers
 	{
 		private readonly ITournamentRepository _tournamentRepository = tournamentRepository;
 
-        [HttpGet("Entrants")]
-		public async Task<ActionResult<IEnumerable<string>>> GetEntrants()
+        [HttpGet]
+		public async Task<ActionResult<List<TournamentRegistration>>> GetTournamentSummaries()
 		{
-            await Task.Delay(1);
-			return Ok();
+            var response = await _tournamentRepository.GetTournamentSummariesAsync();
+            return response.GetRequestResponse();
 		}
 
         [ApiKey]

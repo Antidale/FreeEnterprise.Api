@@ -180,9 +180,6 @@ VALUES
 
         public async Task<Response<ChangeRegistrationResponse>> DropPlayerAsync(ChangeRegistration request)
         {
-            //await Task.Delay(1);
-            //throw new NotImplementedException();
-
             using var connection = _connectionProvider.GetConnection();
             connection.Open();
             try
@@ -204,10 +201,10 @@ from tournament.tournament_registrations
 where user_id = @UserId
 and guild_id = @GuildId
 and (tournament_name = @TournamentName or @TournamentName = '')
-and registration_end < now()
+and registration_end > now()
 ;";
 
-                var registrations = (await connection.QueryAsync<TournamentRegistration>(sql, new { request.UserId, request.TournamentName, GuildId = request.GuildId.ToString() })).ToList();
+                var registrations = (await connection.QueryAsync<TournamentRegistration>(sql, new { UserId = request.UserId.ToString(), request.TournamentName, GuildId = request.GuildId.ToString() })).ToList();
 
 
                 if (registrations.Count != 1)
@@ -217,8 +214,25 @@ and registration_end < now()
                         : new Response<ChangeRegistrationResponse>().Conflict($"There are multiple tournaments that could be {request.DesiredStatus}, please specify a tournament name {string.Join(", ", registrations.Select(x => x.tournament_name).Distinct())}");
                 }
 
-                var deleteResponse = connection.ExecuteScalarAsync(TournamentRegistrationConstants.DropPlayerSql, 
-                                    new { registrations.First().entrant_id, registrations.First().tournament_id });
+                var tournamentId = registrations.First().tournament_id;
+
+                var deleteResponse = await connection.ExecuteAsync(TournamentRegistrationConstants.DropPlayerSql, 
+                                    new { registrations.First().entrant_id, tournament_id = tournamentId });
+
+                if(deleteResponse != 1)
+                {
+                    return new Response<ChangeRegistrationResponse>().InternalServerError("Drop failed");
+                }
+
+                var tournament = await connection.QueryFirstAsync<Tournament>("select * from tournament.tournaments where id = @id", new { id = tournamentId });
+                var tournamentSummary = await connection.QueryFirstAsync<TournamentSummary>(TournamentRegistrationConstants.GetTournamentSummaryByIdSql, new { tournament_id = tournamentId });
+
+                _ = ulong.TryParse(tournament.tracking_channel_id, out var channelId);
+                _ = ulong.TryParse(tournament.tracking_message_id, out var messageId);
+                _ = ulong.TryParse(tournament.role_id, out var roleId);
+
+
+                return new Response<ChangeRegistrationResponse>().SetSuccess(new ChangeRegistrationResponse(tournamentSummary.EntrantCount, channelId, messageId, roleId, tournament.tournament_name));
             }
             catch (Exception ex)
             {
@@ -248,7 +262,7 @@ and registration_end < now()
 
             try
             {
-                var summaries = await connection.QueryAsync<TournamentSummary>(TournamentRegistrationConstants.GetTournamentSummarySql);
+                var summaries = await connection.QueryAsync<TournamentSummary>(TournamentRegistrationConstants.GetTournamentSummariesSql);
                 return new Response<List<TournamentSummary>>().SetSuccess(summaries.ToList());
             }
             catch (Exception ex)

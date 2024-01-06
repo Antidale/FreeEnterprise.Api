@@ -5,6 +5,6 @@ namespace FreeEnterprise.Api.Interfaces
 {
     public interface IGuidesRepository
     {
-        Task<Response<IEnumerable<Guide>>> GetGuidesAsync(string searchText);
+        Task<Response<IEnumerable<Guide>>> GetGuidesAsync(string searchText, int? limit = null);
     }
 }

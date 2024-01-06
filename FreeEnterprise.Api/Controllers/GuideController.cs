@@ -10,9 +10,9 @@ namespace FreeEnterprise.Api.Controllers
         private readonly IGuidesRepository _guidesRepository = guidesRepository;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Guide>>> Search([FromQuery] string searchText)
+        public async Task<ActionResult<IEnumerable<Guide>>> Search([FromQuery] string searchText, [FromQuery] int? limit = null)
         {
-            var result = await _guidesRepository.GetGuidesAsync(searchText);
+            var result = await _guidesRepository.GetGuidesAsync(searchText, limit);
             return result.GetRequestResponse();
         }
 

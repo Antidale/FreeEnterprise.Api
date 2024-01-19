@@ -1,6 +1,8 @@
-﻿using FreeEnterprise.Api.Interfaces;
+﻿using Dapper;
+using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Providers;
 using FreeEnterprise.Api.Repositories;
+using FreeEnterprise.Api.TypeHandlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+SqlMapper.AddTypeHandler(new StringListHandler());
 var app = builder.Build();
 
 app.UseSwagger();

@@ -1,6 +1,7 @@
 using FeInfo.Common.Requests;
 using FeInfo.Common.Responses;
 using FreeEnterprise.Api.Classes;
+using FreeEnterprise.Api.Models;
 
 namespace FreeEnterprise.Api.Interfaces
 {
@@ -11,6 +12,7 @@ namespace FreeEnterprise.Api.Interfaces
         Task<Response<ChangeRegistrationResponse>> RegisterPlayerAsync(ChangeRegistration registration);
         Task<Response<ChangeRegistrationResponse>> DropPlayerAsync(ChangeRegistration registration);
         Task<Response<List<TournamentSummary>>> GetTournamentSummariesAsync();
+        Task<Response<List<TournamentRegistrant>>> GetTournamentRegistrantsAsync(int id);
 
     }
 }

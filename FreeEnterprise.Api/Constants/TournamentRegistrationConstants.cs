@@ -1,4 +1,5 @@
-﻿using FreeEnterprise.Api.Models;
+﻿using FreeEnterprise.Api.Classes;
+using FreeEnterprise.Api.Models;
 
 namespace FreeEnterprise.Api.Constants
 {
@@ -56,9 +57,10 @@ where user_id = @userId";
 $@"INSERT INTO tournament.entrants(
     {nameof(Entrant.user_id)},
     {nameof(Entrant.user_name)}, 
-    {nameof(Entrant.pronouns)})
+    {nameof(Entrant.pronouns)},
+    {nameof(Entrant.twitch_name)})
 VALUES
-(@UserId, @UserName, @Pronouns)
+(@UserId, @UserName, @Pronouns, @TwitchName)
 Returning id;
 ";
 
@@ -96,18 +98,18 @@ $@"WITH registration_counts AS (
     from tournament.tournament_registrations
     where {nameof(TournamentRegistration.entrant_id)} is not null
     group by {nameof(TournamentRegistration.tournament_id)}
-)
+    )
 
-select
-      t.id as TournamentId
-    , t.guild_name as GuildName
-    , t.tournament_name as TournamentName
-    , t.registration_start as RegistrationStart
-    , t.registration_end as RegistrationEnd
-    , COALESCE(entrant_count, 0) as EntrantCount
-from tournament.tournaments t
-left join registration_counts r on t.id = r.tournament_id
-where t.id = @tournament_id;";
+    select
+        t.id as TournamentId
+        , t.guild_name as GuildName
+        , t.tournament_name as TournamentName
+        , t.registration_start as RegistrationStart
+        , t.registration_end as RegistrationEnd
+        , COALESCE(entrant_count, 0) as EntrantCount
+    from tournament.tournaments t
+    left join registration_counts r on t.id = r.tournament_id
+    where t.id = @tournament_id;";
 
         /// <summary>
         /// Sql for dropping a player. uses @tournament_id and @entrant_id as params;
@@ -116,5 +118,16 @@ where t.id = @tournament_id;";
 @"delete from tournament.registrations
 where tournament_id = @tournament_id
 and entrant_id = @entrant_id;";
+
+        public const string GetTournamentRegistraionsSql =
+        $@"select 
+      {nameof(TournamentRegistration.tournament_name)} as {nameof(TournamentRegistrant.TournamentName)}
+    , {nameof(TournamentRegistration.discord_name)} as {nameof(TournamentRegistrant.DiscordName)}
+    , {nameof(TournamentRegistration.display_name)} as {nameof(TournamentRegistrant.DisplayName)}
+    , {nameof(TournamentRegistration.registered_on)} as {nameof(TournamentRegistrant.RegistrationDate)}
+    , {nameof(TournamentRegistration.pronouns)} as {nameof(TournamentRegistrant.Pronouns)}
+    , {nameof(TournamentRegistration.twitch_name)} as {nameof(TournamentRegistrant.TwitchName)}
+from tournament.tournament_registrations
+where {nameof(TournamentRegistration.tournament_id)} = @tournament_id";
     }
 }

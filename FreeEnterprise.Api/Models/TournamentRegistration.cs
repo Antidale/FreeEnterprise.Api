@@ -15,8 +15,10 @@
         public DateTimeOffset registration_end { get; init; }
         public int? entrant_id { get; init; }
         public string user_id { get; init; } = string.Empty;
-        public string user_name { get; init; } = string.Empty;
+        public string discord_name { get; init; } = string.Empty;
+        public string display_name { get; init; } = string.Empty;
         public string pronouns { get; init; } = string.Empty;
+        public string twitch_name { get; init; } = string.Empty;
         public DateTime? registered_on { get; init; }
 
     }

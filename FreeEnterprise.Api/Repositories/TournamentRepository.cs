@@ -109,7 +109,7 @@ Values(@GuildId, @GuildName, @ChannelId, @MessageId, @TournamentName, @RoleId, @
             connection.Open();
             try
             {
-                var entrantId = await UpsertEntrantAsync(connection, new Entrant(request.UserId.ToString(), request.UserName, request.Pronouns));
+                var entrantId = await UpsertEntrantAsync(connection, new Entrant(request.UserId.ToString(), request.UserName, request.Pronouns, request.TwitchName));
 
                 if (entrantId == 0)
                 {
@@ -216,10 +216,10 @@ and registration_end > now()
 
                 var tournamentId = registrations.First().tournament_id;
 
-                var deleteResponse = await connection.ExecuteAsync(TournamentRegistrationConstants.DropPlayerSql, 
+                var deleteResponse = await connection.ExecuteAsync(TournamentRegistrationConstants.DropPlayerSql,
                                     new { registrations.First().entrant_id, tournament_id = tournamentId });
 
-                if(deleteResponse != 1)
+                if (deleteResponse != 1)
                 {
                     return new Response<ChangeRegistrationResponse>().InternalServerError("Drop failed");
                 }
@@ -271,6 +271,22 @@ and registration_end > now()
             }
         }
 
+        public async Task<Response<List<TournamentRegistrant>>> GetTournamentRegistrantsAsync(int id)
+        {
+            using var connection = _connectionProvider.GetConnection();
+            connection.Open();
+
+            try
+            {
+                var registrants = await connection.QueryAsync<TournamentRegistrant>(TournamentRegistrationConstants.GetTournamentRegistraionsSql, new { tournament_id = id });
+                return new Response<List<TournamentRegistrant>>().SetSuccess(registrants.ToList());
+            }
+            catch (Exception ex)
+            {
+                return new Response<List<TournamentRegistrant>>().InternalServerError(ex.Message);
+            }
+        }
+
         private async Task<int> UpsertEntrantAsync(IDbConnection connection, Entrant entrant)
         {
             var entrantEntity = await GetEntrantByUserIdAsync(connection, entrant.user_id);
@@ -278,12 +294,12 @@ and registration_end > now()
             if (entrantEntity == null)
             {
                 return await connection.ExecuteScalarAsync<int>(TournamentRegistrationConstants.InsertEntrantSql,
-                    new { UserId = entrant.user_id, UserName = entrant.user_name, Pronouns = entrant.pronouns });
+                    new { UserId = entrant.user_id, UserName = entrant.user_name, Pronouns = entrant.pronouns, TwitchName = entrant.twitch_name });
             }
 
             var updateSql = getUpdateSql(entrant, entrantEntity);
 
-            if(!string.IsNullOrEmpty(updateSql))
+            if (!string.IsNullOrEmpty(updateSql))
             {
                 await connection.ExecuteAsync(updateSql, new { entrant.user_name, entrant.pronouns, entrantEntity.id });
             }
@@ -293,12 +309,13 @@ and registration_end > now()
             static string getUpdateSql(Entrant request, Entrant entity)
             {
                 if (request.user_name.Equals(entity.user_name, StringComparison.InvariantCulture) &&
-                    request.pronouns.Equals(entity.pronouns, StringComparison.InvariantCulture))
+                    request.pronouns.Equals(entity.pronouns, StringComparison.InvariantCulture) &&
+                    request.twitch_name.Equals(entity.twitch_name, StringComparison.InvariantCulture))
                 {
                     return string.Empty;
                 }
 
-                return $@"update tournament.entrants set user_name = @user_name, pronouns = @pronouns where id = @id";
+                return $@"update tournament.entrants set user_name = @user_name, pronouns = @pronouns, twitch_name = @twitch_name where id = @id";
             }
         }
 

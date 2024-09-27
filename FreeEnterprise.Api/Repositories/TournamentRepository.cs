@@ -194,7 +194,7 @@ VALUES
     , registration_end
     , entrant_id
     , user_id
-    , user_name
+    , discord_name
     , pronouns
     , registered_on
 from tournament.tournament_registrations 
@@ -301,7 +301,7 @@ and registration_end > now()
 
             if (!string.IsNullOrEmpty(updateSql))
             {
-                await connection.ExecuteAsync(updateSql, new { entrant.user_name, entrant.pronouns, entrantEntity.id });
+                await connection.ExecuteAsync(updateSql, new { entrant.user_name, entrant.pronouns, entrant.twitch_name, entrantEntity.id });
             }
 
             return entrantEntity.id;

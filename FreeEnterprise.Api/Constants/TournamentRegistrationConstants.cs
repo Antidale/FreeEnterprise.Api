@@ -1,4 +1,4 @@
-﻿using FreeEnterprise.Api.Classes;
+﻿using FeInfo.Common.DTOs;
 using FreeEnterprise.Api.Models;
 
 namespace FreeEnterprise.Api.Constants
@@ -83,6 +83,7 @@ select
     , t.tournament_name as TournamentName
     , t.registration_start as RegistrationStart
     , t.registration_end as RegistrationEnd
+    , t.rules_link as RulesLink
     , COALESCE(entrant_count, 0) as EntrantCount
 from tournament.tournaments t
 left join registration_counts r on t.id = r.tournament_id;";

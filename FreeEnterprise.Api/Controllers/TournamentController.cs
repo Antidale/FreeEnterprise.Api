@@ -1,3 +1,4 @@
+using FeInfo.Common.DTOs;
 using FeInfo.Common.Requests;
 using FeInfo.Common.Responses;
 using FreeEnterprise.Api.Attributes;

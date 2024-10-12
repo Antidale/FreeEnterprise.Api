@@ -9,10 +9,11 @@
     {
         public int id { get; set; }
         public string guild_id { get; set; } = string.Empty;
-        public string guild_name { get; set; } = string.Empty;  
+        public string guild_name { get; set; } = string.Empty;
         public string tracking_channel_id { get; set; } = string.Empty;
         public string tracking_message_id { get; set; } = string.Empty;
-        public string tournament_name { get; set; } = string.Empty; 
+        public string tournament_name { get; set; } = string.Empty;
+        public string rules_link { get; set; } = string.Empty;
         public string role_id { get; set; } = string.Empty;
         public DateTimeOffset? registration_start { get; set; }
         public DateTimeOffset? registration_end { get; set; }

@@ -78,6 +78,7 @@ namespace FreeEnterprise.Api.Repositories
                     ChannelId = createTournamentRequest.TrackingChannelId.ToString(),
                     MessageId = createTournamentRequest.TrackingMessageId.ToString(),
                     createTournamentRequest.TournamentName,
+                    createTournamentRequest.RulesLink,
                     RoleId = createTournamentRequest.RegistrantRoleId.ToString(),
                     RegistrationStart = createTournamentRequest.RegistrationStart?.ToUniversalTime() ?? null,
                     RegistrationEnd = createTournamentRequest.RegistrationEnd?.ToUniversalTime() ?? null,
@@ -90,11 +91,12 @@ $@"Insert Into tournament.tournaments(
     {nameof(Tournament.tracking_channel_id)},
     {nameof(Tournament.tracking_message_id)},
     {nameof(Tournament.tournament_name)},
+    {nameof(Tournament.rules_link)},
     {nameof(Tournament.role_id)},
     {nameof(Tournament.registration_start)},
     {nameof(Tournament.registration_end)}
 )
-Values(@GuildId, @GuildName, @ChannelId, @MessageId, @TournamentName, @RoleId, @RegistrationStart, @RegistrationEnd);";
+Values(@GuildId, @GuildName, @ChannelId, @MessageId, @TournamentName, @RulesLink, @RoleId, @RegistrationStart, @RegistrationEnd);";
                 var insertResponse = await connection.ExecuteAsync(sql, tournamentObject);
                 return new Response<int>(insertResponse, success: true);
             }

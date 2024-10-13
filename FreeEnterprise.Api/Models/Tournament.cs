@@ -14,6 +14,7 @@
         public string tracking_message_id { get; set; } = string.Empty;
         public string tournament_name { get; set; } = string.Empty;
         public string rules_link { get; set; } = string.Empty;
+        public string standings_link { get; set; } = string.Empty;
         public string role_id { get; set; } = string.Empty;
         public DateTimeOffset? registration_start { get; set; }
         public DateTimeOffset? registration_end { get; set; }

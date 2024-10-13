@@ -84,6 +84,7 @@ select
     , t.registration_start as RegistrationStart
     , t.registration_end as RegistrationEnd
     , t.rules_link as RulesLink
+    , t.standings_link as StandingsLink
     , COALESCE(entrant_count, 0) as EntrantCount
 from tournament.tournaments t
 left join registration_counts r on t.id = r.tournament_id;";

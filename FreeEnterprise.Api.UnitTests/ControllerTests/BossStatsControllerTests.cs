@@ -3,13 +3,10 @@ using FreeEnterprise.Api.Controllers;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Requests;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using NUnit.Framework;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace FreeEnterprise.Api.UnitTets.ControllerTests
+namespace FreeEnterprise.Api.UnitTests.ControllerTests
 {
     public class BossStatsControllerTests
     {

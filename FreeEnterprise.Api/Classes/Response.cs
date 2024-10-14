@@ -30,12 +30,14 @@ namespace FreeEnterprise.Api.Classes
             ErrorStatusCode = errorStatusCode;
         }
 
-        public Response() {  }
+        public Response() { }
 
         public Response<T> SetSuccess(T responseObject)
         {
             Data = responseObject;
             Success = true;
+            ErrorStatusCode = null;
+            ErrorMessage = string.Empty;
             return this;
         }
 
@@ -44,6 +46,7 @@ namespace FreeEnterprise.Api.Classes
             ErrorMessage = errorMessage;
             Success = false;
             ErrorStatusCode = errorStatusCode;
+            Data = default;
             return this;
         }
 

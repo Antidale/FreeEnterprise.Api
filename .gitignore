@@ -5,4 +5,5 @@ obj
 obj/*
 bin/*
 .vs
-*/*.csproj.user
+*/*.csproj.user.idea
+.idea

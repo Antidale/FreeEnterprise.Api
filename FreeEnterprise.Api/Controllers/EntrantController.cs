@@ -9,7 +9,7 @@ namespace FreeEnterprise.Api.Controllers;
 public class EntrantController(IEntrantRepository entrantRepository) : ControllerBase
 {
     [ApiKey]
-    [HttpPut("UpdatePronouns")]
+    [HttpPatch("UpdatePronouns")]
     public async Task<ActionResult> UpdatePronouns(UpdatePronouns updatePronouns)
     {
         var response = await entrantRepository.UpdatePronounsAsync(updatePronouns);

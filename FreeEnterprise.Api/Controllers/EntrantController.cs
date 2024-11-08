@@ -15,4 +15,20 @@ public class EntrantController(IEntrantRepository entrantRepository) : Controlle
         var response = await entrantRepository.UpdatePronounsAsync(updatePronouns);
         return response.GetRequestResponse();
     }
+
+    [ApiKey]
+    [HttpPatch("UpdateAlias")]
+    public async Task<ActionResult> UpdateAlias(UpdateAlias updateAlias)
+    {
+        var response = await entrantRepository.UpdateAliasAsync(updateAlias);
+        return response.GetRequestResponse();
+    }
+    
+    [ApiKey]
+    [HttpPatch("UpdateTwitch")]
+    public async Task<ActionResult> UpdateTwitch(UpdateTwitch updateTwitch)
+    {
+        var response = await entrantRepository.UpdateTwitchAsync(updateTwitch);
+        return response.GetRequestResponse();
+    }
 }

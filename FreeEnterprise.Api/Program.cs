@@ -23,6 +23,7 @@ builder.Services.AddSingleton<IBossBattlesRepository, BossBattlesRepository>();
 builder.Services.AddSingleton<IBossStatsRepository, BossStatsRepository>();
 builder.Services.AddSingleton<IEquipmentRepository, EquipmentRepository>();
 builder.Services.AddSingleton<ITournamentRepository, TournamentRepository>();
+builder.Services.AddSingleton<IEntrantRepository, EntrantRepository>();
 builder.Services.AddSingleton<IGuidesRepository, GuidesRepository>();
 
 builder.Services.AddControllers();

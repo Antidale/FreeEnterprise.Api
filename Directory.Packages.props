@@ -1,13 +1,10 @@
-
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
-
   <ItemGroup>
-
     <PackageVersion Include="Dapper" Version="2.1.35" />
-    <PackageVersion Include="FeInfo.Common" Version="4.0.4" />
+    <PackageVersion Include="FeInfo.Common" Version="4.0.5" />
     <PackageVersion Include="FluentAssertions" Version="6.12.0" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.6" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
@@ -16,6 +13,5 @@
     <PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageVersion Include="npgsql" Version="8.0.3" />
-  
   </ItemGroup>
 </Project>

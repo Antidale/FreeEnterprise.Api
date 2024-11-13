@@ -215,8 +215,8 @@ and registration_end > now()
                 if (registrations.Count != 1)
                 {
                     return registrations.Count == 0
-                        ? new Response<ChangeRegistrationResponse>().NotFound($"No tournaments can have their registration {request.DesiredStatus}")
-                        : new Response<ChangeRegistrationResponse>().Conflict($"There are multiple tournaments that could be {request.DesiredStatus}, please specify a tournament name {string.Join(", ", registrations.Select(x => x.tournament_name).Distinct())}");
+                        ? new Response<ChangeRegistrationResponse>().NotFound($"You are not currently registered for a tournament that you can drop from.")
+                        : new Response<ChangeRegistrationResponse>().Conflict($"There are multiple tournaments that could drop from, please retry with a specific tournament name. Your active registered tournament names are: {string.Join(", ", registrations.Select(x => x.tournament_name).Distinct())}");
                 }
 
                 var tournamentId = registrations.First().tournament_id;

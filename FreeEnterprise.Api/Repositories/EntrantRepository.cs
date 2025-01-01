@@ -9,7 +9,7 @@ namespace FreeEnterprise.Api.Repositories;
 public class EntrantRepository(IConnectionProvider connectionProvider) : IEntrantRepository
 {
     public async Task<Response> UpdatePronounsAsync(UpdatePronouns updatePronouns)
-    {   
+    {
         using var connection = connectionProvider.GetConnection();
         connection.Open();
 
@@ -41,16 +41,17 @@ public class EntrantRepository(IConnectionProvider connectionProvider) : IEntran
                                   from tournament.tournament_registrations tr
                                   where tr.tournament_id = r.tournament_id 
                                   and tr.user_id = @userId
+                                  and tr.entrant_id = r.entrant_id
                                   and (@tournamentName = '' 
                                       or tr.tournament_name = @tournamentName)
                                   """;
         var searchParams = new
         {
-            alias = updateAlias.Alias, 
-            userId = updateAlias.UserId.ToString(), 
+            alias = updateAlias.Alias,
+            userId = updateAlias.UserId.ToString(),
             tournamentName = updateAlias.TournamentName
         };
-        
+
         try
         {
             var rowCount = await connection.ExecuteAsync(updateSql, searchParams);
@@ -62,7 +63,7 @@ public class EntrantRepository(IConnectionProvider connectionProvider) : IEntran
             return new Response().InternalServerError(ex.Message);
         }
     }
-    
+
     public async Task<Response> UpdateTwitchAsync(UpdateTwitch updateTwitch)
     {
         using var connection = connectionProvider.GetConnection();
@@ -75,10 +76,10 @@ public class EntrantRepository(IConnectionProvider connectionProvider) : IEntran
                                   """;
         var searchParams = new
         {
-            twitchName = updateTwitch.TwitchName, 
+            twitchName = updateTwitch.TwitchName,
             id = updateTwitch.UserId.ToString()
         };
-        
+
         try
         {
             var rowCount = await connection.ExecuteAsync(updateSql, searchParams);

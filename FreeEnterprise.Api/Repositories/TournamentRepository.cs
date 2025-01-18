@@ -212,7 +212,6 @@ and registration_end > now()
 
                 var registrations = (await connection.QueryAsync<TournamentRegistration>(sql, new { UserId = request.UserId.ToString(), request.TournamentName, GuildId = request.GuildId.ToString() })).ToList();
 
-
                 if (registrations.Count != 1)
                 {
                     return registrations.Count == 0
@@ -291,6 +290,60 @@ and registration_end > now()
             {
                 return new Response<List<TournamentRegistrant>>().InternalServerError(ex.Message);
             }
+        }
+
+        public async Task<Response<ChangeRegistrationResponse>> KickPlayerAsync(DropPlayer kickRequest)
+        {
+            using var connection = _connectionProvider.GetConnection();
+            connection.Open();
+
+            var sql = @"
+select entrant_id, tournament_id, user_id
+from tournament.tournament_registrations
+where tournament_name = @tournamentName
+and discord_name = @playerName
+and guild_id = @guildId
+";
+            var searchResult = (await connection.QueryAsync<(int entrantId, int tournamentId, string userId)>(sql, new { playerName = kickRequest.PlayerName, tounamentName = kickRequest.TournamentName, guildId = kickRequest.GuildId.ToString() })).ToList();
+
+            if (searchResult.Count == 0)
+            {
+                return new Response<ChangeRegistrationResponse>().NotFound($"Unable to find player {kickRequest.PlayerName} registered for {kickRequest.TournamentName} in this server");
+            }
+            else if (searchResult.Count > 1)
+            {
+                return new Response<ChangeRegistrationResponse>().BadRequest($"found more than one match for player name ({kickRequest.PlayerName}) registered for {kickRequest.TournamentName} in this server. This shouldn't be possible, contact Antidale for a resolution");
+            }
+
+            var tournamentId = searchResult.First().tournamentId;
+            var entrantId = searchResult.First().entrantId;
+
+            var deleteSql = @"delete from tournament.registrations where tournament_id = @tournamentid and entrant_id = @entrantId";
+
+            var deleteResponse = await connection.ExecuteAsync(
+                sql: deleteSql,
+                param: new
+                {
+                    touranmentId = searchResult.First().tournamentId,
+                    entrantId = searchResult.First().entrantId
+                });
+
+            if (deleteResponse != 1)
+            {
+                return new Response<ChangeRegistrationResponse>().InternalServerError("Drop failed");
+            }
+
+            var tournament = await connection.QueryFirstAsync<Tournament>("select * from tournament.tournaments where id = @id", new { id = tournamentId });
+            var tournamentSummary = await connection.QueryFirstAsync<TournamentSummary>(TournamentRegistrationConstants.GetTournamentSummaryByIdSql, new { tournament_id = tournamentId });
+
+            _ = ulong.TryParse(tournament.tracking_channel_id, out var channelId);
+            _ = ulong.TryParse(tournament.tracking_message_id, out var messageId);
+            _ = ulong.TryParse(tournament.role_id, out var roleId);
+            _ = ulong.TryParse(searchResult.First().userId, out var userId);
+
+            return new Response<ChangeRegistrationResponse>()
+                        .SetSuccess(new ChangeRegistrationResponse(tournamentSummary.EntrantCount, channelId, messageId, roleId, userId, tournament.tournament_name));
+
         }
 
         private async Task<int> UpsertEntrantAsync(IDbConnection connection, Entrant entrant)

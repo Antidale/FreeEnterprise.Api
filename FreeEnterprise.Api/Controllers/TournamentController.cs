@@ -58,5 +58,13 @@ namespace FreeEnterprise.Api.Controllers
             var result = await _tournamentRepository.DropPlayerAsync(request);
             return result.GetRequestResponse();
         }
+
+        [ApiKey]
+        [HttpPost("Kick")]
+        public async Task<ActionResult<ChangeRegistrationResponse>> KickPLayer(DropPlayer request)
+        {
+            var result = await _tournamentRepository.KickPlayerAsync(request);
+            return result.GetRequestResponse();
+        }
     }
 }

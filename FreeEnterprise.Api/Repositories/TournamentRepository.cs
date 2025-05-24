@@ -1,3 +1,4 @@
+using System.Data;
 using Dapper;
 using FeInfo.Common.DTOs;
 using FeInfo.Common.Enums;
@@ -7,7 +8,6 @@ using FreeEnterprise.Api.Classes;
 using FreeEnterprise.Api.Constants;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Models;
-using System.Data;
 
 namespace FreeEnterprise.Api.Repositories
 {
@@ -175,6 +175,7 @@ VALUES
                         channelId,
                         messageId,
                         roleId,
+                        request.UserId,
                         tournament.tournament_name));
             }
             catch (Exception ex)
@@ -237,7 +238,7 @@ and registration_end > now()
                 _ = ulong.TryParse(tournament.role_id, out var roleId);
 
 
-                return new Response<ChangeRegistrationResponse>().SetSuccess(new ChangeRegistrationResponse(tournamentSummary.EntrantCount, channelId, messageId, roleId, tournament.tournament_name));
+                return new Response<ChangeRegistrationResponse>().SetSuccess(new ChangeRegistrationResponse(tournamentSummary.EntrantCount, channelId, messageId, roleId, request.UserId, tournament.tournament_name));
             }
             catch (Exception ex)
             {

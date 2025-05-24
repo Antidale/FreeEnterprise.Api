@@ -2,10 +2,8 @@ using FeInfo.Common.DTOs;
 using FeInfo.Common.Requests;
 using FeInfo.Common.Responses;
 using FreeEnterprise.Api.Attributes;
-using FreeEnterprise.Api.Classes;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FreeEnterprise.Api.Controllers
 {

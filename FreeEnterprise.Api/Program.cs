@@ -25,6 +25,7 @@ builder.Services.AddSingleton<IEquipmentRepository, EquipmentRepository>();
 builder.Services.AddSingleton<ITournamentRepository, TournamentRepository>();
 builder.Services.AddSingleton<IEntrantRepository, EntrantRepository>();
 builder.Services.AddSingleton<IGuidesRepository, GuidesRepository>();
+builder.Services.AddSingleton<ISeedRepository, SeedRepository>();
 
 builder.Services.AddControllers();
 

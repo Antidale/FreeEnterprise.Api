@@ -14,6 +14,7 @@ namespace FreeEnterprise.Api.Interfaces
         Task<Response<ChangeRegistrationResponse>> DropPlayerAsync(ChangeRegistration registration);
         Task<Response<List<TournamentSummary>>> GetTournamentSummariesAsync();
         Task<Response<List<TournamentRegistrant>>> GetTournamentRegistrantsAsync(int id);
+        Task<Response<ChangeRegistrationResponse>> KickPlayerAsync(DropPlayer kickRequest);
 
     }
 }

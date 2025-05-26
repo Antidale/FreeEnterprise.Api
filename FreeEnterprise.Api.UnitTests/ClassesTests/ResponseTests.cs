@@ -97,7 +97,7 @@ public class ResponseTests
         var sut = new Response<int>();
         sut.SetSuccess(42);
 
-        var response = sut.GetRequestResponse();
+        var response = sut.GetResult();
         response.GetType().Should().Be(typeof(OkObjectResult));
         response.Value.Should().Be(42);
     }
@@ -110,7 +110,7 @@ public class ResponseTests
 
         sut.BadRequest(errorMessage);
 
-        var response = sut.GetRequestResponse();
+        var response = sut.GetResult();
         response.GetType().Should().Be(typeof(BadRequestObjectResult));
         response.Value.Should().Be(errorMessage);
     }
@@ -123,7 +123,7 @@ public class ResponseTests
 
         sut.Unauthorized(errorMessage);
 
-        var response = sut.GetRequestResponse();
+        var response = sut.GetResult();
         response.GetType().Should().Be(typeof(UnauthorizedObjectResult));
         response.Value.Should().Be(errorMessage);
     }
@@ -136,7 +136,7 @@ public class ResponseTests
 
         sut.NotFound(errorMessage);
 
-        var response = sut.GetRequestResponse();
+        var response = sut.GetResult();
         response.GetType().Should().Be(typeof(NotFoundObjectResult));
         response.Value.Should().Be("404");
     }
@@ -149,7 +149,7 @@ public class ResponseTests
 
         sut.Conflict(errorMessage);
 
-        var response = sut.GetRequestResponse();
+        var response = sut.GetResult();
         response.GetType().Should().Be(typeof(ConflictObjectResult));
         response.Value.Should().Be("Fite!");
     }
@@ -162,6 +162,6 @@ public class ResponseTests
         var sut = new Response<int>();
         sut.InternalServerError(errorMessage);
 
-        Assert.Throws<InvalidOperationException>(() => sut.GetRequestResponse());
+        Assert.Throws<InvalidOperationException>(() => sut.GetResult());
     }
 }

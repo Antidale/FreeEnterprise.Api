@@ -22,7 +22,7 @@ public class EntrantRepository(IConnectionProvider connectionProvider) : IEntran
         {
             var rowCount = await connection.ExecuteAsync(updateSql, new { pronouns = updatePronouns.Pronouns, id = updatePronouns.UserId.ToString() });
 
-            return rowCount == 0 ? new Response().NotFound("User not found") : new Response().SetSuccess();
+            return rowCount == 0 ? new Response().NotFound("User not found") : Response.SetSuccess();
         }
         catch (Exception ex)
         {
@@ -56,7 +56,7 @@ public class EntrantRepository(IConnectionProvider connectionProvider) : IEntran
         {
             var rowCount = await connection.ExecuteAsync(updateSql, searchParams);
 
-            return rowCount == 0 ? new Response().NotFound("No updates made") : new Response().SetSuccess();
+            return rowCount == 0 ? new Response().NotFound("No updates made") : Response.SetSuccess();
         }
         catch (Exception ex)
         {
@@ -84,7 +84,7 @@ public class EntrantRepository(IConnectionProvider connectionProvider) : IEntran
         {
             var rowCount = await connection.ExecuteAsync(updateSql, searchParams);
 
-            return rowCount == 0 ? new Response().NotFound("No updates made") : new Response().SetSuccess();
+            return rowCount == 0 ? new Response().NotFound("No updates made") : Response.SetSuccess();
         }
         catch (Exception ex)
         {

@@ -17,14 +17,14 @@ namespace FreeEnterprise.Api.Controllers
         public async Task<ActionResult<List<TournamentSummary>>> GetTournamentSummaries()
         {
             var response = await _tournamentRepository.GetTournamentSummariesAsync();
-            return response.GetRequestResponse();
+            return response.GetResult();
         }
 
         [HttpGet("{id:int}/registrants")]
         public async Task<ActionResult<List<TournamentRegistration>>> GetTournamentRegistrants(int id)
         {
             var response = await _tournamentRepository.GetTournamentRegistrantsAsync(id);
-            return response.GetRequestResponse();
+            return response.GetResult();
         }
 
         [ApiKey]
@@ -32,7 +32,7 @@ namespace FreeEnterprise.Api.Controllers
         public async Task<ActionResult> Create(CreateTournament createTournament)
         {
             var result = await _tournamentRepository.CreateTournamentAsync(createTournament);
-            return result.GetRequestResponse();
+            return result.GetResult();
         }
 
         [ApiKey]
@@ -40,7 +40,7 @@ namespace FreeEnterprise.Api.Controllers
         public async Task<ActionResult> UpdateRegistrationWindow(ChangeRegistrationPeriod request)
         {
             var result = await _tournamentRepository.UpdateRegistrationWindow(request);
-            return result.GetRequestResponse();
+            return result.GetResult();
         }
 
         [ApiKey]
@@ -48,7 +48,7 @@ namespace FreeEnterprise.Api.Controllers
         public async Task<ActionResult<ChangeRegistrationResponse>> RegisterPlayer(ChangeRegistration request)
         {
             var result = await _tournamentRepository.RegisterPlayerAsync(request);
-            return result.GetRequestResponse();
+            return result.GetResult();
         }
 
         [ApiKey]
@@ -56,7 +56,7 @@ namespace FreeEnterprise.Api.Controllers
         public async Task<ActionResult<ChangeRegistrationResponse>> DropPlayer(ChangeRegistration request)
         {
             var result = await _tournamentRepository.DropPlayerAsync(request);
-            return result.GetRequestResponse();
+            return result.GetResult();
         }
     }
 }

@@ -2,6 +2,7 @@
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Providers;
 using FreeEnterprise.Api.Repositories;
+using FreeEnterprise.Api.Services;
 using FreeEnterprise.Api.TypeHandlers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +27,8 @@ builder.Services.AddSingleton<ITournamentRepository, TournamentRepository>();
 builder.Services.AddSingleton<IEntrantRepository, EntrantRepository>();
 builder.Services.AddSingleton<IGuidesRepository, GuidesRepository>();
 builder.Services.AddSingleton<ISeedRepository, SeedRepository>();
+builder.Services.AddSingleton<ISeedFetchService, SeedFetchSerivce>();
+builder.Services.AddHttpClient();
 
 builder.Services.AddControllers();
 

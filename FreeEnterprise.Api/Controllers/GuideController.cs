@@ -13,7 +13,7 @@ namespace FreeEnterprise.Api.Controllers
         public async Task<ActionResult<IEnumerable<Guide>>> Search([FromQuery] string searchText, [FromQuery] int? limit = null)
         {
             var result = await _guidesRepository.GetGuidesAsync(searchText, limit);
-            return result.GetRequestResponse();
+            return result.GetResult();
         }
 
     }

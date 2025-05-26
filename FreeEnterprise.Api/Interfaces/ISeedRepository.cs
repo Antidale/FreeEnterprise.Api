@@ -6,4 +6,5 @@ namespace FreeEnterprise.Api.Interfaces;
 public interface ISeedRepository
 {
     Task<Response<int>> SaveSeedRolledAsync(LogSeedRoled seedInfo);
+    Task<Response> SavePatchHtml(int savedSeedId, string html);
 }

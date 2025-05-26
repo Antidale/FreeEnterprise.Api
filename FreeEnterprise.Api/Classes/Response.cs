@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using System.Net;
 
 namespace FreeEnterprise.Api.Classes
 {
@@ -23,7 +21,7 @@ namespace FreeEnterprise.Api.Classes
         /// <param name="errorMessage"></param>
         /// <param name="success"></param>
         /// <param name="errorStatusCode">Should be not null when using this constructor for an error</param>
-        public Response(T responseObject, string errorMessage = "", bool success = false, HttpStatusCode? errorStatusCode = null)
+        public Response(T? responseObject, string errorMessage = "", bool success = false, HttpStatusCode? errorStatusCode = null)
         {
             Data = responseObject;
             ErrorMessage = errorMessage;
@@ -66,7 +64,7 @@ namespace FreeEnterprise.Api.Classes
         /// </summary>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public ObjectResult GetRequestResponse() => (Success, ErrorStatusCode) switch
+        public ObjectResult GetResult() => (Success, ErrorStatusCode) switch
         {
             (true, _) => new OkObjectResult(Data),
             (false, HttpStatusCode.BadRequest) => new BadRequestObjectResult(ErrorMessage),
@@ -83,14 +81,28 @@ namespace FreeEnterprise.Api.Classes
         private string _errorMessage = string.Empty;
         private bool _success = false;
         private HttpStatusCode? _errorStatusCode;
-        
-        public Response SetSuccess()
+
+        private Response _getSuccess
         {
-            _success = true;
-            _errorStatusCode = null;
-            _errorMessage = string.Empty;
-            return this;
+            get
+            {
+                _success = true;
+                _errorStatusCode = null;
+                _errorMessage = string.Empty;
+                return this;
+            }
         }
+
+        public static Response SetSuccess()
+        {
+            return new Response()._getSuccess;
+        }
+
+        public static Response<T> SetSuccess<T>(T data)
+        {
+            return new Response<T>().SetSuccess(data);
+        }
+
         public Response BadRequest(string errorMessage) => SetError(errorMessage, HttpStatusCode.BadRequest);
         public Response Unauthorized(string errorMessage) => SetError(errorMessage, HttpStatusCode.Unauthorized);
         public Response NotFound(string errorMessage) => SetError(errorMessage, HttpStatusCode.NotFound);
@@ -104,6 +116,7 @@ namespace FreeEnterprise.Api.Classes
             _errorStatusCode = errorStatusCode;
             return this;
         }
+
         public ActionResult GetRequestResponse() => (_success, _errorStatusCode) switch
         {
             (true, _) => new NoContentResult(),

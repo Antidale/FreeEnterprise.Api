@@ -6,7 +6,7 @@ using FreeEnterprise.Api.Models;
 
 namespace FreeEnterprise.Api.Repositories;
 
-public class SeedRepository(IConnectionProvider connectionProvider) : ISeedRepository
+public class SeedRepository(IConnectionProvider connectionProvider, ILogger<SeedRepository> logger) : ISeedRepository
 {
     private readonly IConnectionProvider _connectionProvider = connectionProvider;
 
@@ -27,9 +27,10 @@ public class SeedRepository(IConnectionProvider connectionProvider) : ISeedRepos
     {nameof(RolledSeed.seed)},
     {nameof(RolledSeed.verification)}
 )
-Values(@UserId, @Flags, @Url, @Version, @Seed, @Verification);";
+Values(@UserId, @Flags, @Url, @Version, @Seed, @Verification)
+RETURNING id;";
 
-            var insertResponse = await connection.ExecuteAsync(sql, new
+            var insertResponse = await connection.QuerySingleAsync<int>(sql, new
             {
                 UserId = seedInfo.UserId.ToString(),
                 seedInfo.Info.Flags,
@@ -39,11 +40,33 @@ Values(@UserId, @Flags, @Url, @Version, @Seed, @Verification);";
                 seedInfo.Info.Verification,
             });
 
-            return new Response<int>(insertResponse, success: true);
+            return new Response<int>().SetSuccess(insertResponse);
         }
         catch (Exception ex)
         {
             return new Response<int>().InternalServerError(ex.Message);
+        }
+    }
+
+    public async Task<Response> SavePatchHtml(int savedSeedId, string html)
+    {
+        using var connection = _connectionProvider.GetConnection();
+
+        var insertStatment =
+@$"insert into seeds.saved_html (rolled_seed_id, patch_html)
+    VALUES (@savedSeedId, @html);
+";
+        try
+        {
+            var insertResponse = await connection.ExecuteAsync(insertStatment, new { savedSeedId, html });
+            return insertResponse <= 0
+                ? new Response().InternalServerError("patch page was not saved")
+                : Response.SetSuccess();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("Exception when saving patch page: {ex}", ex.ToString());
+            return new Response().InternalServerError(ex.Message);
         }
     }
 }

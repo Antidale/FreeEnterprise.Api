@@ -28,6 +28,7 @@ builder.Services.AddSingleton<IEntrantRepository, EntrantRepository>();
 builder.Services.AddSingleton<IGuidesRepository, GuidesRepository>();
 builder.Services.AddSingleton<ISeedRepository, SeedRepository>();
 builder.Services.AddSingleton<ISeedFetchService, SeedFetchSerivce>();
+builder.Services.AddSingleton<IRaceRespository, RaceRepository>();
 builder.Services.AddHttpClient();
 
 builder.Services.AddControllers();

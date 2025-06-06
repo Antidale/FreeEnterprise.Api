@@ -1,8 +1,6 @@
 using FeInfo.Common.Requests;
 using FreeEnterprise.Api.Attributes;
 using FreeEnterprise.Api.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FreeEnterprise.Api.Controllers
 {

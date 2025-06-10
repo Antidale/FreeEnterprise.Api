@@ -15,7 +15,7 @@ public class Race
     public string room_name { get; init; } = string.Empty;
     public string race_type { get; init; } = string.Empty;
     public string race_host { get; init; } = string.Empty;
-    public string metadata { get; init; } = string.Empty;
+    public Dictionary<string, string> metadata { get; init; } = [];
 
     public Race() { }
     public Race(CreateRaceRoom createRaceRoom)
@@ -24,7 +24,7 @@ public class Race
         room_name = createRaceRoom.RoomName;
         race_host = createRaceRoom.RaceHost;
         race_type = createRaceRoom.RaceType;
-        metadata = JsonSerializer.Serialize(createRaceRoom.Metadata);
+        metadata = createRaceRoom.Metadata;
     }
 
 

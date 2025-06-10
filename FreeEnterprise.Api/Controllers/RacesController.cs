@@ -14,7 +14,6 @@ namespace FreeEnterprise.Api.Controllers
         public async Task<IActionResult> LogRaceCreatedAsync(CreateRaceRoom createRequest)
         {
             var insertResponse = await _raceRepository.CreateRaceAsync(createRequest);
-
             return insertResponse.GetResult();
         }
     }

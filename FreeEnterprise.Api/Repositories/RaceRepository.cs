@@ -20,7 +20,7 @@ public class RaceRepository(IConnectionProvider connectionProvider, ILogger<Race
             var model = new Race(createRequest);
 
             var insertStatement =
-    @$"insert into race.race_detail (
+    @$"insert into races.race_detail (
     {nameof(Race.room_name)},
     {nameof(Race.race_host)},
     {nameof(Race.race_type)},
@@ -32,8 +32,8 @@ VALUES
     @{nameof(Race.race_host)},
     @{nameof(Race.race_type)},
     @{nameof(Race.metadata)}
-);
-returning id;
+)
+RETURNING id;
 ";
             var insertResult = await connection.QuerySingleAsync<int>(insertStatement, model);
 

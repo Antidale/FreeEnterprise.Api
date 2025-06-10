@@ -38,6 +38,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 SqlMapper.AddTypeHandler(new StringListHandler());
+SqlMapper.AddTypeHandler(new JsonStringDictionaryHandler());
 var app = builder.Build();
 
 app.UseSwagger();

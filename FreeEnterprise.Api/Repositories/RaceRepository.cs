@@ -1,4 +1,3 @@
-
 using Dapper;
 using FeInfo.Common.Requests;
 using FreeEnterprise.Api.Classes;
@@ -47,6 +46,15 @@ RETURNING id;
             logger.LogError("Exception when saving patch page: {ex}", ex.ToString());
             return new Response<int>().InternalServerError(ex.Message);
         }
+    }
 
+    public async Task<Response> JoinRaceAsync(JoinRaceRequest request)
+    {
+        using var connection = _connectionPrivoder.GetConnection();
+
+        //upsert user to race.racers
+        //add entrant to race.entrants
+
+        return new Response().BadRequest("stuff");
     }
 }

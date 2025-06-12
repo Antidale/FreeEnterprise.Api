@@ -16,5 +16,15 @@ namespace FreeEnterprise.Api.Controllers
             var insertResponse = await _raceRepository.CreateRaceAsync(createRequest);
             return insertResponse.GetResult();
         }
+
+        [ApiKey, HttpPost]
+        public async Task<IActionResult> JoinRaceAsync(JoinRaceRequest joinRequest)
+        {
+            var joinResponse = await _raceRepository.JoinRaceAsync(joinRequest);
+            return joinResponse.GetResults();
+
+        }
     }
+
+
 }

@@ -13,10 +13,18 @@ public class SeedRepository(IConnectionProvider connectionProvider, ILogger<Seed
     public async Task<Response<int>> SaveSeedRolledAsync(LogSeedRoled seedInfo)
     {
         using var connection = _connectionProvider.GetConnection();
-
         try
         {
             connection.Open();
+            var raceId = seedInfo.RaceId;
+
+            //In case a caller doesn't know our internal id (e.g. racingway picks a race that another bot created for rt.gg), we can try to fetch the id by the room name. If neither works, we just dont' worry about it.
+            if (seedInfo.RaceId is null && seedInfo.RaceName is not null)
+            {
+                var lookupSql = @$"select id from races.race_detail where {nameof(Race.room_name)} = @RoomName";
+                raceId = await connection.QueryFirstOrDefaultAsync<int?>(lookupSql, new { RoomName = seedInfo.RaceName });
+                logger.LogCritical("pulled {raceId} from {raceName}", raceId, seedInfo.RaceName);
+            }
 
             var sql =
 @$"insert into seeds.rolled_seeds(
@@ -25,9 +33,10 @@ public class SeedRepository(IConnectionProvider connectionProvider, ILogger<Seed
     {nameof(RolledSeed.link)},
     {nameof(RolledSeed.fe_version)},
     {nameof(RolledSeed.seed)},
-    {nameof(RolledSeed.verification)}
+    {nameof(RolledSeed.verification)},
+    {nameof(RolledSeed.race_id)}
 )
-Values(@UserId, @Flags, @Url, @Version, @Seed, @Verification)
+Values(@UserId, @Flags, @Url, @Version, @Seed, @Verification, @RaceId)
 RETURNING id;";
 
             var insertResponse = await connection.QuerySingleAsync<int>(sql, new
@@ -38,6 +47,7 @@ RETURNING id;";
                 seedInfo.Info.Version,
                 seedInfo.Info.Seed,
                 seedInfo.Info.Verification,
+                raceId
             });
 
             return new Response<int>().SetSuccess(insertResponse);

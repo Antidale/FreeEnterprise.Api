@@ -17,13 +17,12 @@ namespace FreeEnterprise.Api.Controllers
             return insertResponse.GetResult();
         }
 
-        [ApiKey, HttpPost]
-        public async Task<IActionResult> JoinRaceAsync(JoinRaceRequest joinRequest)
-        {
-            var joinResponse = await _raceRepository.JoinRaceAsync(joinRequest);
-            return joinResponse.GetResults();
-
-        }
+        // [ApiKey, HttpPost]
+        // public async Task<IActionResult> JoinRaceAsync(JoinRaceRequest joinRequest)
+        // {
+        //     var joinResponse = await _raceRepository.JoinRaceAsync(joinRequest);
+        //     return joinResponse.GetRequestResponse();
+        // }
     }
 
 

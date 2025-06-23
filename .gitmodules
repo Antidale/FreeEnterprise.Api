@@ -1,0 +1,3 @@
+[submodule "free_enterprise_db"]
+	path = free_enterprise_db
+	url = https://github.com/Antidale/free_enterprise_db.git

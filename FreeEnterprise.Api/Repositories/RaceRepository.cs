@@ -57,4 +57,27 @@ RETURNING id;
 
         return new Response().BadRequest("stuff");
     }
+
+    public async Task<Response<IEnumerable<RaceDetail>>> GetRacesAsync()
+    {
+        using var connection = _connectionPrivoder.GetConnection();
+        var query = @$"select 
+{nameof(Race.room_name)} as {nameof(RaceDetail.RoomName)},
+{nameof(Race.race_host)} as {nameof(RaceDetail.RaceHost)},
+{nameof(Race.race_type)} as {nameof(RaceDetail.RaceType)},
+{nameof(Race.metadata)} as {nameof(RaceDetail.Metadata)}
+FROM races.race_detail;";
+        try
+        {
+            connection.Open();
+            var races = await connection.QueryAsync<RaceDetail>(query);
+
+            return Response.SetSuccess(races);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("Exception when saving patch page: {ex}", ex.ToString());
+            return new Response<IEnumerable<RaceDetail>>().InternalServerError(ex.Message);
+        }
+    }
 }

@@ -44,6 +44,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+Console.WriteLine("Application Starting");
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors();

@@ -13,15 +13,16 @@ services:
       context: .
       target: final
     environment:
-      FE_PGHOST: localhost
+      FE_PGHOST: fe_info_db
       FE_PGDATABASE: freeenterprise
       FE_PGUSER: fe_user
       FE_PGPASS: dev_test
+      FE_PGPORT: "5432"
     ports:
-      - 8080:8080
-    # depends_on:
-    #   freeenterprise_db:
-    #     condition: service_healthy
+      - 8085:8080
+    depends_on:
+      fe_info_db:
+        condition: service_healthy
 
   fe_info_db:
     build:
@@ -36,43 +37,10 @@ services:
       - fe_db_data:/var/lib/postgresql/data/
     ports:
       - 5432:5432
-    # healthcheck:
-    #   test: [ "CMD", "pg_isready -U fe_user" ]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "fe_user", "-d", "freeenterprise" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 volumes:
   fe_db_data:
-
-    # The commented out section below is an example of how to define a PostgreSQL
-    # database that your application can use. `depends_on` tells Docker Compose to
-    # start the database before your application. The `db-data` volume persists the
-    # database data between container restarts. The `db-password` secret is used
-    # to set the database password. You must create `db/password.txt` and add
-    # a password of your choosing to it before running `docker compose up`.
-    #     depends_on:
-    #       db:
-    #         condition: service_healthy
-    #   db:
-    #     image: postgres
-    #     restart: always
-    #     user: postgres
-    #     secrets:
-    #       - db-password
-    #     volumes:
-    #       - db-data:/var/lib/postgresql/data
-    #     environment:
-    #       - POSTGRES_DB=example
-    #       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-    #     expose:
-    #       - 5432
-    #     healthcheck:
-    #       test: [ "CMD", "pg_isready" ]
-    #       interval: 10s
-    #       timeout: 5s
-    #       retries: 5
-    # volumes:
-    #   db-data:
-    # secrets:
-    #   db-password:
-    #     file: db/password.txt

@@ -8,7 +8,7 @@
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
 services:
-  server:
+  fe_info_api:
     build:
       context: .
       target: final
@@ -19,11 +19,11 @@ services:
       FE_PGPASS: dev_test
     ports:
       - 8080:8080
-    depends_on:
-      freeenterprise_db:
-        condition: service_healthy
+    # depends_on:
+    #   freeenterprise_db:
+    #     condition: service_healthy
 
-  freeenterprise_db:
+  fe_info_db:
     build:
       context: ./free_enterprise_db/
     image: fe_api_db
@@ -34,13 +34,13 @@ services:
       POSTGRES_DB: freeenterprise
     volumes:
       - fe_db_data:/var/lib/postgresql/data/
-    expose:
-      - "5432"
-    healthcheck:
-      test: [ "CMD", "pg_isready -U fe_user" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    ports:
+      - 5432:5432
+    # healthcheck:
+    #   test: [ "CMD", "pg_isready -U fe_user" ]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
 volumes:
   fe_db_data:
 

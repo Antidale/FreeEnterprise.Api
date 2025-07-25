@@ -19,20 +19,27 @@ public class RaceRepository(IConnectionProvider connectionProvider, ILogger<Race
             var model = new Race(createRequest);
 
             var insertStatement =
-    @$"insert into races.race_detail (
-    {nameof(Race.room_name)},
-    {nameof(Race.race_host)},
-    {nameof(Race.race_type)},
-    {nameof(Race.metadata)}
+    @$"
+with try_insert as (
+    insert into races.race_detail (
+        {nameof(Race.room_name)},
+        {nameof(Race.race_host)},
+        {nameof(Race.race_type)},
+        {nameof(Race.metadata)}
+    )
+    VALUES
+    (
+        @{nameof(Race.room_name)},
+        @{nameof(Race.race_host)},
+        @{nameof(Race.race_type)},
+        @{nameof(Race.metadata)}
+    )
+    RETURNING id
 )
-VALUES
-(
-    @{nameof(Race.room_name)},
-    @{nameof(Race.race_host)},
-    @{nameof(Race.race_type)},
-    @{nameof(Race.metadata)}
-)
-RETURNING id;
+select * from try_insert
+UNION
+select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.room_name)}
+;
 ";
             var insertResult = await connection.QuerySingleAsync<int>(insertStatement, model);
 

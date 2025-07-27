@@ -29,5 +29,11 @@ namespace FreeEnterprise.Api.Controllers
             //Intentionally swallowing any errors with saving the patch page
             return insertResponse.GetResult();
         }
+
+        // [HttpGet]
+        // public async Task<ActionResult> SearchSeed([FromQuery] string? flags = null, [FromQuery] int page = 1, [FromQuery] int take = 20)
+        // {
+        //     return Ok();
+        // }
     }
 }

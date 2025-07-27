@@ -7,6 +7,7 @@ namespace FreeEnterprise.Api.Interfaces;
 public interface IRaceRespository
 {
     Task<Response<int>> CreateRaceAsync(CreateRaceRoom createRequest);
-    Task<Response<IEnumerable<RaceDetail>>> GetRacesAsync();
+    Task<Response<IEnumerable<RaceDetail>>> GetRacesAsync(int offset, int limit);
+    Task<Response<RaceDetail>> GetRaceAsync(string idOrSlug);
     Task<Response> JoinRaceAsync(JoinRaceRequest joinRaceRequest);
 }

@@ -18,11 +18,28 @@ namespace FreeEnterprise.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetRacesAsync()
+        public async Task<IActionResult> GetRacesAsync(
+            [FromQuery] int offset = 0,
+            [FromQuery] int limit = 20
+        )
         {
-            var getResponse = await _raceRepository.GetRacesAsync();
+            //TODO: add min/max values for limit (5 || 50?)
+            var getResponse = await _raceRepository.GetRacesAsync(offset, limit);
             return getResponse.GetResult();
         }
+
+        // [HttpGet("{idOrSlug}")]
+        // public async Task<IActionResult> GetRaceAsync(string idOrSlug)
+        // {
+        //     var raceResponse = await _raceRepository.GetRaceAsync(idOrSlug);
+        //     return raceResponse.GetResult();
+        // }
+
+        // [HttpGet("{idOrSlug}/seed")]
+        // public async Task<IActionResult> GetRaceSeedAsync(string idOrSlug)
+        // {
+        //     throw new NotImplementedException("Endpoint not implemented");
+        // }
 
         // [ApiKey, HttpPost]
         // public async Task<IActionResult> JoinRaceAsync(JoinRaceRequest joinRequest)
@@ -31,6 +48,4 @@ namespace FreeEnterprise.Api.Controllers
         //     return joinResponse.GetRequestResponse();
         // }
     }
-
-
 }

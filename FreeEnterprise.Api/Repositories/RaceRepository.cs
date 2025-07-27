@@ -35,6 +35,7 @@ with try_insert as (
         @{nameof(Race.race_type)},
         @{nameof(Race.metadata)}
     )
+    ON CONFLICT(room_name) DO NOTHING
     RETURNING id
 )
 select * from try_insert

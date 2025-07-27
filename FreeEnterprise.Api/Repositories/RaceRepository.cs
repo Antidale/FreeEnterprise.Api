@@ -1,4 +1,5 @@
 using Dapper;
+using FeInfo.Common.DTOs;
 using FeInfo.Common.Requests;
 using FreeEnterprise.Api.Classes;
 using FreeEnterprise.Api.Interfaces;
@@ -65,26 +66,87 @@ select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.
         return new Response().BadRequest("stuff");
     }
 
-    public async Task<Response<IEnumerable<RaceDetail>>> GetRacesAsync()
+    public async Task<Response<IEnumerable<RaceDetail>>> GetRacesAsync(int offset, int limit)
     {
         using var connection = _connectionPrivoder.GetConnection();
-        var query = @$"select 
+        var query = @$"select
+rd.{nameof(Race.id)} as {nameof(RaceDetail.RaceId)},
 {nameof(Race.room_name)} as {nameof(RaceDetail.RoomName)},
 {nameof(Race.race_host)} as {nameof(RaceDetail.RaceHost)},
 {nameof(Race.race_type)} as {nameof(RaceDetail.RaceType)},
-{nameof(Race.metadata)} as {nameof(RaceDetail.Metadata)}
-FROM races.race_detail;";
+{nameof(Race.metadata)} as {nameof(RaceDetail.Metadata)},
+{nameof(RolledSeed.flagset)} as {nameof(RaceDetail.Flagset)},
+max(rs.{nameof(RolledSeed.id)}) as {nameof(RaceDetail.SeedId)}
+FROM races.race_detail rd
+left join seeds.rolled_seeds rs on rs.race_id = rd.id
+group by {nameof(RaceDetail.RoomName)}, {nameof(RaceDetail.RaceHost)}, {nameof(RaceDetail.RaceType)}, {nameof(RaceDetail.Metadata)}, {nameof(RaceDetail.Flagset)}, {nameof(RaceDetail.RaceId)}
+order by {nameof(RaceDetail.RaceId)}
+offset @offset
+limit @limit
+;";
         try
         {
             connection.Open();
-            var races = await connection.QueryAsync<RaceDetail>(query);
+            var races = await connection.QueryAsync<RaceDetail>(query, new { offset, limit });
 
             return Response.SetSuccess(races);
         }
         catch (Exception ex)
         {
-            logger.LogError("Exception when saving patch page: {ex}", ex.ToString());
+            logger.LogError("When fetching races information {ex}", ex.ToString());
             return new Response<IEnumerable<RaceDetail>>().InternalServerError(ex.Message);
         }
     }
+
+    public async Task<Response<RaceDetail>> GetRaceAsync(string idOrSlug)
+    {
+        using var connection = _connectionPrivoder.GetConnection();
+        try
+        {
+            connection.Open();
+            RaceDetail? raceDetail;
+            if (int.TryParse(idOrSlug, out var id))
+            {
+                raceDetail = await connection.QueryFirstOrDefaultAsync<RaceDetail>(GetRaceByIdQueryString(), new { id });
+            }
+            else
+            {
+                raceDetail = await connection.QueryFirstOrDefaultAsync<RaceDetail>(GetRaceByRoomNameQuery(), new { roomName = idOrSlug });
+            }
+
+            if (raceDetail is null) { return new Response<RaceDetail>().NotFound(idOrSlug); }
+
+            return new Response<RaceDetail>().SetSuccess(raceDetail);
+
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("When fetching races information for race {idOrSlug}: {ex}", idOrSlug, ex.ToString());
+            return new Response<RaceDetail>().InternalServerError(ex.Message);
+        }
+    }
+
+    private string GetRaceByIdQueryString() => @$"select
+{nameof(Race.room_name)} as {nameof(RaceDetail.RoomName)},
+{nameof(Race.race_host)} as {nameof(RaceDetail.RaceHost)},
+{nameof(Race.race_type)} as {nameof(RaceDetail.RaceType)},
+{nameof(Race.metadata)} as {nameof(RaceDetail.Metadata)},
+{nameof(RolledSeed.flagset)} as {nameof(RaceDetail.Flagset)},
+max(rs.{nameof(RolledSeed.id)}) as {nameof(RaceDetail.RaceId)}
+FROM races.race_detail rd
+left join seeds.rolled_seeds rs on rs.race_id = rd.id
+where rd.id = @id
+group by {nameof(RaceDetail.RoomName)}, {nameof(RaceDetail.RaceHost)}, {nameof(RaceDetail.RaceType)}, {nameof(RaceDetail.Metadata)}, {nameof(RaceDetail.Flagset)}";
+
+    private string GetRaceByRoomNameQuery() => @$"select
+{nameof(Race.room_name)} as {nameof(RaceDetail.RoomName)},
+{nameof(Race.race_host)} as {nameof(RaceDetail.RaceHost)},
+{nameof(Race.race_type)} as {nameof(RaceDetail.RaceType)},
+{nameof(Race.metadata)} as {nameof(RaceDetail.Metadata)},
+{nameof(RolledSeed.flagset)} as {nameof(RaceDetail.Flagset)},
+max(rs.{nameof(RolledSeed.id)}) as {nameof(RaceDetail.RaceId)}
+FROM races.race_detail rd
+left join seeds.rolled_seeds rs on rs.race_id = rd.id
+where rd.id = @roomName
+group by {nameof(RaceDetail.RoomName)}, {nameof(RaceDetail.RaceHost)}, {nameof(RaceDetail.RaceType)}, {nameof(RaceDetail.Metadata)}, {nameof(RaceDetail.Flagset)}";
 }

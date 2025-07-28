@@ -89,6 +89,7 @@ limit @limit
         {
             connection.Open();
             var races = await connection.QueryAsync<RaceDetail>(query, new { offset, limit });
+            races = races.Select(x => x.WithFilteredMetadata("CR_"));
 
             return Response.SetSuccess(races);
         }
@@ -117,7 +118,7 @@ limit @limit
 
             if (raceDetail is null) { return new Response<RaceDetail>().NotFound(idOrSlug); }
 
-            return new Response<RaceDetail>().SetSuccess(raceDetail);
+            return new Response<RaceDetail>().SetSuccess(raceDetail.WithFilteredMetadata("CR_"));
 
         }
         catch (Exception ex)

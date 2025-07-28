@@ -11,4 +11,20 @@ public class RaceDetail
     public string Flagset { get; init; } = string.Empty;
     public int? SeedId { get; init; }
     public Dictionary<string, string> Metadata { get; init; } = [];
+
+    /// <summary>
+    /// Returns a new instance of this class, but applying a filter to remove metadata entries that start with the given string filter
+    /// </summary>
+    /// <param name="keyFilter">The string to apply as a filter</param>
+    /// <returns></returns>
+    public RaceDetail WithFilteredMetadata(string keyFilter) => new()
+    {
+        RaceId = this.RaceId,
+        RoomName = this.RoomName,
+        RaceType = this.RaceType,
+        RaceHost = this.RaceHost,
+        Flagset = this.Flagset,
+        SeedId = this.SeedId,
+        Metadata = this.Metadata.Where(x => !x.Key.StartsWith(keyFilter)).ToDictionary()
+    };
 }

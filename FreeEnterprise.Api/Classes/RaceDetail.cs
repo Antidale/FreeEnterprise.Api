@@ -2,7 +2,7 @@ using System;
 
 namespace FreeEnterprise.Api.Classes;
 
-public class RaceDetail
+public record RaceDetail()
 {
     public int RaceId { get; init; }
     public string RoomName { get; init; } = string.Empty;
@@ -17,14 +17,8 @@ public class RaceDetail
     /// </summary>
     /// <param name="keyFilter">The string to apply as a filter</param>
     /// <returns></returns>
-    public RaceDetail WithFilteredMetadata(string keyFilter) => new()
+    public RaceDetail WithFilteredMetadata(string keyFilter) => this with
     {
-        RaceId = this.RaceId,
-        RoomName = this.RoomName,
-        RaceType = this.RaceType,
-        RaceHost = this.RaceHost,
-        Flagset = this.Flagset,
-        SeedId = this.SeedId,
-        Metadata = this.Metadata.Where(x => !x.Key.StartsWith(keyFilter)).ToDictionary()
+        Metadata = Metadata.Where(x => !x.Key.StartsWith(keyFilter)).ToDictionary()
     };
 }

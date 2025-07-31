@@ -20,11 +20,13 @@ namespace FreeEnterprise.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetRacesAsync(
             [FromQuery] int offset = 0,
-            [FromQuery] int limit = 20
+            [FromQuery] int limit = 20,
+            [FromQuery] string? description = null,
+            [FromQuery] string? flagset = null
         )
         {
             //TODO: add min/max values for limit (5 || 50?)
-            var getResponse = await _raceRepository.GetRacesAsync(offset, limit);
+            var getResponse = await _raceRepository.GetRacesAsync(offset, limit, description, flagset);
             return getResponse.GetResult();
         }
 

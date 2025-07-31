@@ -1,5 +1,4 @@
 using Dapper;
-using FeInfo.Common.DTOs;
 using FeInfo.Common.Requests;
 using FreeEnterprise.Api.Classes;
 using FreeEnterprise.Api.Interfaces;
@@ -64,10 +63,10 @@ select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.
         //upsert user to race.racers
         //add entrant to race.entrants
 
-        return new Response().BadRequest("stuff");
+        return new Response().InternalServerError("Not Implemented");
     }
 
-    public async Task<Response<IEnumerable<RaceDetail>>> GetRacesAsync(int offset, int limit)
+    public async Task<Response<IEnumerable<RaceDetail>>> GetRacesAsync(int offset, int limit, string? description, string? flagset)
     {
         using var connection = _connectionPrivoder.GetConnection();
         var query = @$"select
@@ -80,15 +79,18 @@ rd.{nameof(Race.id)} as {nameof(RaceDetail.RaceId)},
 max(rs.{nameof(RolledSeed.id)}) as {nameof(RaceDetail.SeedId)}
 FROM races.race_detail rd
 left join seeds.rolled_seeds rs on rs.race_id = rd.id
+where (@description is null or metadata ->> 'Description' like @description)
+and (@flagset is null or rs.flagset_search @@ websearch_to_tsquery('english', @flagset))
 group by {nameof(RaceDetail.RoomName)}, {nameof(RaceDetail.RaceHost)}, {nameof(RaceDetail.RaceType)}, {nameof(RaceDetail.Metadata)}, {nameof(RaceDetail.Flagset)}, {nameof(RaceDetail.RaceId)}
 order by {nameof(RaceDetail.RaceId)}
 offset @offset
 limit @limit
 ;";
+
         try
         {
             connection.Open();
-            var races = await connection.QueryAsync<RaceDetail>(query, new { offset, limit });
+            var races = await connection.QueryAsync<RaceDetail>(query, new { offset, limit, description = $"%{description}%", flagset });
             races = races.Select(x => x.WithFilteredMetadata("CR_"));
 
             return Response.SetSuccess(races);

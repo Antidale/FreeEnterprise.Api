@@ -35,7 +35,8 @@ namespace FreeEnterprise.Api.Controllers
         (
             [FromQuery] int offset = 0,
             [FromQuery] int limit = 20,
-            [FromQuery] string? flags = null
+            [FromQuery] string? flag_search = null,
+            [FromQuery] string? seedString = null
         )
         {
             return Ok();
@@ -47,7 +48,7 @@ namespace FreeEnterprise.Api.Controllers
             return Ok();
         }
 
-        [HttpGet("{seedId:int/html}")]
+        [HttpGet("{seedId:int}/html")]
         public async Task<ActionResult> GetSeedHtmlAsync(int seedId)
         {
             return Ok();

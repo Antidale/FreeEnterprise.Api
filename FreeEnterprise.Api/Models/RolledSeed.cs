@@ -8,6 +8,7 @@ public class RolledSeed
     public int id { get; set; }
     public string user_id { get; set; } = string.Empty;
     public string flagset { get; set; } = string.Empty;
+    public string binary_flags { get; set; } = string.Empty;
     public string link { get; set; } = string.Empty;
     public string fe_version { get; set; } = string.Empty;
     public string seed { get; set; } = string.Empty;

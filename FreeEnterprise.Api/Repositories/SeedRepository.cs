@@ -37,6 +37,7 @@ public class SeedRepository(IConnectionProvider connectionProvider, ILogger<Seed
     {nameof(RolledSeed.race_id)}
 )
 Values(@UserId, @Flags, @Url, @Version, @Seed, @Verification, @RaceId)
+ON CONFLICT(link) DO NOTHING
 RETURNING id;";
 
             var insertResponse = await connection.QuerySingleAsync<int>(sql, new

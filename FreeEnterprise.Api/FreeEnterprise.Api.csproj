@@ -11,6 +11,7 @@
     <PackageReference Include="Dapper" />
     <PackageReference Include="FeInfo.Common" />
     <PackageReference Include="npgsql" />
+    <PackageReference Include="Scalar.AspNetCore" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
   </ItemGroup>

@@ -1,6 +1,8 @@
 using FeInfo.Common.Requests;
 using FreeEnterprise.Api.Attributes;
+using FreeEnterprise.Api.Classes;
 using FreeEnterprise.Api.Interfaces;
+using FreeEnterprise.Api.Models;
 
 namespace FreeEnterprise.Api.Controllers
 {
@@ -18,7 +20,7 @@ namespace FreeEnterprise.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetRacesAsync(
+        public async Task<ActionResult<IEnumerable<RaceDetail>>> GetRacesAsync(
             [FromQuery] int offset = 0,
             [FromQuery] int limit = 20,
             [FromQuery] string? description = null,
@@ -31,21 +33,21 @@ namespace FreeEnterprise.Api.Controllers
         }
 
         [HttpGet("{idOrSlug}")]
-        public async Task<IActionResult> GetRaceAsync(string idOrSlug)
+        public async Task<ActionResult<Race>> GetRaceAsync(string idOrSlug)
         {
             var raceResponse = await _raceRepository.GetRaceAsync(idOrSlug);
             return raceResponse.GetResult();
         }
 
         [HttpGet("{idOrSlug}/seed")]
-        public async Task<IActionResult> GetRaceSeedAsync(string idOrSlug)
+        public async Task<ActionResult<string>> GetRaceSeedAsync(string idOrSlug)
         {
             var raceResponse = await _raceRepository.GetRaceSeedHtmlAsync(idOrSlug);
             return raceResponse.GetResult();
         }
 
         // [ApiKey, HttpPost]
-        // public async Task<IActionResult> JoinRaceAsync(JoinRaceRequest joinRequest)
+        // public async Task<ActionResult> JoinRaceAsync(JoinRaceRequest joinRequest)
         // {
         //     var joinResponse = await _raceRepository.JoinRaceAsync(joinRequest);
         //     return joinResponse.GetRequestResponse();

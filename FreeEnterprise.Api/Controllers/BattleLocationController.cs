@@ -1,16 +1,15 @@
 using FeInfo.Common.DTOs;
 using FreeEnterprise.Api.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FreeEnterprise.Api.Controllers
 {
-    [Route("api/[controller]")]
+	[Route("api/[controller]")]
 	[ApiController]
 	public class BattleLocationController(IBattleLocationsRepository battleLocationsRepository) : ControllerBase
 	{
 		private readonly IBattleLocationsRepository _battleLocationsRepository = battleLocationsRepository;
 
-        [HttpGet]
+		[HttpGet]
 		public async Task<ActionResult<IEnumerable<NameWithId>>> Get()
 		{
 			var locations = await _battleLocationsRepository.GetBattleLocationsAsync();

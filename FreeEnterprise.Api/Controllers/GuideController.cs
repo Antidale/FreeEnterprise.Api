@@ -1,6 +1,5 @@
 ﻿using FeInfo.Common.DTOs;
 using FreeEnterprise.Api.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FreeEnterprise.Api.Controllers
 {

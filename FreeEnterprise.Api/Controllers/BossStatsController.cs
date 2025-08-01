@@ -1,17 +1,16 @@
 using FeInfo.Common.DTOs;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Requests;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FreeEnterprise.Api.Controllers
 {
-    [Route("api/[controller]")]
+	[Route("api/[controller]")]
 	[ApiController]
 	public class BossStatsController(IBossStatsRepository bossStatsRepository) : ControllerBase
 	{
 		private readonly IBossStatsRepository _bossStatsRepository = bossStatsRepository;
 
-        [HttpPost]
+		[HttpPost]
 		public async Task<ActionResult<IEnumerable<NameWithId>>> Search(BossStatsSearchRequest request)
 		{
 			if (request.BattleId == 0 && request.LocationId == 0)

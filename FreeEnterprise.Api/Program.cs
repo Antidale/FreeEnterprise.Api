@@ -4,6 +4,7 @@ using FreeEnterprise.Api.Providers;
 using FreeEnterprise.Api.Repositories;
 using FreeEnterprise.Api.Services;
 using FreeEnterprise.Api.TypeHandlers;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApi();
 
 SqlMapper.AddTypeHandler(new StringListHandler());
 SqlMapper.AddTypeHandler(new JsonStringDictionaryHandler());
@@ -43,6 +45,8 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
+app.MapOpenApi();
+app.MapScalarApiReference();
 
 Console.WriteLine("Application Starting");
 app.UseHttpsRedirection();

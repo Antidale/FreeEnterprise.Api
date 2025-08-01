@@ -30,18 +30,19 @@ namespace FreeEnterprise.Api.Controllers
             return getResponse.GetResult();
         }
 
-        // [HttpGet("{idOrSlug}")]
-        // public async Task<IActionResult> GetRaceAsync(string idOrSlug)
-        // {
-        //     var raceResponse = await _raceRepository.GetRaceAsync(idOrSlug);
-        //     return raceResponse.GetResult();
-        // }
+        [HttpGet("{idOrSlug}")]
+        public async Task<IActionResult> GetRaceAsync(string idOrSlug)
+        {
+            var raceResponse = await _raceRepository.GetRaceAsync(idOrSlug);
+            return raceResponse.GetResult();
+        }
 
-        // [HttpGet("{idOrSlug}/seed")]
-        // public async Task<IActionResult> GetRaceSeedAsync(string idOrSlug)
-        // {
-        //     throw new NotImplementedException("Endpoint not implemented");
-        // }
+        [HttpGet("{idOrSlug}/seed")]
+        public async Task<IActionResult> GetRaceSeedAsync(string idOrSlug)
+        {
+            var raceResponse = await _raceRepository.GetRaceSeedHtmlAsync(idOrSlug);
+            return raceResponse.GetResult();
+        }
 
         // [ApiKey, HttpPost]
         // public async Task<IActionResult> JoinRaceAsync(JoinRaceRequest joinRequest)

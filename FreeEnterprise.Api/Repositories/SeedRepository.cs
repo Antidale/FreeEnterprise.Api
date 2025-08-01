@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Dapper;
 using FeInfo.Common.Requests;
 using FreeEnterprise.Api.Classes;
@@ -6,7 +7,7 @@ using FreeEnterprise.Api.Models;
 
 namespace FreeEnterprise.Api.Repositories;
 
-public class SeedRepository(IConnectionProvider connectionProvider, ILogger<SeedRepository> logger) : ISeedRepository
+public partial class SeedRepository(IConnectionProvider connectionProvider, ILogger<SeedRepository> logger) : ISeedRepository
 {
     private readonly IConnectionProvider _connectionProvider = connectionProvider;
 
@@ -18,7 +19,12 @@ public class SeedRepository(IConnectionProvider connectionProvider, ILogger<Seed
             connection.Open();
             var raceId = seedInfo.RaceId;
 
-            //In case a caller doesn't know our internal id (e.g. racingway picks a race that another bot created for rt.gg), we can try to fetch the id by the room name. If neither works, we just dont' worry about it.
+            var match = UrlFlagsRegex().Matches(seedInfo.Info.Url);
+
+            //TODO: move this out to somewhere better
+            var binaryFlags = UrlFlagsRegex().Matches(seedInfo.Info.Url).FirstOrDefault()?.Groups.Values.LastOrDefault()?.Value ?? "";
+
+            //In case a caller doesn't know our internal id (e.g. racingway picks a race that another bot created for rt.gg), we can try to fetch the id by the room name. If neither works, we just don't worry about it.
             if (seedInfo.RaceId is null && seedInfo.RaceName is not null)
             {
                 var lookupSql = @$"select id from races.race_detail where {nameof(Race.room_name)} = @RoomName";
@@ -34,9 +40,10 @@ public class SeedRepository(IConnectionProvider connectionProvider, ILogger<Seed
     {nameof(RolledSeed.fe_version)},
     {nameof(RolledSeed.seed)},
     {nameof(RolledSeed.verification)},
+    {nameof(RolledSeed.binary_flags)},
     {nameof(RolledSeed.race_id)}
 )
-Values(@UserId, @Flags, @Url, @Version, @Seed, @Verification, @RaceId)
+Values(@UserId, @Flags, @Url, @Version, @Seed, @Verification, @BinaryFlags, @RaceId)
 ON CONFLICT(link) DO NOTHING
 RETURNING id;";
 
@@ -48,6 +55,7 @@ RETURNING id;";
                 seedInfo.Info.Version,
                 seedInfo.Info.Seed,
                 seedInfo.Info.Verification,
+                BinaryFlags = binaryFlags,
                 raceId
             });
 
@@ -80,4 +88,7 @@ RETURNING id;";
             return new Response().InternalServerError(ex.Message);
         }
     }
+
+    [GeneratedRegex(@"=(\w+)\.", RegexOptions.IgnoreCase, "en-US")]
+    private static partial Regex UrlFlagsRegex();
 }

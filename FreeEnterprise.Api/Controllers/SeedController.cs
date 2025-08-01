@@ -1,5 +1,6 @@
 using FeInfo.Common.Requests;
 using FreeEnterprise.Api.Attributes;
+using FreeEnterprise.Api.Classes;
 using FreeEnterprise.Api.Interfaces;
 
 namespace FreeEnterprise.Api.Controllers
@@ -31,27 +32,34 @@ namespace FreeEnterprise.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetSeedsAsync
+        public async Task<ActionResult<IEnumerable<SeedDetail>>> GetSeedsAsync
         (
             [FromQuery] int offset = 0,
             [FromQuery] int limit = 20,
-            [FromQuery] string? flag_search = null,
-            [FromQuery] string? seedString = null
+            [FromQuery] string? flagSearch = null,
+            [FromQuery] string? seedString = null,
+            [FromQuery] string? binaryFlags = null
         )
         {
-            return Ok();
+            var response = await _seedRepository.SearchSeedDetails(offset: offset, limit: limit, flagset: flagSearch, seedValue: seedString, binaryFlags: binaryFlags);
+
+            return response.GetResult();
         }
 
         [HttpGet("{seedId:int}")]
-        public async Task<ActionResult> GetSeedAsync(int seedId)
+        public async Task<ActionResult<SeedDetail>> GetSeedAsync(int seedId)
         {
-            return Ok();
+            var response = await _seedRepository.GetSeedByIdAsync(seedId);
+
+            return response.GetResult();
         }
 
         [HttpGet("{seedId:int}/html")]
-        public async Task<ActionResult> GetSeedHtmlAsync(int seedId)
+        public async Task<ActionResult<string>> GetSeedHtmlAsync(int seedId)
         {
-            return Ok();
+            var response = await _seedRepository.GetPatchBySeedIdAsync(seedId);
+
+            return response.GetResult();
         }
     }
 }

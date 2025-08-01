@@ -30,10 +30,27 @@ namespace FreeEnterprise.Api.Controllers
             return insertResponse.GetResult();
         }
 
-        // [HttpGet]
-        // public async Task<ActionResult> SearchSeed([FromQuery] string? flags = null, [FromQuery] int page = 1, [FromQuery] int take = 20)
-        // {
-        //     return Ok();
-        // }
+        [HttpGet]
+        public async Task<ActionResult> GetSeedsAsync
+        (
+            [FromQuery] int offset = 0,
+            [FromQuery] int limit = 20,
+            [FromQuery] string? flags = null
+        )
+        {
+            return Ok();
+        }
+
+        [HttpGet("{seedId:int}")]
+        public async Task<ActionResult> GetSeedAsync(int seedId)
+        {
+            return Ok();
+        }
+
+        [HttpGet("{seedId:int/html}")]
+        public async Task<ActionResult> GetSeedHtmlAsync(int seedId)
+        {
+            return Ok();
+        }
     }
 }

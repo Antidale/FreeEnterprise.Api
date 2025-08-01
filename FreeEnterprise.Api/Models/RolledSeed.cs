@@ -13,6 +13,7 @@ public class RolledSeed
     public string fe_version { get; set; } = string.Empty;
     public string seed { get; set; } = string.Empty;
     public string verification { get; set; } = string.Empty;
+    public string flagset_search { get; set; } = string.Empty;
     public int? race_id { get; set; }
 
 }

@@ -67,6 +67,91 @@ RETURNING id;";
         }
     }
 
+    public async Task<Response<IEnumerable<SeedDetail>>> SearchSeedDetails(int offset, int limit, string? flagset, string? binaryFlags, string? seedValue)
+    {
+        using var connection = _connectionProvider.GetConnection();
+        try
+        {
+            var query = $@"select 
+    {nameof(RolledSeed.id)} as {nameof(SeedDetail.SeedId)}
+    , {nameof(RolledSeed.flagset)} as {nameof(SeedDetail.Flagset)}
+    , {nameof(RolledSeed.verification)} as {nameof(SeedDetail.Verification)}
+    , {nameof(RolledSeed.link)} as {nameof(SeedDetail.SourceUrl)}
+    , {nameof(RolledSeed.seed)} as {nameof(SeedDetail.Seed)}
+    , {nameof(RolledSeed.fe_version)} as {nameof(SeedDetail.Version)}
+    , ts_rank({nameof(RolledSeed.flagset_search)}, websearch_to_tsquery('english', @flagset)) as Rank
+from seeds.rolled_seeds
+where (@seedValue is null or {nameof(RolledSeed.seed)} = @seedValue)
+and (@binaryFlags is null or {nameof(RolledSeed.binary_flags)} = @binaryFlags)
+and (@flagset is null or {nameof(RolledSeed.flagset_search)} @@ websearch_to_tsquery('english', @flagset))
+order by Rank desc, id
+offset @offset
+limit @limit
+;";
+            var seeds = await connection.QueryAsync<SeedDetail>(query, new { seedValue, flagset, binaryFlags, offset, limit });
+
+            return new Response<IEnumerable<SeedDetail>>().SetSuccess(seeds);
+
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("Exception when searching: \r\nflagset: {flagset}\r\nbinaryFlags {binaryFlags}\r\nseedValue: {seedValue}\r\n{ex}", flagset, binaryFlags, seedValue, ex.ToString());
+            return new Response<IEnumerable<SeedDetail>>().InternalServerError(ex.Message);
+        }
+    }
+
+    public async Task<Response<SeedDetail>> GetSeedByIdAsync(int id)
+    {
+        using var connection = _connectionProvider.GetConnection();
+        try
+        {
+            var query = $@"select 
+    {nameof(RolledSeed.id)} as {nameof(SeedDetail.SeedId)}
+    , {nameof(RolledSeed.flagset)} as {nameof(SeedDetail.Flagset)}
+    , {nameof(RolledSeed.verification)} as {nameof(SeedDetail.Verification)}
+    , {nameof(RolledSeed.link)} as {nameof(SeedDetail.SourceUrl)}
+    , {nameof(RolledSeed.seed)} as {nameof(SeedDetail.Seed)}
+    , {nameof(RolledSeed.fe_version)} as {nameof(SeedDetail.Version)}
+    , cast(0 as real) as Rank
+from seeds.rolled_seeds
+where id = @id    
+";
+            var seedDetail = await connection.QuerySingleOrDefaultAsync<SeedDetail>(query, new { id });
+            if (seedDetail is null)
+            {
+                return new Response<SeedDetail>().NotFound($"Seed id {id} not found");
+            }
+
+            return new Response<SeedDetail>().SetSuccess(seedDetail);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("Exception when searching for {id}: \r\n{ex}", id, ex.ToString());
+            return new Response<SeedDetail>().InternalServerError(ex.Message);
+        }
+    }
+
+    public async Task<Response<string>> GetPatchBySeedIdAsync(int id)
+    {
+        using var connection = _connectionProvider.GetConnection();
+        try
+        {
+            var query = "select patch_html from seeds.saved_html where saved_html.rolled_seed_id = @id";
+            var patchHtml = await connection.QuerySingleOrDefaultAsync<string>(query, new { id });
+            if (string.IsNullOrEmpty(patchHtml))
+            {
+                return new Response<string>().NotFound($"No patch page found for seed {id}");
+            }
+
+            return new Response<string>().SetSuccess(patchHtml);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("Exception when getting patch for seed {id}: \r\n{ex}", id, ex.ToString());
+            return new Response<string>().InternalServerError(ex.Message);
+        }
+    }
+
     public async Task<Response> SavePatchHtml(int savedSeedId, string html)
     {
         using var connection = _connectionProvider.GetConnection();

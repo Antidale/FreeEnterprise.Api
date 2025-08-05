@@ -161,7 +161,7 @@ limit @limit
         }
     }
 
-    private string GetRaceByIdQueryString() => @$"select
+    private static string GetRaceByIdQueryString() => @$"select
 rd.{nameof(Race.id)} as {nameof(RaceDetail.RaceId)},
 {nameof(Race.room_name)} as {nameof(RaceDetail.RoomName)},
 {nameof(Race.race_host)} as {nameof(RaceDetail.RaceHost)},
@@ -174,7 +174,7 @@ left join seeds.rolled_seeds rs on rs.race_id = rd.id
 where rd.id = @id
 group by {nameof(RaceDetail.RoomName)}, {nameof(RaceDetail.RaceHost)}, {nameof(RaceDetail.RaceType)}, {nameof(RaceDetail.Metadata)}, {nameof(RaceDetail.Flagset)}, {nameof(RaceDetail.RaceId)}";
 
-    private string GetRaceByRoomNameQuery() => @$"select
+    private static string GetRaceByRoomNameQuery() => @$"select
 rd.{nameof(Race.id)} as {nameof(RaceDetail.RaceId)},
 {nameof(Race.room_name)} as {nameof(RaceDetail.RoomName)},
 {nameof(Race.race_host)} as {nameof(RaceDetail.RaceHost)},
@@ -187,7 +187,7 @@ left join seeds.rolled_seeds rs on rs.race_id = rd.id
 where rd.room_name = @roomName
 group by {nameof(RaceDetail.RoomName)}, {nameof(RaceDetail.RaceHost)}, {nameof(RaceDetail.RaceType)}, {nameof(RaceDetail.Metadata)}, {nameof(RaceDetail.Flagset)}, {nameof(RaceDetail.RaceId)}";
 
-    private string GetSeedByRaceIdQuery() => @"
+    private static string GetSeedByRaceIdQuery() => @"
 with seed_id AS (
     select max (rs.id) as seed_id
     from races.race_detail rd
@@ -199,7 +199,7 @@ select sh.patch_html
 from seeds.saved_html sh
 join seed_id rs on sh.rolled_seed_id = rs.seed_id;";
 
-    private string GetSeedByRaceRoomNameQuery() => @"
+    private static string GetSeedByRaceRoomNameQuery() => @"
 with seed_id AS (
     select max (rs.id) as seed_id
     from races.race_detail rd

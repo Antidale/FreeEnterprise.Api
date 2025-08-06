@@ -1,8 +1,6 @@
 
 
 // ReSharper disable InconsistentNaming
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using FeInfo.Common.Requests;
 
 namespace FreeEnterprise.Api.Models;

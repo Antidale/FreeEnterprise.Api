@@ -24,7 +24,5 @@ public class Race
         race_type = createRaceRoom.RaceType;
         metadata = createRaceRoom.Metadata;
     }
-
-
 #pragma warning restore IDE1006 // Naming Styles
 }

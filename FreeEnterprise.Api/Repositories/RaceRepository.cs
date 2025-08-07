@@ -3,6 +3,7 @@ using FeInfo.Common.Requests;
 using FreeEnterprise.Api.Classes;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Models;
+using FreeEnterprise.Api.Repositories.Queries;
 
 namespace FreeEnterprise.Api.Repositories;
 
@@ -63,8 +64,6 @@ select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.
 
         //upsert user to race.racers
         //add entrant to race.entrants
-
-
     }
 
     public async Task<Response<IEnumerable<RaceDetail>>> GetRacesAsync(int offset, int limit, string? description, string? flagset)
@@ -112,11 +111,17 @@ limit @limit
             RaceDetail? raceDetail;
             if (int.TryParse(idOrSlug, out var id))
             {
-                raceDetail = await connection.QueryFirstOrDefaultAsync<RaceDetail>(GetRaceByIdQueryString(), new { id });
+                raceDetail = await connection.QueryFirstOrDefaultAsync<RaceDetail>(
+                    RaceQueries.GetRaceByIdQueryString,
+                    new { id }
+                );
             }
             else
             {
-                raceDetail = await connection.QueryFirstOrDefaultAsync<RaceDetail>(GetRaceByRoomNameQuery(), new { roomName = idOrSlug });
+                raceDetail = await connection.QueryFirstOrDefaultAsync<RaceDetail>(
+                    RaceQueries.GetRaceByRoomNameQuery,
+                    new { roomName = idOrSlug }
+                );
             }
 
             if (raceDetail is null) { return new Response<RaceDetail>().NotFound(idOrSlug); }
@@ -140,16 +145,14 @@ limit @limit
             string? patchHtml;
             if (int.TryParse(idOrSlug, out var id))
             {
-                patchHtml = await connection.QueryFirstOrDefaultAsync<string>(GetSeedByRaceIdQuery(), new { id });
+                patchHtml = await connection.QueryFirstOrDefaultAsync<string>(RaceQueries.GetSeedByRaceIdQuery, new { id });
             }
             else
             {
-                patchHtml = await connection.QueryFirstOrDefaultAsync<string>(GetSeedByRaceRoomNameQuery(), new { roomName = idOrSlug });
+                patchHtml = await connection.QueryFirstOrDefaultAsync<string>(RaceQueries.GetSeedByRaceRoomNameQuery, new { roomName = idOrSlug });
             }
 
             if (patchHtml is null) { return new Response<string>().NotFound(idOrSlug); }
-
-            logger.LogInformation("got the stuff");
 
             return new Response<string>().SetSuccess(patchHtml);
 
@@ -161,53 +164,30 @@ limit @limit
         }
     }
 
-    private static string GetRaceByIdQueryString() => @$"select
-rd.{nameof(Race.id)} as {nameof(RaceDetail.RaceId)},
-{nameof(Race.room_name)} as {nameof(RaceDetail.RoomName)},
-{nameof(Race.race_host)} as {nameof(RaceDetail.RaceHost)},
-{nameof(Race.race_type)} as {nameof(RaceDetail.RaceType)},
-{nameof(Race.metadata)} as {nameof(RaceDetail.Metadata)},
-{nameof(RolledSeed.flagset)} as {nameof(RaceDetail.Flagset)},
-max(rs.{nameof(RolledSeed.id)}) as {nameof(RaceDetail.SeedId)}
-FROM races.race_detail rd
-left join seeds.rolled_seeds rs on rs.race_id = rd.id
-where rd.id = @id
-group by {nameof(RaceDetail.RoomName)}, {nameof(RaceDetail.RaceHost)}, {nameof(RaceDetail.RaceType)}, {nameof(RaceDetail.Metadata)}, {nameof(RaceDetail.Flagset)}, {nameof(RaceDetail.RaceId)}";
+    public async Task<Response<IEnumerable<RaceEntrant>>> GetRaceEntrantsAsync(string idOrSlug)
+    {
+        using var connection = _connectionPrivoder.GetConnection();
+        try
+        {
+            connection.Open();
 
-    private static string GetRaceByRoomNameQuery() => @$"select
-rd.{nameof(Race.id)} as {nameof(RaceDetail.RaceId)},
-{nameof(Race.room_name)} as {nameof(RaceDetail.RoomName)},
-{nameof(Race.race_host)} as {nameof(RaceDetail.RaceHost)},
-{nameof(Race.race_type)} as {nameof(RaceDetail.RaceType)},
-{nameof(Race.metadata)} as {nameof(RaceDetail.Metadata)},
-{nameof(RolledSeed.flagset)} as {nameof(RaceDetail.Flagset)},
-max(rs.{nameof(RolledSeed.id)}) as {nameof(RaceDetail.SeedId)}
-FROM races.race_detail rd
-left join seeds.rolled_seeds rs on rs.race_id = rd.id
-where rd.room_name = @roomName
-group by {nameof(RaceDetail.RoomName)}, {nameof(RaceDetail.RaceHost)}, {nameof(RaceDetail.RaceType)}, {nameof(RaceDetail.Metadata)}, {nameof(RaceDetail.Flagset)}, {nameof(RaceDetail.RaceId)}";
 
-    private static string GetSeedByRaceIdQuery() => @"
-with seed_id AS (
-    select max (rs.id) as seed_id
-    from races.race_detail rd
-    left join seeds.rolled_seeds rs on rd.id = rs.race_id
-    where rd.id = @id
-)
+            var entrants = int.TryParse(idOrSlug, out var raceId)
+                ? await connection.QueryAsync<RaceEntrant>(
+                    RaceEntrantQueries.GetEntrantsByRaceId,
+                    new { raceId })
+                : await connection.QueryAsync<RaceEntrant>(
+                    RaceEntrantQueries.GetEntrantsByRaceName,
+                    new { roomName = idOrSlug }
+                );
 
-select sh.patch_html
-from seeds.saved_html sh
-join seed_id rs on sh.rolled_seed_id = rs.seed_id;";
+            return new Response<IEnumerable<RaceEntrant>>().SetSuccess(entrants.Select(x => x.EnsureExpectedMetadata()));
 
-    private static string GetSeedByRaceRoomNameQuery() => @"
-with seed_id AS (
-    select max (rs.id) as seed_id
-    from races.race_detail rd
-    left join seeds.rolled_seeds rs on rd.id = rs.race_id
-    where rd.room_name = @roomName
-)
-
-select sh.patch_html
-from seeds.saved_html sh
-join seed_id rs on sh.rolled_seed_id = rs.seed_id;";
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("When fetching entrant information for race {idOrSlug}: {ex}", idOrSlug, ex.ToString());
+            return new Response<IEnumerable<RaceEntrant>>().InternalServerError(ex.Message);
+        }
+    }
 }

@@ -8,6 +8,7 @@ public class Racer
     public int id { get; set; }
     public string discord_id { get; set; } = string.Empty;
     public string discord_display_name { get; set; } = string.Empty;
+    public string racetime_display_name { get; set; } = string.Empty;
     public string racetime_id { get; set; } = string.Empty;
     public string twitch_name { get; set; } = string.Empty;
 

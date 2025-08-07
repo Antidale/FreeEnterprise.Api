@@ -2,7 +2,7 @@ using System;
 
 namespace FreeEnterprise.Api.Models;
 
-public class RaceEntrant
+public class RaceEntrantModel
 {
 #pragma warning disable IDE1006 // Naming Styles - ignoring for pure database models, these names reflect what is in the database
     public int race_id { get; set; }

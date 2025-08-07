@@ -33,7 +33,7 @@ namespace FreeEnterprise.Api.Controllers
         }
 
         [HttpGet("{idOrSlug}")]
-        public async Task<ActionResult<Race>> GetRaceAsync(string idOrSlug)
+        public async Task<ActionResult<RaceDetail>> GetRaceAsync(string idOrSlug)
         {
             var raceResponse = await _raceRepository.GetRaceAsync(idOrSlug);
             return raceResponse.GetResult();

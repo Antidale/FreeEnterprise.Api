@@ -49,7 +49,7 @@ namespace FreeEnterprise.Api.Controllers
         [HttpGet("{idOrSlug}/entrants")]
         public async Task<ActionResult<string>> GetRaceEntrantsAsync(string idOrSlug)
         {
-            var raceResponse = await _raceRepository.GetRaceSeedHtmlAsync(idOrSlug);
+            var raceResponse = await _raceRepository.GetRaceEntrantsAsync(idOrSlug);
             return raceResponse.GetResult();
         }
 

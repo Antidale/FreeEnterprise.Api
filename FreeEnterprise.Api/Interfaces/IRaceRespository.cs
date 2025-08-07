@@ -9,5 +9,6 @@ public interface IRaceRespository
     Task<Response<IEnumerable<RaceDetail>>> GetRacesAsync(int offset, int limit, string? description, string? flagset);
     Task<Response<RaceDetail>> GetRaceAsync(string idOrSlug);
     Task<Response<string>> GetRaceSeedHtmlAsync(string idOrSlug);
+    Task<Response<IEnumerable<RaceEntrant>>> GetRaceEntrantsAsync(string idOrSlug);
     Task<Response> JoinRaceAsync(JoinRaceRequest joinRaceRequest);
 }

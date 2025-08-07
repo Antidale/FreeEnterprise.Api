@@ -46,6 +46,13 @@ namespace FreeEnterprise.Api.Controllers
             return raceResponse.GetResult();
         }
 
+        [HttpGet("{idOrSlug}/entrants")]
+        public async Task<ActionResult<string>> GetRaceEntrantsAsync(string idOrSlug)
+        {
+            var raceResponse = await _raceRepository.GetRaceSeedHtmlAsync(idOrSlug);
+            return raceResponse.GetResult();
+        }
+
         // [ApiKey, HttpPost]
         // public async Task<ActionResult> JoinRaceAsync(JoinRaceRequest joinRequest)
         // {

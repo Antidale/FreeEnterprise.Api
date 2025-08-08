@@ -1,5 +1,3 @@
-
-
 // ReSharper disable InconsistentNaming
 using FeInfo.Common.Requests;
 
@@ -13,6 +11,7 @@ public class Race
     public string room_name { get; init; } = string.Empty;
     public string race_type { get; init; } = string.Empty;
     public string race_host { get; init; } = string.Empty;
+    public DateTimeOffset ended_at { get; init; }
     public Dictionary<string, string> metadata { get; init; } = [];
 
     public Race() { }

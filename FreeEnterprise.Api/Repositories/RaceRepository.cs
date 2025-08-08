@@ -75,14 +75,16 @@ rd.{nameof(Race.id)} as {nameof(RaceDetail.RaceId)},
 {nameof(Race.race_host)} as {nameof(RaceDetail.RaceHost)},
 {nameof(Race.race_type)} as {nameof(RaceDetail.RaceType)},
 {nameof(Race.metadata)} as {nameof(RaceDetail.Metadata)},
+{nameof(Race.ended_at)} as {nameof(RaceDetail.EndedAt)},
 {nameof(RolledSeed.flagset)} as {nameof(RaceDetail.Flagset)},
+
 max(rs.{nameof(RolledSeed.id)}) as {nameof(RaceDetail.SeedId)}
 FROM races.race_detail rd
 left join seeds.rolled_seeds rs on rs.race_id = rd.id
 where (@description is null or metadata ->> 'Description' like @description)
 and (@flagset is null or rs.flagset_search @@ websearch_to_tsquery('english', @flagset))
 group by {nameof(RaceDetail.RoomName)}, {nameof(RaceDetail.RaceHost)}, {nameof(RaceDetail.RaceType)}, {nameof(RaceDetail.Metadata)}, {nameof(RaceDetail.Flagset)}, {nameof(RaceDetail.RaceId)}
-order by {nameof(RaceDetail.SeedId)}
+order by {nameof(RaceDetail.EndedAt)}
 offset @offset
 limit @limit
 ;";
@@ -170,7 +172,6 @@ limit @limit
         try
         {
             connection.Open();
-
 
             var entrants = int.TryParse(idOrSlug, out var raceId)
                 ? await connection.QueryAsync<RaceEntrant>(

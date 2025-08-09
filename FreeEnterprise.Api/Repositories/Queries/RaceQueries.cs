@@ -15,20 +15,16 @@ where rd.id = @id or rd.room_name = @roomName
 {{GetEntrantsForRaceSubsection}}
 """;
 
-    public const string GetRaceByRoomNameQuery = $$"""
-with race_data as (
-    {{GetRaceBySelect}}
-    where rd.room_name = @roomName
-    {{GetRaceByGroupBy}}
-)
-{{GetEntrantsForRaceSubsection}}
-""";
-
     public const string GetRacesQuery = $$"""
 with race_data as (
     {{GetRaceBySelect}}
     where (@description is null or metadata ->> 'Description' like @description)
     and (@flagset is null or rs.flagset_search @@ websearch_to_tsquery('english', @flagset))
+    and (
+            @includeCancelled is true
+            or metadata ->> 'Status' != 'cancelled'
+            or metadata ->> 'Status' is null
+        )
     {{GetRaceByGroupBy}}
     order by EndedAt desc
     offset @offset

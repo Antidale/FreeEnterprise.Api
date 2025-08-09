@@ -3,7 +3,6 @@ using FreeEnterprise.Api.Attributes;
 using FreeEnterprise.Api.Classes;
 using FreeEnterprise.Api.Interfaces;
 
-
 namespace FreeEnterprise.Api.Controllers
 {
     [Route("api/[controller]")]
@@ -23,12 +22,14 @@ namespace FreeEnterprise.Api.Controllers
         public async Task<ActionResult<IEnumerable<RaceDetail>>> GetRacesAsync(
             [FromQuery] int offset = 0,
             [FromQuery] int limit = 20,
+            [FromQuery] bool includeCancelled = false,
             [FromQuery] string? description = null,
             [FromQuery] string? flagset = null
+
         )
         {
             //TODO: add min/max values for limit (5 || 50?)
-            var getResponse = await _raceRepository.GetRacesAsync(offset, limit, description, flagset);
+            var getResponse = await _raceRepository.GetRacesAsync(offset, limit, includeCancelled, description, flagset);
             return getResponse.GetRequestResponse();
         }
 

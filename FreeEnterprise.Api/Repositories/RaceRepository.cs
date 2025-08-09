@@ -66,7 +66,7 @@ select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.
     //     //add entrant to race.entrants
     // }
 
-    public async Task<Response<IEnumerable<RaceDetail>>> GetRacesAsync(int offset, int limit, string? description, string? flagset)
+    public async Task<Response<IEnumerable<RaceDetail>>> GetRacesAsync(int offset, int limit, bool includeCancelled, string? description, string? flagset)
     {
         using var connection = _connectionPrivoder.GetConnection();
 
@@ -80,7 +80,7 @@ select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.
                     race.Entrants.Add(entrant);
                     return race;
                 },
-                param: new { offset, limit, description = $"%{description}%", flagset },
+                param: new { offset, limit, description = $"%{description}%", flagset, includeCancelled },
                 splitOn: nameof(RaceEntrant.RacetimeId).ToLower()
                 );
 

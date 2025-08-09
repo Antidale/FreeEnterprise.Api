@@ -46,20 +46,6 @@ namespace FreeEnterprise.Api.Controllers
             return raceResponse.GetRequestResponse();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="idOrSlug">Use either the RaceId or the RoomName from a RaceDetail</param>
-        /// <returns>A List of RaceEntrant</returns>
-        /// <response code="200">Returns the list of entrants if the race and entrants exist. The list will return empty if either the idOrSlug is not valid, or if there are not entrants.</response>
-        /// <response code="500">Returns 500 when any execption happens</response>
-        [HttpGet("{idOrSlug}/entrants")]
-        public async Task<ActionResult<IEnumerable<RaceEntrant>>> GetRaceEntrantsAsync(string idOrSlug)
-        {
-            var raceResponse = await _raceRepository.GetRaceEntrantsAsync(idOrSlug);
-            return raceResponse.GetRequestResponse();
-        }
-
         // [ApiKey, HttpPost]
         // public async Task<ActionResult> JoinRaceAsync(JoinRaceRequest joinRequest)
         // {

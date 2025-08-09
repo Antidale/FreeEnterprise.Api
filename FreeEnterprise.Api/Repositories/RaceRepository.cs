@@ -69,31 +69,30 @@ select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.
     public async Task<Response<IEnumerable<RaceDetail>>> GetRacesAsync(int offset, int limit, string? description, string? flagset)
     {
         using var connection = _connectionPrivoder.GetConnection();
-        var query = @$"select
-rd.{nameof(Race.id)} as {nameof(RaceDetail.RaceId)},
-{nameof(Race.room_name)} as {nameof(RaceDetail.RoomName)},
-{nameof(Race.race_host)} as {nameof(RaceDetail.RaceHost)},
-{nameof(Race.race_type)} as {nameof(RaceDetail.RaceType)},
-{nameof(Race.metadata)} as {nameof(RaceDetail.Metadata)},
-{nameof(Race.ended_at)} as {nameof(RaceDetail.EndedAt)},
-{nameof(RolledSeed.flagset)} as {nameof(RaceDetail.Flagset)},
-
-max(rs.{nameof(RolledSeed.id)}) as {nameof(RaceDetail.SeedId)}
-FROM races.race_detail rd
-left join seeds.rolled_seeds rs on rs.race_id = rd.id
-where (@description is null or metadata ->> 'Description' like @description)
-and (@flagset is null or rs.flagset_search @@ websearch_to_tsquery('english', @flagset))
-group by {nameof(RaceDetail.RoomName)}, {nameof(RaceDetail.RaceHost)}, {nameof(RaceDetail.RaceType)}, {nameof(RaceDetail.Metadata)}, {nameof(RaceDetail.Flagset)}, {nameof(RaceDetail.RaceId)}
-order by {nameof(RaceDetail.EndedAt)}
-offset @offset
-limit @limit
-;";
 
         try
         {
             connection.Open();
-            var races = await connection.QueryAsync<RaceDetail>(query, new { offset, limit, description = $"%{description}%", flagset });
-            races = races.Select(x => x.WithFilteredMetadata("CR_"));
+            var races = await connection.QueryAsync<RaceDetail, RaceEntrant, RaceDetail>(
+                RaceQueries.GetRacesQuery,
+                (race, entrant) =>
+                {
+                    race.Entrants.Add(entrant);
+                    return race;
+                },
+                param: new { offset, limit, description = $"%{description}%", flagset },
+                splitOn: nameof(RaceEntrant.RacetimeId).ToLower()
+                );
+
+            races = races.Select(x => x.WithFilteredMetadata("CR_"))
+                         .GroupBy(x => x.RaceId)
+                         .Select(r =>
+                            {
+                                var race = r.First();
+                                race.Entrants = [.. r.Select(x => x.Entrants.Single())];
+                                return race;
+                            }
+                          );
 
             return Response.SetSuccess(races);
         }
@@ -110,25 +109,32 @@ limit @limit
         try
         {
             connection.Open();
-            RaceDetail? raceDetail;
-            if (int.TryParse(idOrSlug, out var id))
-            {
-                raceDetail = await connection.QueryFirstOrDefaultAsync<RaceDetail>(
-                    RaceQueries.GetRaceByIdQueryString,
-                    new { id }
-                );
-            }
-            else
-            {
-                raceDetail = await connection.QueryFirstOrDefaultAsync<RaceDetail>(
-                    RaceQueries.GetRaceByRoomNameQuery,
-                    new { roomName = idOrSlug }
-                );
-            }
 
-            if (raceDetail is null) { return new Response<RaceDetail>().NotFound(idOrSlug); }
+            _ = int.TryParse(idOrSlug, out var id);
 
-            return new Response<RaceDetail>().SetSuccess(raceDetail.WithFilteredMetadata("CR_"));
+            var raceDetail = await connection.QueryAsync<RaceDetail, RaceEntrant, RaceDetail>(
+                    sql: RaceQueries.GetRaceByIdQueryString,
+                    map: (race, entrant) =>
+                    {
+                        race.Entrants.Add(entrant);
+                        return race;
+                    },
+                    param: new { id, roomName = idOrSlug },
+                    splitOn: nameof(RaceEntrant.RacetimeId).ToLower()
+                );
+
+            if (raceDetail is null || !raceDetail.Any()) { return new Response<RaceDetail>().NotFound(idOrSlug); }
+
+            raceDetail = raceDetail.Select(x => x.WithFilteredMetadata("CR_")).GroupBy(x => x.RaceId)
+                         .Select(r =>
+                            {
+                                var race = r.First();
+                                race.Entrants = [.. r.Select(x => x.Entrants.Single())];
+                                return race;
+                            }
+                          );
+
+            return new Response<RaceDetail>().SetSuccess(raceDetail.First());
 
         }
         catch (Exception ex)
@@ -163,32 +169,6 @@ limit @limit
         {
             logger.LogError("When fetching races information for race {idOrSlug}: {ex}", idOrSlug, ex.ToString());
             return new Response<string>().InternalServerError(ex.Message);
-        }
-    }
-
-    public async Task<Response<IEnumerable<RaceEntrant>>> GetRaceEntrantsAsync(string idOrSlug)
-    {
-        using var connection = _connectionPrivoder.GetConnection();
-        try
-        {
-            connection.Open();
-
-            var entrants = int.TryParse(idOrSlug, out var raceId)
-                ? await connection.QueryAsync<RaceEntrant>(
-                    RaceEntrantQueries.GetEntrantsByRaceId,
-                    new { raceId })
-                : await connection.QueryAsync<RaceEntrant>(
-                    RaceEntrantQueries.GetEntrantsByRaceName,
-                    new { roomName = idOrSlug }
-                );
-
-            return new Response<IEnumerable<RaceEntrant>>().SetSuccess(entrants.Select(x => x.EnsureExpectedMetadata()));
-
-        }
-        catch (Exception ex)
-        {
-            logger.LogError("When fetching entrant information for race {idOrSlug}: {ex}", idOrSlug, ex.ToString());
-            return new Response<IEnumerable<RaceEntrant>>().InternalServerError(ex.Message);
         }
     }
 }

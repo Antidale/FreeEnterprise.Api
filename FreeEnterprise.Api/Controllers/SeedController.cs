@@ -18,7 +18,7 @@ namespace FreeEnterprise.Api.Controllers
             var insertResponse = await _seedRepository.SaveSeedRolledAsync(logRequest);
             if (!insertResponse.Success)
             {
-                return insertResponse.GetResult();
+                return insertResponse.GetRequestResponse();
             }
 
             var patchhtmlResponse = await _seedFetchService.GetPatchHtmlAsync(logRequest.Info);
@@ -28,7 +28,7 @@ namespace FreeEnterprise.Api.Controllers
             }
 
             //Intentionally swallowing any errors with saving the patch page
-            return insertResponse.GetResult();
+            return insertResponse.GetRequestResponse();
         }
 
         [HttpGet]
@@ -43,7 +43,7 @@ namespace FreeEnterprise.Api.Controllers
         {
             var response = await _seedRepository.SearchSeedDetails(offset: offset, limit: limit, flagset: flagSearch, seedValue: seedString, binaryFlags: binaryFlags);
 
-            return response.GetResult();
+            return response.GetRequestResponse();
         }
 
         [HttpGet("{seedId:int}")]
@@ -51,7 +51,7 @@ namespace FreeEnterprise.Api.Controllers
         {
             var response = await _seedRepository.GetSeedByIdAsync(seedId);
 
-            return response.GetResult();
+            return response.GetRequestResponse();
         }
 
         [HttpGet("{seedId:int}/html")]
@@ -59,7 +59,7 @@ namespace FreeEnterprise.Api.Controllers
         {
             var response = await _seedRepository.GetPatchBySeedIdAsync(seedId);
 
-            return response.GetResult();
+            return response.GetRequestResponse();
         }
     }
 }

@@ -57,14 +57,14 @@ select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.
         }
     }
 
-    public async Task<Response> JoinRaceAsync(JoinRaceRequest request)
-    {
-        return new Response().InternalServerError("Not Implemented");
-        using var connection = _connectionPrivoder.GetConnection();
+    // public async Task<Response> JoinRaceAsync(JoinRaceRequest request)
+    // {
+    //     return new Response().InternalServerError("Not Implemented");
 
-        //upsert user to race.racers
-        //add entrant to race.entrants
-    }
+
+    //     //upsert user to race.racers
+    //     //add entrant to race.entrants
+    // }
 
     public async Task<Response<IEnumerable<RaceDetail>>> GetRacesAsync(int offset, int limit, string? description, string? flagset)
     {

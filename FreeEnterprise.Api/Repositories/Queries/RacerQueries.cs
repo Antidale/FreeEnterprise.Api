@@ -97,7 +97,6 @@ select
     , r.finish_time as FinishTime
     , r.placement
     , r.EntrantMetadata
-
 from races.race_detail rd
 join racer_one r on rd.id = r.race_id
 join racer_two on rd.id = racer_two.race_id

@@ -6,13 +6,36 @@ namespace FreeEnterprise.Api.Repositories.Queries;
 
 public class RaceQueries
 {
-    public const string GetRaceByIdQueryString = @$"{GetRaceBySelect}
-where rd.id = @id
-{GetRaceByGroupBy}";
+    public const string GetRaceByIdQueryString = $$"""
+    with race_data as (
+    {{GetRaceBySelect}}
+where rd.id = @id or rd.room_name = @roomName
+{{GetRaceByGroupBy}}
+    )
+{{GetEntrantsForRaceSubsection}}
+""";
 
-    public const string GetRaceByRoomNameQuery = @$"{GetRaceBySelect}
-where rd.room_name = @roomName
-{GetRaceByGroupBy}";
+    public const string GetRaceByRoomNameQuery = $$"""
+with race_data as (
+    {{GetRaceBySelect}}
+    where rd.room_name = @roomName
+    {{GetRaceByGroupBy}}
+)
+{{GetEntrantsForRaceSubsection}}
+""";
+
+    public const string GetRacesQuery = $$"""
+with race_data as (
+    {{GetRaceBySelect}}
+    where (@description is null or metadata ->> 'Description' like @description)
+    and (@flagset is null or rs.flagset_search @@ websearch_to_tsquery('english', @flagset))
+    {{GetRaceByGroupBy}}
+    order by EndedAt desc
+    offset @offset
+    limit @limit
+)
+{{GetEntrantsForRaceSubsection}}
+""";
 
     public const string GetSeedByRaceIdQuery = @"
 with seed_id AS (
@@ -38,44 +61,36 @@ select sh.patch_html
 from seeds.saved_html sh
 join seed_id rs on sh.rolled_seed_id = rs.seed_id;";
 
-    public const string GetEntrantsForRace = """
-select 
-      rd.room_name as RoomName
-    , rd.id as RaceId
-    , rd.race_type as RaceType
-    , rd.race_host as RaceHost
-    , rs.flagset as Flagset
-    , rd.ended_at as EndedAt
-    , max(rs.id) as SeedId
-    , rd.metadata 
+    private const string GetRaceBySelect = $$"""
+    select
+rd.{{nameof(Race.id)}} as {{nameof(RaceDetail.RaceId)}},
+{{nameof(Race.room_name)}} as {{nameof(RaceDetail.RoomName)}},
+{{nameof(Race.race_host)}} as {{nameof(RaceDetail.RaceHost)}},
+{{nameof(Race.race_type)}} as {{nameof(RaceDetail.RaceType)}},
+{{nameof(Race.metadata)}} as {{nameof(RaceDetail.Metadata)}},
+{{nameof(Race.ended_at)}} as {{nameof(RaceDetail.EndedAt)}},
+{{nameof(RolledSeed.flagset)}} as {{nameof(RaceDetail.Flagset)}},
+max(rs.{{nameof(RolledSeed.id)}}) as {{nameof(RaceDetail.SeedId)}}
+FROM races.race_detail rd
+left join seeds.rolled_seeds rs on rs.race_id = rd.id
+""";
+
+    private const string GetRaceByGroupBy = @$"group by {nameof(RaceDetail.RoomName)}, {nameof(RaceDetail.RaceHost)}, {nameof(RaceDetail.RaceType)}, {nameof(RaceDetail.Metadata)}, {nameof(RaceDetail.Flagset)}, {nameof(RaceDetail.RaceId)}, {nameof(RaceDetail.EndedAt)}";
+
+    private const string GetEntrantsForRaceSubsection = """
+
+select rd.*
     , r.racetime_id as RacetimeId
     , r.twitch_name as TwitchName
     , re.finish_time as FinishTime
     , '{"comment": "", "score": "", "scoreChange": ""}' || re.metadata as EntrantMetadata
     , re.placement
     , r.racetime_display_name as Name
-from races.race_entrants re
-join races.race_detail rd on re.race_id = rd.id
-join races.racers r on re.entrant_id = r.id
-left join seeds.rolled_seeds rs on rs.race_id = r.id
-where rd.id = @id
-group by RaceId, RoomName, RaceHost, RaceType, EndedAt, Flagset, rd.metadata, placement, Name, RacetimeId, TwitchName, FinishTime, EntrantMetadata
-order by placement;
+from race_data rd
+left join races.race_entrants re on rd.raceId = re.race_id
+left join races.racers r on r.id = re.entrant_id
+order by endedat desc, placement
 """;
-
-    private const string GetRaceBySelect = @$"select
-rd.{nameof(Race.id)} as {nameof(RaceDetail.RaceId)},
-{nameof(Race.room_name)} as {nameof(RaceDetail.RoomName)},
-{nameof(Race.race_host)} as {nameof(RaceDetail.RaceHost)},
-{nameof(Race.race_type)} as {nameof(RaceDetail.RaceType)},
-{nameof(Race.metadata)} as {nameof(RaceDetail.Metadata)},
-{nameof(Race.ended_at)} as {nameof(RaceDetail.EndedAt)},
-{nameof(RolledSeed.flagset)} as {nameof(RaceDetail.Flagset)},
-max(rs.{nameof(RolledSeed.id)}) as {nameof(RaceDetail.SeedId)}
-FROM races.race_detail rd
-left join seeds.rolled_seeds rs on rs.race_id = rd.id";
-
-    private const string GetRaceByGroupBy = @$"group by {nameof(RaceDetail.RoomName)}, {nameof(RaceDetail.RaceHost)}, {nameof(RaceDetail.RaceType)}, {nameof(RaceDetail.Metadata)}, {nameof(RaceDetail.Flagset)}, {nameof(RaceDetail.RaceId)}, {nameof(RaceDetail.EndedAt)}";
 
 
 }

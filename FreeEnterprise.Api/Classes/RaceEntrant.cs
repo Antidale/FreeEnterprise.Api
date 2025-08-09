@@ -1,14 +1,13 @@
-using System;
-
 namespace FreeEnterprise.Api.Classes;
 
 public record RaceEntrant
 {
     public string Name { get; set; } = string.Empty;
     public string TwitchName { get; set; } = string.Empty;
+    public string RacetimeId { get; set; } = string.Empty;
     public TimeSpan? FinishTime { get; set; }
     public int? Placement { get; set; }
-    public Dictionary<string, string> Metadata { get; set; } = [];
+    public Dictionary<string, string> EntrantMetadata { get; set; } = [];
 
     /// <summary>
     /// Returns a new instance of this class, but ensures that score, scoreChanged, and comment all are present in the dictionary. If they were not previously included they have empty strings
@@ -21,8 +20,8 @@ public record RaceEntrant
             ["scoreChange"] = "",
             ["comment"] = ""
         };
-        var metadata = this.Metadata.Concat(defaultDictionary.Where(kpv => !Metadata.ContainsKey(kpv.Key))).ToDictionary(x => x.Key, y => y.Value);
+        var metadata = this.EntrantMetadata.Concat(defaultDictionary.Where(kpv => !EntrantMetadata.ContainsKey(kpv.Key))).ToDictionary(x => x.Key, y => y.Value);
 
-        return this with { Metadata = metadata };
+        return this with { EntrantMetadata = metadata };
     }
 }

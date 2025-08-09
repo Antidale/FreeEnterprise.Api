@@ -9,16 +9,16 @@ public class RaceEntrantTests
     public void RaceEntrant_Defaults_ToEmptyDictioanry()
     {
         var sut = new RaceEntrant();
-        sut.Metadata.Should().BeEmpty();
+        sut.EntrantMetadata.Should().BeEmpty();
     }
 
     [Test]
     public void RaceEntrant_EnsureExpectedMetadata_AddsExpectedKeys_ToDefault()
     {
         var sut = new RaceEntrant().EnsureExpectedMetadata();
-        sut.Metadata.Should().NotBeEmpty();
-        sut.Metadata.Should().HaveCount(3);
-        sut.Metadata.Should().BeEquivalentTo(new Dictionary<string, string>
+        sut.EntrantMetadata.Should().NotBeEmpty();
+        sut.EntrantMetadata.Should().HaveCount(3);
+        sut.EntrantMetadata.Should().BeEquivalentTo(new Dictionary<string, string>
         {
             ["score"] = "",
             ["scoreChange"] = "",
@@ -38,11 +38,11 @@ public class RaceEntrantTests
 
         var sut = new RaceEntrant
         {
-            Metadata = presetDictioanry
+            EntrantMetadata = presetDictioanry
         }.EnsureExpectedMetadata();
-        sut.Metadata.Should().NotBeEmpty();
-        sut.Metadata.Should().HaveCount(3);
-        sut.Metadata.Should().BeEquivalentTo(presetDictioanry);
+        sut.EntrantMetadata.Should().NotBeEmpty();
+        sut.EntrantMetadata.Should().HaveCount(3);
+        sut.EntrantMetadata.Should().BeEquivalentTo(presetDictioanry);
     }
 
     [Test]
@@ -56,11 +56,11 @@ public class RaceEntrantTests
 
         var sut = new RaceEntrant
         {
-            Metadata = presetDictioanry
+            EntrantMetadata = presetDictioanry
         }.EnsureExpectedMetadata();
-        sut.Metadata.Should().NotBeEmpty();
-        sut.Metadata.Should().HaveCount(3);
-        sut.Metadata.Should().BeEquivalentTo(new Dictionary<string, string>
+        sut.EntrantMetadata.Should().NotBeEmpty();
+        sut.EntrantMetadata.Should().HaveCount(3);
+        sut.EntrantMetadata.Should().BeEquivalentTo(new Dictionary<string, string>
         {
             ["score"] = "1234",
             ["scoreChange"] = "",
@@ -90,10 +90,10 @@ public class RaceEntrantTests
 
         var sut = new RaceEntrant
         {
-            Metadata = presetDictioanry
+            EntrantMetadata = presetDictioanry
         }.EnsureExpectedMetadata();
-        sut.Metadata.Should().NotBeEmpty();
-        sut.Metadata.Should().HaveCount(expectedDictionary.Count);
-        sut.Metadata.Should().BeEquivalentTo(expectedDictionary);
+        sut.EntrantMetadata.Should().NotBeEmpty();
+        sut.EntrantMetadata.Should().HaveCount(expectedDictionary.Count);
+        sut.EntrantMetadata.Should().BeEquivalentTo(expectedDictionary);
     }
 }

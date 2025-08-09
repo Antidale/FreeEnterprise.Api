@@ -14,8 +14,7 @@ namespace FreeEnterprise.Api.Classes
         public bool Success { get; private set; } = false;
         public HttpStatusCode? ErrorStatusCode { get; private set; }
 
-        /// <summary>
-        /// Basic constructor for the Response object. Generally prefer to use new Response<T>().SetSuccess() or SetError() to construct the response
+        /// <summary>Basic constructor for the Response object. Generally prefer to use new Response<T>().SetSuccess() or SetError() to construct the response
         /// </summary>
         /// <param name="responseObject"></param>
         /// <param name="errorMessage"></param>
@@ -64,7 +63,7 @@ namespace FreeEnterprise.Api.Classes
         /// </summary>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public ObjectResult GetResult() => (Success, ErrorStatusCode) switch
+        public ObjectResult GetRequestResponse() => (Success, ErrorStatusCode) switch
         {
             (true, _) => new OkObjectResult(Data),
             (false, HttpStatusCode.BadRequest) => new BadRequestObjectResult(ErrorMessage),
@@ -102,6 +101,12 @@ namespace FreeEnterprise.Api.Classes
         {
             return new Response<T>().SetSuccess(data);
         }
+
+        public static Response<T> BadRequest<T>(string errorMessage) => new Response<T>().BadRequest(errorMessage);
+        public static Response<T> Unauthorized<T>(string errorMessage) => new Response<T>().Unauthorized(errorMessage);
+        public static Response<T> NotFound<T>(string errorMessage) => new Response<T>().NotFound(errorMessage);
+        public static Response<T> Conflict<T>(string errorMessage) => new Response<T>().Conflict(errorMessage);
+        public static Response<T> InternalServerError<T>(string errorMessage) => new Response<T>().InternalServerError(errorMessage);
 
         public Response BadRequest(string errorMessage) => SetError(errorMessage, HttpStatusCode.BadRequest);
         public Response Unauthorized(string errorMessage) => SetError(errorMessage, HttpStatusCode.Unauthorized);

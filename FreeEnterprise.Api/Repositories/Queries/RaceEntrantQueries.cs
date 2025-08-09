@@ -14,7 +14,7 @@ select
     , {{nameof(Models.RaceEntrantModel.finish_time)}} as {{nameof(RaceEntrant.FinishTime)}}
     , {{nameof(Models.Racer.racetime_id)}} as {{nameof(RaceEntrant.RacetimeId)}}
     , {{nameof(Models.RaceEntrantModel.placement)}}
-    , '{"comment": "", "score": "", "scoreChange": ""}'::jsonb || {{nameof(Models.RaceEntrantModel.metadata)}} as {{nameof(RaceEntrant.EntrantMetadata)}}
+    , '{"comment": "", "score": "", "scoreChange": ""}'::jsonb || re.{{nameof(Models.RaceEntrantModel.metadata)}} as {{nameof(RaceEntrant.EntrantMetadata)}}
 from races.race_entrants re
 join races.racers r on re.entrant_id = r.id
 where re.race_id = @raceId
@@ -28,7 +28,7 @@ select
     , {{nameof(Models.RaceEntrantModel.finish_time)}} as {{nameof(RaceEntrant.FinishTime)}}
     , {{nameof(Models.Racer.racetime_id)}} as {{nameof(RaceEntrant.RacetimeId)}}
     , {{nameof(Models.RaceEntrantModel.placement)}}
-    , '{"comment": "", "score": "", "scoreChange": ""}'::jsonb || {{nameof(Models.RaceEntrantModel.metadata)}} as {{nameof(RaceEntrant.EntrantMetadata)}}
+    , '{"comment": "", "score": "", "scoreChange": ""}'::jsonb || re.{{nameof(Models.RaceEntrantModel.metadata)}} as {{nameof(RaceEntrant.EntrantMetadata)}}
 from races.race_entrants re
 join races.racers r on re.entrant_id = r.id
 join races.race_detail rd on re.race_id = rd.id

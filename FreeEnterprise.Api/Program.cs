@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using System.Reflection;
+using Dapper;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Providers;
 using FreeEnterprise.Api.Repositories;
@@ -37,7 +38,11 @@ builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
 builder.Services.AddOpenApi();
 builder.Services.AddMemoryCache();
 
@@ -46,8 +51,7 @@ SqlMapper.AddTypeHandler(new JsonStringDictionaryHandler());
 var app = builder.Build();
 
 app.UseSwagger();
-app.UseSwaggerUI();
-app.MapOpenApi();
+app.MapOpenApi().CacheOutput();
 app.MapScalarApiReference(options => options.WithOpenApiRoutePattern("/swagger/{documentName}/swagger.json"));
 
 Console.WriteLine("Application Starting");

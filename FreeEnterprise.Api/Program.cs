@@ -47,7 +47,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.MapOpenApi();
-app.MapScalarApiReference();
+app.MapScalarApiReference(options => options.WithOpenApiRoutePattern("/swagger/{documentName}/swagger.json"));
 
 Console.WriteLine("Application Starting");
 app.UseHttpsRedirection();

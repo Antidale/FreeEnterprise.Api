@@ -15,11 +15,12 @@ public class RacerRepository(IConnectionProvider connectionProvider, ILogger<Rac
         try
         {
             connection.Open();
-            var racer = int.TryParse(idOrName, out var id)
-                ? await connection.QuerySingleOrDefaultAsync<Racer>(
-                    RacerQueries.GetRacerById, new { id })
-                : await connection.QuerySingleOrDefaultAsync<Racer>(
-                    RacerQueries.GetRacerByName, new { name = idOrName });
+            _ = int.TryParse(idOrName, out var id);
+            var racer = await connection.QuerySingleOrDefaultAsync<Racer>(
+                    RacerQueries.GetRacerByIdOrName,
+                    new { id, name = idOrName }
+                );
+
             return racer is not null
                 ? Response.SetSuccess(racer)
                 : Response.NotFound<Racer>($"no racer found by {idOrName}");
@@ -60,13 +61,13 @@ public class RacerRepository(IConnectionProvider connectionProvider, ILogger<Rac
         }
     }
 
-    public async Task<Response<IEnumerable<RaceDetail>>> GetRacesForRacerAsync(string id, int offset, int limit)
+    public async Task<Response<IEnumerable<RaceDetail>>> GetRacesForRacerAsync(string idOrName, int offset, int limit)
     {
         var connection = _connectionPrivoder.GetConnection();
         try
         {
-            _ = int.TryParse(id, out var entrantId);
-            var param = new { entrantId, racetimeId = id, offset, limit };
+            _ = int.TryParse(idOrName, out var entrantId);
+            var param = new { entrantId, name = idOrName, offset, limit };
 
             var races = await connection.QueryAsync<RaceDetail, RaceEntrant, RaceDetail>(
                 RacerQueries.GetRacesForRacer,
@@ -77,18 +78,22 @@ public class RacerRepository(IConnectionProvider connectionProvider, ILogger<Rac
                 },
                 param: param,
                 splitOn: nameof(RaceEntrant.RacetimeId).ToLower());
-            foreach (var race in races)
-            {
-                foreach (var entrant in race.Entrants)
-                {
-                    entrant.EnsureExpectedMetadata();
-                }
-            }
+
+            races = races.GroupBy(x => x.RaceId)
+                         .Select(r =>
+                            {
+                                var race = r.First().WithFilteredMetadata("CR_");
+                                race.Entrants = [.. r.Select(x => x.Entrants.Single())];
+                                return race;
+                            }
+                          );
+
+
             return Response.SetSuccess(races);
         }
         catch (Exception ex)
         {
-            logger.LogError("Error when fetching Racers {idOrName}: {ex}", id, ex.ToString());
+            logger.LogError("Error when fetching Racers {idOrName}: {ex}", idOrName, ex.ToString());
             return Response.InternalServerError<IEnumerable<RaceDetail>>(ex.Message);
         }
     }

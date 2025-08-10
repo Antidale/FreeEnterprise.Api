@@ -1,13 +1,15 @@
 using FeInfo.Common.Requests;
 using FreeEnterprise.Api.Attributes;
 using FreeEnterprise.Api.Classes;
+using FreeEnterprise.Api.Extensions;
 using FreeEnterprise.Api.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FreeEnterprise.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RacesController(IRaceRespository raceRespository) : ControllerBase
+    public class RacesController(IRaceRespository raceRespository, IMemoryCache memoryCache) : ControllerBase
     {
         private readonly IRaceRespository _raceRepository = raceRespository;
 
@@ -28,8 +30,21 @@ namespace FreeEnterprise.Api.Controllers
 
         )
         {
-            //TODO: add min/max values for limit (5 || 50?)
+            if (limit > 500)
+            {
+                return BadRequest("Cannot ask for more than 500 races");
+            }
+
+            var cacheKey = $"Races_o{offset}_l{limit}_d{description}_f{flagset}_{includeCancelled}";
+
+            if (memoryCache.TryGetValue<IEnumerable<RaceDetail>>(cacheKey, out var raceDetails) && raceDetails is not null)
+            {
+                return Classes.Response.SetSuccess(raceDetails).GetRequestResponse();
+            }
+
             var getResponse = await _raceRepository.GetRacesAsync(offset, limit, includeCancelled, description, flagset);
+
+            memoryCache.SetCache(cacheKey, getResponse.Data);
             return getResponse.GetRequestResponse();
         }
 

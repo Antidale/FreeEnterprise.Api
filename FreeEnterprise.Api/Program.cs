@@ -39,6 +39,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
+builder.Services.AddMemoryCache();
 
 SqlMapper.AddTypeHandler(new StringListHandler());
 SqlMapper.AddTypeHandler(new JsonStringDictionaryHandler());

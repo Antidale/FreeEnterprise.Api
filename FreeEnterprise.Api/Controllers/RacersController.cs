@@ -1,14 +1,14 @@
-using FeInfo.Common.Requests;
-using FreeEnterprise.Api.Attributes;
 using FreeEnterprise.Api.Classes;
+using FreeEnterprise.Api.Extensions;
 using FreeEnterprise.Api.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 
 
 namespace FreeEnterprise.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RacersController(IRacerRepository racerRepository) : ControllerBase
+    public class RacersController(IRacerRepository racerRepository, IMemoryCache memoryCache) : ControllerBase
     {
         private readonly IRacerRepository _racerRepository = racerRepository;
 
@@ -19,7 +19,17 @@ namespace FreeEnterprise.Api.Controllers
             [FromQuery] string? name = null
         )
         {
+            var cacheKey = $"Races_o{offset}_l{limit}_n{name}";
+
+            if (memoryCache.TryGetValue<IEnumerable<Racer>>(cacheKey, out var raceDetails) && raceDetails is not null)
+            {
+                return Classes.Response.SetSuccess(raceDetails).GetRequestResponse();
+            }
+
             var getResponse = await _racerRepository.GetRacersAsync(offset, limit, name);
+
+            memoryCache.SetCache(cacheKey, getResponse.Data);
+
             return getResponse.GetRequestResponse();
         }
 
@@ -39,7 +49,15 @@ namespace FreeEnterprise.Api.Controllers
             [FromQuery] int limit = 20
         )
         {
+            var cacheKey = $"Racer_n{idOrName}_o{offset}_l{limit}";
+            if (memoryCache.TryGetValue<IEnumerable<RaceDetail>>(cacheKey, out var raceDetails) && raceDetails is not null)
+            {
+                return Classes.Response.SetSuccess(raceDetails).GetRequestResponse();
+            }
             var response = await _racerRepository.GetRacesForRacerAsync(idOrName, offset, limit);
+
+            memoryCache.SetCache(cacheKey, response.Data);
+
             return response.GetRequestResponse();
         }
 
@@ -49,7 +67,17 @@ namespace FreeEnterprise.Api.Controllers
             string opponentIdOrName
         )
         {
+            var cacheKey = $"Racer_h2h_n{idOrName}_opp{opponentIdOrName}";
+
+            if (memoryCache.TryGetValue<IEnumerable<Racer>>(cacheKey, out var raceDetails) && raceDetails is not null)
+            {
+                return Classes.Response.SetSuccess(raceDetails).GetRequestResponse();
+            }
+
             var response = await _racerRepository.GetHeadToHeadAsync(idOrName, opponentIdOrName);
+
+            memoryCache.SetCache(cacheKey, response.Data);
+
             return response.GetRequestResponse();
         }
     }

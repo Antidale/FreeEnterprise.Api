@@ -84,11 +84,10 @@ select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.
                 splitOn: nameof(RaceEntrant.RacetimeId).ToLower()
                 );
 
-            races = races.Select(x => x.WithFilteredMetadata("CR_"))
-                         .GroupBy(x => x.RaceId)
+            races = races.GroupBy(x => x.RaceId)
                          .Select(r =>
                             {
-                                var race = r.First();
+                                var race = r.First().WithFilteredMetadata("CR_");
                                 race.Entrants = [.. r.Select(x => x.Entrants.Single())];
                                 return race;
                             }
@@ -125,10 +124,10 @@ select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.
 
             if (raceDetail is null || !raceDetail.Any()) { return new Response<RaceDetail>().NotFound(idOrSlug); }
 
-            raceDetail = raceDetail.Select(x => x.WithFilteredMetadata("CR_")).GroupBy(x => x.RaceId)
+            raceDetail = raceDetail.GroupBy(x => x.RaceId)
                          .Select(r =>
                             {
-                                var race = r.First();
+                                var race = r.First().WithFilteredMetadata("CR_");
                                 race.Entrants = [.. r.Select(x => x.Entrants.Single())];
                                 return race;
                             }

@@ -14,7 +14,8 @@ namespace FreeEnterprise.Api.Classes
         public bool Success { get; private set; } = false;
         public HttpStatusCode? ErrorStatusCode { get; private set; }
 
-        /// <summary>Basic constructor for the Response object. Generally prefer to use new Response<T>().SetSuccess() or SetError() to construct the response
+        /// <summary>
+        /// Basic constructor for the Response object.
         /// </summary>
         /// <param name="responseObject"></param>
         /// <param name="errorMessage"></param>

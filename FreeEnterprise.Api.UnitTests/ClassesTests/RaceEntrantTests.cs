@@ -5,14 +5,14 @@ namespace FreeEnterprise.Api.UnitTests.ClassesTests;
 
 public class RaceEntrantTests
 {
-    [Test]
+    [Fact]
     public void RaceEntrant_Defaults_ToEmptyDictioanry()
     {
         var sut = new RaceEntrant();
         sut.EntrantMetadata.Should().BeEmpty();
     }
 
-    [Test]
+    [Fact]
     public void RaceEntrant_EnsureExpectedMetadata_AddsExpectedKeys_ToDefault()
     {
         var sut = new RaceEntrant().EnsureExpectedMetadata();
@@ -26,7 +26,7 @@ public class RaceEntrantTests
         });
     }
 
-    [Test]
+    [Fact]
     public void RaceEntrant_EnsureExpectedMetadata_ShouldNotOverride_ExistingSharedKeys()
     {
         var presetDictioanry = new Dictionary<string, string>
@@ -45,7 +45,7 @@ public class RaceEntrantTests
         sut.EntrantMetadata.Should().BeEquivalentTo(presetDictioanry);
     }
 
-    [Test]
+    [Fact]
     public void RaceEntrant_EnsureExpectedMetadata_WillFillInMissingKeys()
     {
         var presetDictioanry = new Dictionary<string, string>
@@ -68,7 +68,7 @@ public class RaceEntrantTests
         });
     }
 
-    [Test]
+    [Fact]
     public void RaceEntrant_EnsureExpectedMetadata_DoesNotRemoveKeys()
     {
         var presetDictioanry = new Dictionary<string, string>

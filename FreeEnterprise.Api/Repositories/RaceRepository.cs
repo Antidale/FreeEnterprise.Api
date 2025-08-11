@@ -149,17 +149,13 @@ select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.
         try
         {
             connection.Open();
-            string? patchHtml;
-            if (int.TryParse(idOrSlug, out var id))
-            {
-                patchHtml = await connection.QueryFirstOrDefaultAsync<string>(RaceQueries.GetSeedByRaceIdQuery, new { id });
-            }
-            else
-            {
-                patchHtml = await connection.QueryFirstOrDefaultAsync<string>(RaceQueries.GetSeedByRaceRoomNameQuery, new { roomName = idOrSlug });
-            }
+            _ = int.TryParse(idOrSlug, out var id);
+            var patchHtml = await connection.QueryFirstOrDefaultAsync<string>(
+                    RaceQueries.GetRaceSeedQuery,
+                    new { id, roomName = idOrSlug });
 
-            if (patchHtml is null) { return new Response<string>().NotFound(idOrSlug); }
+            if (patchHtml is null)
+                return new Response<string>().NotFound(idOrSlug);
 
             return new Response<string>().SetSuccess(patchHtml);
 

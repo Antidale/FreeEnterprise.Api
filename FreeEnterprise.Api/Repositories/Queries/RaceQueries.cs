@@ -33,24 +33,13 @@ with race_data as (
 {{GetEntrantsForRaceSubsection}}
 """;
 
-    public const string GetSeedByRaceIdQuery = @"
+    public const string GetRaceSeedQuery = @"
 with seed_id AS (
     select max (rs.id) as seed_id
     from races.race_detail rd
     left join seeds.rolled_seeds rs on rd.id = rs.race_id
-    where rd.id = @id
-)
-
-select sh.patch_html
-from seeds.saved_html sh
-join seed_id rs on sh.rolled_seed_id = rs.seed_id;";
-
-    public const string GetSeedByRaceRoomNameQuery = @"
-with seed_id AS (
-    select max (rs.id) as seed_id
-    from races.race_detail rd
-    left join seeds.rolled_seeds rs on rd.id = rs.race_id
-    where rd.room_name = @roomName
+    where rd.id = @id 
+    or rd.room_name = @roomName
 )
 
 select sh.patch_html

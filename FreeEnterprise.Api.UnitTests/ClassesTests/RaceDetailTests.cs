@@ -1,4 +1,3 @@
-using System;
 using FluentAssertions;
 using FreeEnterprise.Api.Classes;
 
@@ -6,14 +5,14 @@ namespace FreeEnterprise.Api.UnitTests.ClassesTests;
 
 public class RaceTests
 {
-    [Test]
+    [Fact]
     public void RaceDetail_Metadata_Defaults_ToEmptyDictionary()
     {
         var sut = new RaceDetail();
         sut.Metadata.Should().BeEmpty();
     }
 
-    [Test]
+    [Fact]
     public void RaceDetail_WithFilteredMetadata_RemovesFiterPrefix()
     {
         var presetMetadata = new Dictionary<string, string>

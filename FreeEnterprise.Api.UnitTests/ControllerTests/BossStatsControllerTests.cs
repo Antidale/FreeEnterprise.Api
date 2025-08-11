@@ -1,10 +1,11 @@
+using System.Net;
+using System.Threading.Tasks;
 using FeInfo.Common.DTOs;
+using FluentAssertions;
 using FreeEnterprise.Api.Controllers;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Requests;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace FreeEnterprise.Api.UnitTests.ControllerTests
 {
@@ -12,13 +13,14 @@ namespace FreeEnterprise.Api.UnitTests.ControllerTests
     {
         Mock<IBossStatsRepository> bossStatsRepositoryMock;
 
-        [SetUp]
-        public void SetUp()
+
+        public BossStatsControllerTests()
         {
             bossStatsRepositoryMock = new Mock<IBossStatsRepository>();
         }
 
-        [TestCase(0, 0, HttpStatusCode.BadRequest)]
+        [Theory]
+        [InlineData(0, 0, HttpStatusCode.BadRequest)]
         public async Task BossStatsController_Requires_ValidRequest(int locationId, int battleId, HttpStatusCode responseCode)
         {
             bossStatsRepositoryMock
@@ -34,7 +36,9 @@ namespace FreeEnterprise.Api.UnitTests.ControllerTests
             };
 
             var response = await sut.Search(request);
-            Assert.That((HttpStatusCode)(response.Result as StatusCodeResult).StatusCode, Is.EqualTo(responseCode));
+            var statusCode = (HttpStatusCode)(response.Result as StatusCodeResult).StatusCode;
+            statusCode.Should().Be(responseCode);
+
         }
     }
 }

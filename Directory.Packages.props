@@ -12,6 +12,8 @@
     <PackageVersion Include="Scalar.AspNetCore" Version="2.6.8" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="9.0.3" />
     <PackageVersion Include="npgsql" Version="9.0.3" />
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.6.0" />
+    <PackageVersion Include="Testcontainers.XunitV3" Version="4.6.0" />
     <PackageVersion Include="xunit.v3" Version="3.0.0" />
   </ItemGroup>
 </Project>

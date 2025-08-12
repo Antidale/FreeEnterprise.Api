@@ -18,6 +18,7 @@ services:
       FE_PGUSER: fe_user
       FE_PGPASS: dev_test
       FE_PGPORT: "5432"
+      Api-Key: "test"
     ports:
       - 8085:8080
     depends_on:

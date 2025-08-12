@@ -30,7 +30,6 @@ public class RaceTests
         {
             Metadata = presetMetadata
         }.WithFilteredMetadata("CR_");
-
         sut.Metadata.Should().NotBeEmpty();
         sut.Metadata.Should().HaveCount(1);
         sut.Metadata.Should().BeEquivalentTo(expectedMetadata);

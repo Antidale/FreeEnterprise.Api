@@ -29,8 +29,15 @@ steps:
     projects: FreeEnterprise.Api/FreeEnterprise.Api.csproj
     arguments: '--configuration $(buildConfiguration)'
 
-- task: DotNetCoreCLI@2
-  displayName: Run Tests
+- script: dotnet run --project ./FreeEnterprise.Api.UnitTests/FreeEnterprise.Api.UnitTests.csproj -c Release --report-trx --results-directory . --report-trx-filename results.trx
+  displayName: 'Run tests'
+  continueOnError: false
+
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results'
   inputs:
-    command: 'test'
-    projects: FreeEnterprise.Api.UnitTests/FreeEnterprise.Api.UnitTests.csproj
+    testResultsFormat: VSTest
+    testResultsFiles: 'results.trx'
+    searchFolder: '.'
+    failTaskOnFailedTests: true
+    failTaskOnMissingResultsFile: true

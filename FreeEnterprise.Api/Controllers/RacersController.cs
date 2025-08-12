@@ -15,10 +15,13 @@ namespace FreeEnterprise.Api.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="offset"></param>
-        /// <param name="limit"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
+        /// <remarks>
+        /// Results are cached for 5 minutes, based on the combination of the offset, limit, and name query parameters
+        /// </remarks>
+        /// <param name="offset">used with limit to accomplish paging through results</param>
+        /// <param name="limit">used with offset to accomplish paging through results. Currently no maximum value, but there might be a limit imposed at some point in the future</param>
+        /// <param name="name">The name of the racer, currently looks at either their discord name or the name of the twitch account linked to their discord account. search is case insensitive</param>
+        /// <returns>A collection of Racer objects</returns>
         /// <response code="200"></response>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -65,6 +68,7 @@ namespace FreeEnterprise.Api.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Results are cached for five minutes, based on the combination of limit and offset.</remarks>
         /// <param name="idOrName">the racetime id of the user, or their ractime mae or the name of the twitch account registered to their racetime account</param>
         /// <param name="offset"></param>
         /// <param name="limit">The amount of <see cref="RaceDetail"/>RaceDetails to return in this call. Combine with offset to page through records</param>
@@ -97,6 +101,14 @@ namespace FreeEnterprise.Api.Controllers
             return response.GetRequestResponse();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Provides all of the races both runners have raced in</remarks>
+        /// <param name="idOrName">Either the ractime.gg id, or the racer's display name for either rt.gg or twitch</param>
+        /// <param name="opponentIdOrName">Either the ractime.gg id, or the racer's display name for either rt.gg or twitch</param>
+        /// <returns>A collection of RaceDetail objects. The Entrants property of those races will bel limited to just the two requested racers.</returns>
+        /// <response code="200"></response>
         [HttpGet("{idOrName}/head-to-head/{opponentIdOrName}")]
         public async Task<ActionResult<IEnumerable<RaceDetail>>> GetHeadToHeadAsync(
             string idOrName,

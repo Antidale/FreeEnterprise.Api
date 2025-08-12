@@ -16,7 +16,6 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
-  system.debug: 'true'
 
 steps:
 - task: UseDotNet@2

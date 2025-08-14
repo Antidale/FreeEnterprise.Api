@@ -19,7 +19,7 @@ public record User()
     public string TwitchName { get; set; } = string.Empty;
     [JsonPropertyName("twitch_display_name")]
     public string TwitchDisplayName { get; set; } = string.Empty;
-    [JsonPropertyName("twitch_thannel")]
+    [JsonPropertyName("twitch_channel")]
     public string TwitchChannel { get; set; } = string.Empty;
     [JsonPropertyName("can_moderate")]
     public bool CanModerate { get; set; }

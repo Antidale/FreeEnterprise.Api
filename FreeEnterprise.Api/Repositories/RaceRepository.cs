@@ -166,4 +166,20 @@ select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.
             return new Response<string>().InternalServerError(ex.Message);
         }
     }
+
+    public async Task MergeRacesAsync(List<Race> races)
+    {
+        using var connection = _connectionPrivoder.GetConnection();
+        try
+        {
+            string racesMerge = """
+
+""";
+            await connection.ExecuteAsync(racesMerge, races);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("Error when performing merge for races {}", ex.ToString());
+        }
+    }
 }

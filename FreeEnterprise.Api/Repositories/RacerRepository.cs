@@ -2,6 +2,7 @@ using Dapper;
 using FreeEnterprise.Api.Classes;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Repositories.Queries;
+using Models = FreeEnterprise.Api.Models;
 
 namespace FreeEnterprise.Api.Repositories;
 
@@ -93,7 +94,6 @@ public class RacerRepository(IConnectionProvider connectionProvider, ILogger<Rac
                             }
                           );
 
-
             return Response.SetSuccess(races);
         }
         catch (Exception ex)
@@ -143,6 +143,36 @@ public class RacerRepository(IConnectionProvider connectionProvider, ILogger<Rac
         {
             logger.LogError("Error when fetching H2H for Racers {idOrName} and {opponentIdOrName}: {ex}", idOrName, opponentIdOrName, ex.ToString());
             return Response.InternalServerError<IEnumerable<RaceDetail>>(ex.Message);
+        }
+    }
+
+    public async Task MergeRacersAsync(List<Models.Racer> racers)
+    {
+        var connection = _connectionPrivoder.GetConnection();
+        try
+        {
+            string runnerMerge = """
+merge into races.racers
+using (select * from
+	(
+		values
+		(@racetime_id, @twitch_name, @racetime_display_name)
+	)
+ as t (incoming_id, incoming_twitch, incoming_display_name)) inc
+on racetime_id = incoming_id
+when matched then
+	update set
+		twitch_name = inc.incoming_twitch,
+		racetime_display_name = inc.incoming_display_name
+WHEN NOT matched then
+	insert(racetime_id, twitch_name, racetime_display_name)
+	values(incoming_id, incoming_twitch, incoming_display_name)
+""";
+            await connection.ExecuteAsync(runnerMerge, racers);
+        }
+        catch (Exception)
+        {
+            //log exception
         }
     }
 

@@ -55,6 +55,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.AddOpenApi();
 builder.Services.AddMemoryCache();
+builder.Services.AddHostedService<RacetimeDataFetchService>();
 
 SqlMapper.AddTypeHandler(new StringListHandler());
 SqlMapper.AddTypeHandler(new JsonStringDictionaryHandler());
@@ -64,7 +65,6 @@ app.UseSwagger();
 app.MapOpenApi().CacheOutput();
 app.MapScalarApiReference(options => options.WithOpenApiRoutePattern("/swagger/{documentName}/swagger.json"));
 
-Console.WriteLine("Application Starting");
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors();

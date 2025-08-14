@@ -1,0 +1,14 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+    <Project Path="FreeEnterprise.Api/FreeEnterprise.Api.csproj" />
+    <Folder Name="/Testing/">
+      <Project Path="FreeEnterprise.Api.IntegrationTests/FreeEnterprise.Api.IntegrationTests.csproj" />
+    
+      <Project Path="FreeEnterprise.Api.UnitTests/FreeEnterprise.Api.UnitTests.csproj" />
+    </Folder>
+  
+</Solution>

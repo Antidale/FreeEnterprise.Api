@@ -14,7 +14,7 @@ namespace FreeEnterprise.Api.Controllers
         private readonly IRaceRespository _raceRepository = raceRespository;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="createRequest">A request detailing the required information for the race</param>
         /// <returns>the internal id of the newly created race</returns>
@@ -28,7 +28,7 @@ namespace FreeEnterprise.Api.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="offset">The amount of records to skip. Combined with limit, lets you page through results</param>
         /// <param name="limit">The amount of records to return. Limited to 500</param>
@@ -67,7 +67,7 @@ namespace FreeEnterprise.Api.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="idOrSlug">The internal id (int)for the race, or the name of the racetime room.</param>
         /// <returns>The detail for the specifc race, including entrants</returns>
@@ -82,7 +82,7 @@ namespace FreeEnterprise.Api.Controllers
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="idOrSlug">The internal id (int) for the race, or the name of the racetime room.</param>
         /// <returns>returns the entire html document to reconstruct the patch page.</returns>

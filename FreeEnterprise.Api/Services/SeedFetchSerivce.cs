@@ -2,7 +2,6 @@ using FeInfo.Common.DTOs;
 using FreeEnterprise.Api.Classes;
 using FreeEnterprise.Api.Interfaces;
 
-
 namespace FreeEnterprise.Api.Services;
 
 public class SeedFetchSerivce(IHttpClientFactory httpClientFactory, ILogger<SeedFetchSerivce> logger) : ISeedFetchService
@@ -34,7 +33,6 @@ public class SeedFetchSerivce(IHttpClientFactory httpClientFactory, ILogger<Seed
         {
             return new Response<string>().InternalServerError(ex.Message);
         }
-
     }
 
     private Response<Uri> ValidateUrl(string seedUrl)

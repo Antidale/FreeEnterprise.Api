@@ -133,8 +133,6 @@ public class RacerRepository(IConnectionProvider connectionProvider, ILogger<Rac
             });
 
             return Response.SetSuccess(finalzed);
-
-
         }
         catch (Exception ex)
         {

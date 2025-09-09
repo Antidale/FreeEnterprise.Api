@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 using Dapper;
+using FreeEnterprise.Api;
+using FreeEnterprise.Api.Constraints;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Providers;
 using FreeEnterprise.Api.Repositories;
@@ -19,6 +21,12 @@ builder.Services.AddCors(options =>
 
 builder.Configuration.AddEnvironmentVariables(prefix: "FE_");
 
+//I actually think this is better handled a different way, because getting a BadRequest back for invalid values is much more appropriate than a 404, but I thought it was interesting to do the work for this and try it out
+builder.Services.Configure<RouteOptions>(opt =>
+{
+    opt.ConstraintMap.Add("bossNameEnum", typeof(BossNameRouteConstraint));
+});
+
 // Add services to the container.
 builder.Services.AddSingleton<IBattleLocationsRepository, BattleLocationsRepository>();
 builder.Services.AddSingleton<IConnectionProvider, ConnectionProvider>();
@@ -32,6 +40,7 @@ builder.Services.AddSingleton<ISeedRepository, SeedRepository>();
 builder.Services.AddSingleton<ISeedFetchService, SeedFetchSerivce>();
 builder.Services.AddSingleton<IRaceRespository, RaceRepository>();
 builder.Services.AddSingleton<IRacerRepository, RacerRepository>();
+
 builder.Services.AddHttpClient();
 
 builder.Services.AddControllers();
@@ -42,6 +51,7 @@ builder.Services.AddSwaggerGen(options =>
 {
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+    options.SchemaFilter<EnumSchemaFilter>();
 });
 builder.Services.AddOpenApi();
 builder.Services.AddMemoryCache();

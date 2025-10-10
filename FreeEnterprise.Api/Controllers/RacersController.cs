@@ -8,7 +8,7 @@ namespace FreeEnterprise.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RacersController(IRacerRepository racerRepository, IMemoryCache memoryCache) : ControllerBase
+    public class RacersController(IRacerRepository racerRepository, IMemoryCache memoryCache, IHttpClientFactory httpClientFactory) : ControllerBase
     {
         private readonly IRacerRepository _racerRepository = racerRepository;
 
@@ -127,6 +127,37 @@ namespace FreeEnterprise.Api.Controllers
             memoryCache.SetCache(cacheKey, response.Data);
 
             return response.GetRequestResponse();
+        }
+
+        [HttpGet("racetime-search")]
+        public async Task<ActionResult> SearchRacetimeUser()
+        {
+            List<string> validKeys = ["name", "discriminator", "term"];
+            var validPairs = HttpContext.Request.Query.Where(x => validKeys.Contains(x.Key)).Select(x => $"{x.Key}={x.Value}");
+            if (!validPairs.Any())
+            {
+                return BadRequest();
+            }
+
+            var querystring = $"?{string.Join('&', validPairs)}";
+            if (memoryCache.TryGetValue<string>(querystring, out var cacheResponse) && cacheResponse is not null)
+            {
+                return Ok(cacheResponse);
+            }
+
+            try
+            {
+                var client = httpClientFactory.CreateClient();
+                var response = await client.GetAsync($"http://racetime.gg/user/search{querystring}");
+                response.EnsureSuccessStatusCode();
+                var result = await response.Content.ReadAsStringAsync();
+                memoryCache.SetCache(querystring, result);
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
     }
 }

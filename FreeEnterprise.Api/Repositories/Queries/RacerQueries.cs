@@ -22,8 +22,8 @@ or lower(racetime_id) = lower(@name)
     , racetime_id as RacetimeId
 from races.racers
 Where @name is null 
-or racetime_display_name = @name
-or twitch_name = @name
+or racetime_display_name like @name
+or twitch_name like @name
 order by RacetimeName
 offset @offset
 limit @limit

@@ -20,8 +20,8 @@ namespace FreeEnterprise.Api.Controllers
         /// </remarks>
         /// <param name="offset">used with limit to accomplish paging through results</param>
         /// <param name="limit">used with offset to accomplish paging through results. Currently no maximum value, but there might be a limit imposed at some point in the future</param>
-        /// <param name="name">The name of the racer, currently looks at either their discord name or the name of the twitch account linked to their discord account. search is case insensitive</param>
-        /// <returns>A collection of Racer objects</returns>
+        /// <param name="name">The name of the racer, currently looks at either their racetime name or the name of the twitch account linked to their discord account. search is case insensitive, and all names starting with your search string are returned, within the offset and limit parameters. </param>
+        /// <returns>A collection of Racer objects sorted by RacetimeName</returns>
         /// <response code="200"></response>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]

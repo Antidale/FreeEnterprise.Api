@@ -47,6 +47,11 @@ public class RacerRepository(IConnectionProvider connectionProvider, ILogger<Rac
         using var connection = _connectionPrivoder.GetConnection();
         try
         {
+            if (name is not null)
+            {
+                name = $"{name}%";
+            }
+
             connection.Open();
             var racers = await connection.QueryAsync<Racer>(
                 RacerQueries.GetRacers,

@@ -1,15 +1,18 @@
-using System;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace FreeEnterprise.Api;
 
 public class EnumSchemaFilter : ISchemaFilter
 {
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
         if (!context.Type.IsEnum)
+        {
+            return;
+        }
+
+        if (schema is null || schema.Enum is null)
         {
             return;
         }
@@ -18,7 +21,8 @@ public class EnumSchemaFilter : ISchemaFilter
 
         foreach (var name in Enum.GetNames(context.Type))
         {
-            schema.Enum.Add(new OpenApiString(name));
+            schema.Enum.Add(name);
         }
     }
+
 }

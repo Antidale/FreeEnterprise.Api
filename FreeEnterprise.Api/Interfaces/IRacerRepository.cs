@@ -1,5 +1,4 @@
 using FreeEnterprise.Api.Classes;
-
 namespace FreeEnterprise.Api.Interfaces;
 
 public interface IRacerRepository

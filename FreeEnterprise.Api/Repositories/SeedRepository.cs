@@ -67,7 +67,7 @@ RETURNING id;";
         }
     }
 
-    public async Task<Response<IEnumerable<SeedDetail>>> SearchSeedDetails(int offset, int limit, string? flagset, string? binaryFlags, string? seedValue)
+    public async Task<Response<IEnumerable<SeedDetail>>> SearchSeedDetails(int offset, int limit, string? flagset, string? binaryFlags, string? seedValue, bool onlySavedHtml)
     {
         using var connection = _connectionProvider.GetConnection();
         try
@@ -80,15 +80,17 @@ RETURNING id;";
     , {nameof(RolledSeed.seed)} as {nameof(SeedDetail.Seed)}
     , {nameof(RolledSeed.fe_version)} as {nameof(SeedDetail.Version)}
     , ts_rank({nameof(RolledSeed.flagset_search)}, websearch_to_tsquery('english', @flagset)) as Rank
-from seeds.rolled_seeds
+from seeds.rolled_seeds rs
+left join seeds.saved_html sh on rs.id = sh.rolled_seed_id
 where (@seedValue is null or {nameof(RolledSeed.seed)} = @seedValue)
 and (@binaryFlags is null or {nameof(RolledSeed.binary_flags)} = @binaryFlags)
 and (@flagset is null or {nameof(RolledSeed.flagset_search)} @@ websearch_to_tsquery('english', @flagset))
+and (@onlySavedHtml = false or sh.rolled_seed_id is not null)
 order by Rank desc, id
 offset @offset
 limit @limit
 ;";
-            var seeds = await connection.QueryAsync<SeedDetail>(query, new { seedValue, flagset, binaryFlags, offset, limit });
+            var seeds = await connection.QueryAsync<SeedDetail>(query, new { seedValue, flagset, binaryFlags, offset, limit, onlySavedHtml });
 
             return new Response<IEnumerable<SeedDetail>>().SetSuccess(seeds);
 

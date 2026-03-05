@@ -46,6 +46,7 @@ namespace FreeEnterprise.Api.Controllers
         /// <param name="flagSearch">Search for a flagset that contains a desired flag. Can be a bit wonky.</param>
         /// <param name="seedString">search for an exact match of the seed value.</param>
         /// <param name="binaryFlags">search for an exact match of the binary flag string.</param>
+        /// <param name="onlySavedHtml">when true, the seed must have a copy of the patch page saved</param>
         /// <returns></returns>
         /// <response code="200"></response>
         [HttpGet]
@@ -55,10 +56,11 @@ namespace FreeEnterprise.Api.Controllers
             [FromQuery] int limit = 20,
             [FromQuery] string? flagSearch = null,
             [FromQuery] string? seedString = null,
-            [FromQuery] string? binaryFlags = null
+            [FromQuery] string? binaryFlags = null,
+            [FromQuery] bool? onlySavedHtml = false
         )
         {
-            var response = await _seedRepository.SearchSeedDetails(offset: offset, limit: limit, flagset: flagSearch, seedValue: seedString, binaryFlags: binaryFlags);
+            var response = await _seedRepository.SearchSeedDetails(offset: offset, limit: limit, flagset: flagSearch, seedValue: seedString, binaryFlags: binaryFlags, onlySavedHtml: onlySavedHtml ?? false);
 
             return response.GetRequestResponse();
         }

@@ -54,7 +54,8 @@ public class SeedFetchSerivce(IHttpClientFactory httpClientFactory, ILogger<Seed
 #endif
             { Host: var h } when
                 h.Equals("ff4fe.galeswift.com") ||
-                h.Equals("ff4fe.com") => new Response<Uri>().SetSuccess(seedUri),
+                h.Equals("ff4fe.com") ||
+                h.Equals("alpha.ff4fe.com") => new Response<Uri>().SetSuccess(seedUri),
 
             _ => new Response<Uri>().BadRequest("Invalid URI host")
         };

@@ -37,7 +37,7 @@ steps:
   displayName: 'Publish Test Results'
   inputs:
     testResultsFormat: VSTest
-    testResultsFiles: 'results.trx'
+    testResultsFiles: '*.trx'
     searchFolder: '.'
     failTaskOnFailedTests: true
     failTaskOnMissingResultsFile: true

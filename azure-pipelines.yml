@@ -18,6 +18,9 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+- checkout: self
+  submodules: true
+
 - task: UseDotNet@2
   inputs:
     version: '10.x'
@@ -29,7 +32,7 @@ steps:
     projects: FreeEnterprise.Api/FreeEnterprise.Api.csproj
     arguments: '--configuration $(buildConfiguration)'
 
-- script: dotnet test -c Release --report-trx --results-directory . 
+- script: dotnet test -c Release --report-trx --results-directory .
   displayName: 'Run tests'
   continueOnError: false
 

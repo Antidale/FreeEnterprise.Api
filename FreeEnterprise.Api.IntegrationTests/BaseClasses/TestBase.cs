@@ -2,7 +2,7 @@ using Npgsql;
 
 namespace FreeEnterprise.Api.IntegrationTests.BaseClasses;
 
-public partial class TestBase(FixtureBase fixture)
+public abstract partial class TestBase(FixtureBase fixture)
 {
     public FixtureBase FixtureBase = fixture;
     public void SetupProviderMock()

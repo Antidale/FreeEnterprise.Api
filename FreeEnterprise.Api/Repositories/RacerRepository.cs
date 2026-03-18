@@ -148,7 +148,7 @@ public class RacerRepository(IConnectionProvider connectionProvider, ILogger<Rac
 
     public async Task MergeRacersAsync(List<Models.Racer> racers)
     {
-        var connection = _connectionPrivoder.GetConnection();
+        using var connection = _connectionPrivoder.GetConnection();
         try
         {
             string runnerMerge = """

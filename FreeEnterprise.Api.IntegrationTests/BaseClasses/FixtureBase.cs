@@ -3,7 +3,7 @@ using Testcontainers.Xunit;
 
 namespace FreeEnterprise.Api.IntegrationTests.BaseClasses;
 
-public class FixtureBase(IMessageSink messageSink) : ContainerFixture<PostgreSqlBuilder, PostgreSqlContainer>(messageSink), IAsyncDisposable
+public abstract class FixtureBase(IMessageSink messageSink) : ContainerFixture<PostgreSqlBuilder, PostgreSqlContainer>(messageSink), IAsyncDisposable
 {
     public Mock<IConnectionProvider> ProviderMock = new(MockBehavior.Loose);
 

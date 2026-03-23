@@ -2,6 +2,7 @@
 using Dapper;
 using FreeEnterprise.Api;
 using FreeEnterprise.Api.Constraints;
+using FreeEnterprise.Api.Extensions;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Providers;
 using FreeEnterprise.Api.Repositories;
@@ -28,22 +29,11 @@ builder.Services.Configure<RouteOptions>(opt =>
 });
 
 // Add services to the container.
-builder.Services.AddSingleton<IBattleLocationsRepository, BattleLocationsRepository>();
-builder.Services.AddSingleton<IConnectionProvider, ConnectionProvider>();
-builder.Services.AddSingleton<IBossBattlesRepository, BossBattlesRepository>();
-builder.Services.AddSingleton<IBossStatsRepository, BossStatsRepository>();
-builder.Services.AddSingleton<IEquipmentRepository, EquipmentRepository>();
-builder.Services.AddSingleton<ITournamentRepository, TournamentRepository>();
-builder.Services.AddSingleton<IEntrantRepository, EntrantRepository>();
-builder.Services.AddSingleton<IGuidesRepository, GuidesRepository>();
-builder.Services.AddSingleton<ISeedRepository, SeedRepository>();
-builder.Services.AddSingleton<ISeedFetchService, SeedFetchSerivce>();
-builder.Services.AddSingleton<IRaceRespository, RaceRepository>();
-builder.Services.AddSingleton<IRacerRepository, RacerRepository>();
-
-builder.Services.AddHttpClient();
-
-builder.Services.AddControllers();
+builder.Services.AddSingleton<ISeedFetchService, SeedFetchSerivce>()
+                .AddSingleton<IConnectionProvider, ConnectionProvider>()
+                .AddRepositories()
+                .AddHttpClient()
+                .AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

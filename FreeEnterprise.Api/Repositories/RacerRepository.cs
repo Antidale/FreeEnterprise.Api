@@ -170,9 +170,9 @@ WHEN NOT matched then
 """;
             await connection.ExecuteAsync(runnerMerge, racers);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            //log exception
+            logger.LogError("Error when merging racers: {ex}", ex.ToString());
         }
     }
 

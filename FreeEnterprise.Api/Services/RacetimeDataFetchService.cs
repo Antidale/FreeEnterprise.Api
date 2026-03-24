@@ -8,7 +8,8 @@ public class RacetimeDataFetchService(
     ILogger<RacetimeDataFetchService> logger,
     IHttpClientFactory httpClientFactory,
     IRaceRespository raceRespository,
-    IRacerRepository racerRepository
+    IRacerRepository racerRepository,
+    IRaceEntrantRepository raceEntrantRepository
 ) : BackgroundService
 {
     private readonly ILogger<RacetimeDataFetchService> _logger = logger;
@@ -77,24 +78,15 @@ public class RacetimeDataFetchService(
         await racerRepository.MergeRacersAsync(racers);
 
         //upsert race
-        var races = rtggRaces.Select(x => new Race
-        {
-            race_type = "FFA",
-            room_name = x.Name,
-            race_host = "Racetime.gg",
-            //a recorded race should have an Ended at, and we're pulling only recorded races to this point
-            ended_at = x.EndedAt ?? DateTime.UtcNow,
-            metadata = new Dictionary<string, string>
-            {
-                ["Goal"] = x.Goal.Name,
-                ["Description"] = x.Info,
-                ["Entrants"] = x.EntrantsCount.ToString(),
-                ["Status"] = x.Status.Value
-            }
-        });
+        var races = rtggRaces.Select(x => x.ToRaceModel()).ToList();
 
+        //merge races
+        await raceRespository.MergeRacesAsync(races);
 
+        var entrants = rtggRaces.SelectMany(x => x.ToCreateEntrantModels()).ToList();
         //Insert race_entrants
+        await raceEntrantRepository.InsertRaceEntrants(entrants);
+
     }
 
     private async Task<List<Rtgg.Race>> GetRecentRecordedRtggRaces()

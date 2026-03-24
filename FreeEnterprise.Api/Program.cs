@@ -5,7 +5,6 @@ using FreeEnterprise.Api.Constraints;
 using FreeEnterprise.Api.Extensions;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Providers;
-using FreeEnterprise.Api.Repositories;
 using FreeEnterprise.Api.Services;
 using FreeEnterprise.Api.TypeHandlers;
 using Scalar.AspNetCore;
@@ -53,7 +52,7 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.MapOpenApi().CacheOutput();
-app.MapScalarApiReference(options => options.WithOpenApiRoutePattern("/swagger/{documentName}/swagger.json"));
+app.MapScalarApiReference(options => options.WithOpenApiRoutePattern("/swagger/{documentName}/swagger.json").WithTitle("FeInfo API Documentation"));
 
 app.UseHttpsRedirection();
 app.UseRouting();

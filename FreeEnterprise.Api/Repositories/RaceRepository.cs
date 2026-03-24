@@ -173,7 +173,21 @@ select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.
         try
         {
             string racesMerge = """
-
+merge into races.race_detail
+using (select * from
+	(
+		values
+		(@room_name, @ended_at, @metadata, @race_type, @race_host)
+	)
+ as t (incoming_id, ended_at, metadata)) inc
+on room_name = incoming_id
+when matched then
+	update set
+		ended_at = inc.ended_at,
+		metadata = inc.metadata
+WHEN NOT matched then
+	insert(room_name, ended_at, metadata, race_type, race_host)
+	values(incoming_id, ended_at, metadata, race_type, race_host)
 """;
             await connection.ExecuteAsync(racesMerge, races);
         }

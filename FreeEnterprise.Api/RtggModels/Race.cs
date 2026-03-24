@@ -42,4 +42,28 @@ public record class Race
     public DateTime? CancelledAt { get; set; }
     public bool Recordable { get; set; }
     public bool Recorded { get; set; }
+
+    public Models.Race ToRaceModel()
+    {
+        return new Models.Race
+        {
+            race_type = "FFA",
+            room_name = Name,
+            race_host = "Racetime.gg",
+            //a recorded race should have an Ended at, and we're pulling only recorded races to this point, so if for some reason RT.gg has borked, we'll just put something there.
+            ended_at = EndedAt ?? DateTime.UtcNow,
+            metadata = new Dictionary<string, string>
+            {
+                ["Goal"] = Goal.Name,
+                ["Description"] = Info,
+                ["Entrants"] = EntrantsCount.ToString(),
+                ["Status"] = Status.Value
+            }
+        };
+    }
+
+    public List<Models.CreateRaceEntrantModel> ToCreateEntrantModels()
+    {
+        return [.. Entrants.Select(x => x.ToRaceEntrant(roomName: Name))];
+    }
 }

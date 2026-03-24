@@ -20,4 +20,34 @@ public record class Entrant
     public bool StreamLive { get; set; }
     [JsonPropertyName("stream_overrite")]
     public bool StreamOverride { get; set; }
+
+    public Models.Racer ToRacerModel()
+    {
+        return new Models.Racer();
+    }
+
+    public Models.CreateRaceEntrantModel ToRaceEntrant(string roomName)
+    {
+        var metaData = new Dictionary<string, string>();
+        if (Score.HasValue)
+            metaData.Add("score", Score!.Value.ToString());
+
+        if (ScoreChange.HasValue)
+            metaData.Add("scoreChange", ScoreChange!.Value.ToString());
+
+        if (!string.IsNullOrWhiteSpace(Comment))
+            metaData.Add("comment", Comment);
+
+        if (Status.Value != "done")
+            metaData.Add("status", Status.Value);
+
+        return new Models.CreateRaceEntrantModel
+        {
+            finish_time = FinishTime,
+            metadata = metaData,
+            placement = Place,
+            racetime_id = User.Id,
+            room_name = roomName
+        };
+    }
 }

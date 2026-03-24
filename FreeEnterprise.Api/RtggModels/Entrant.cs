@@ -21,11 +21,6 @@ public record class Entrant
     [JsonPropertyName("stream_overrite")]
     public bool StreamOverride { get; set; }
 
-    public Models.Racer ToRacerModel()
-    {
-        return new Models.Racer();
-    }
-
     public Models.CreateRaceEntrantModel ToRaceEntrant(string roomName)
     {
         var metaData = new Dictionary<string, string>();

@@ -38,7 +38,7 @@ public record class Entrant
         if (!string.IsNullOrWhiteSpace(Comment))
             metaData.Add("comment", Comment);
 
-        if (Status.Value != "done")
+        if (!Status.Value.Equals("done", StringComparison.InvariantCultureIgnoreCase))
             metaData.Add("status", Status.Value);
 
         return new Models.CreateRaceEntrantModel

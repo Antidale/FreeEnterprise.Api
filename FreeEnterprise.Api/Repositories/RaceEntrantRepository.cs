@@ -1,4 +1,3 @@
-using System;
 using Dapper;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Models;

@@ -18,7 +18,7 @@ from(
     values(@finish_time, @placement, @metadata, @room_name, @racetime_id)
 ) as ins(finish_time, placement, metadata, room_name, racetime_id)
 join races.race_detail rd on rd.room_name = ins.room_name
-join races.racers ra on ra.racetime_display_name = ins.racetime_id
+join races.racers ra on ra.racetime_id = ins.racetime_id
 """;
             await connection.ExecuteAsync(query, entrants);
         }

@@ -11,9 +11,7 @@ public class ResponseTests
     public void Response_SetSuccess_SetsSuccess_True()
     {
         var expectedData = "success string";
-        var sut = new Response<string>();
-
-        sut.SetSuccess(expectedData);
+        var sut = Response<string>.SetSuccess(expectedData);
 
         Assert.Multiple(() =>
         {
@@ -35,9 +33,7 @@ public class ResponseTests
     public void Response_BadRequest_ShouldSet_StatusCode_and_Message()
     {
         var errorMessage = "Oh, caught in a Bad Request";
-        var sut = new Response<int>();
-
-        sut.BadRequest(errorMessage);
+        var sut = Response<int>.BadRequest(errorMessage);
 
         sut.ErrorStatusCode.Should().Be(HttpStatusCode.BadRequest);
         sut.Data.Should().Be(default, "an errored response should have a default value for T");
@@ -47,9 +43,7 @@ public class ResponseTests
     public void Response_Unauthorized_ShouldSet_StatusCode_and_Message()
     {
         var errorMessage = "Don't go in there";
-        var sut = new Response<int>();
-
-        sut.Unauthorized(errorMessage);
+        var sut = Response<int>.Unauthorized(errorMessage);
 
         sut.ErrorStatusCode.Should().Be(HttpStatusCode.Unauthorized);
         sut.Data.Should().Be(default, "an errored response should have a default value for T");
@@ -59,9 +53,7 @@ public class ResponseTests
     public void Response_NotFound_ShouldSet_StatusCode_and_Message()
     {
         var errorMessage = "404";
-        var sut = new Response<int>();
-
-        sut.NotFound(errorMessage);
+        var sut = Response<int>.NotFound(errorMessage);
 
         sut.ErrorStatusCode.Should().Be(HttpStatusCode.NotFound);
         sut.Data.Should().Be(default, "an errored response should have a default value for T");
@@ -71,9 +63,7 @@ public class ResponseTests
     public void Response_Conflict_ShouldSet_StatusCode_and_Message()
     {
         var errorMessage = "Fite!";
-        var sut = new Response<int>();
-
-        sut.Conflict(errorMessage);
+        var sut = Response<int>.Conflict(errorMessage);
 
         sut.ErrorStatusCode.Should().Be(HttpStatusCode.Conflict);
         sut.Data.Should().Be(default, "an errored response should have a default value for T");
@@ -83,9 +73,7 @@ public class ResponseTests
     public void Response_InternalServerError_ShouldSet_StatusCode_and_Message()
     {
         var errorMessage = "Dave, I can't do that";
-        var sut = new Response<int>();
-
-        sut.InternalServerError(errorMessage);
+        var sut = Response<int>.InternalServerError(errorMessage);
 
         sut.ErrorStatusCode.Should().Be(HttpStatusCode.InternalServerError);
         sut.Data.Should().Be(default, "an errored response should have a default value for T");
@@ -94,11 +82,10 @@ public class ResponseTests
     [Fact]
     public void GetRequestResponse_Success_Should_Return_OkObject()
     {
-        var sut = new Response<int>();
-        sut.SetSuccess(42);
+        var sut = Response<int>.SetSuccess(42);
 
         var response = sut.GetRequestResponse();
-        response.GetType().Should().Be(typeof(OkObjectResult));
+        response.GetType().Should().Be<OkObjectResult>();
         response.Value.Should().Be(42);
     }
 
@@ -106,12 +93,10 @@ public class ResponseTests
     public void GetRequestResponse_BadRequest_ShouldReturn_BadRequestObject()
     {
         var errorMessage = "Oh, caught in a Bad Request";
-        var sut = new Response<int>();
-
-        sut.BadRequest(errorMessage);
+        var sut = Response<int>.BadRequest(errorMessage);
 
         var response = sut.GetRequestResponse();
-        response.GetType().Should().Be(typeof(BadRequestObjectResult));
+        response.GetType().Should().Be<BadRequestObjectResult>();
         response.Value.Should().Be(errorMessage);
     }
 
@@ -119,12 +104,10 @@ public class ResponseTests
     public void GetRequestResponse_Unauthorized_ShouldReturn_UnauthorizedRequestObject()
     {
         var errorMessage = "I can't allow that, Dave";
-        var sut = new Response<int>();
-
-        sut.Unauthorized(errorMessage);
+        var sut = Response<int>.Unauthorized(errorMessage);
 
         var response = sut.GetRequestResponse();
-        response.GetType().Should().Be(typeof(UnauthorizedObjectResult));
+        response.GetType().Should().Be<UnauthorizedObjectResult>();
         response.Value.Should().Be(errorMessage);
     }
 
@@ -132,9 +115,7 @@ public class ResponseTests
     public void GetRequestResponse_NotFound_ShouldReturn_NotFoundRequestObject()
     {
         var errorMessage = "404";
-        var sut = new Response<int>();
-
-        sut.NotFound(errorMessage);
+        var sut = Response<int>.NotFound(errorMessage);
 
         var response = sut.GetRequestResponse();
         response.GetType().Should().Be(typeof(NotFoundObjectResult));
@@ -145,12 +126,10 @@ public class ResponseTests
     public void GetRequestResponse_Conflict_ShouldReturn_ConflictRequestObject()
     {
         var errorMessage = "Fite!";
-        var sut = new Response<int>();
-
-        sut.Conflict(errorMessage);
+        var sut = Response<int>.Conflict(errorMessage);
 
         var response = sut.GetRequestResponse();
-        response.GetType().Should().Be(typeof(ConflictObjectResult));
+        response.GetType().Should().Be<ConflictObjectResult>();
         response.Value.Should().Be("Fite!");
     }
 
@@ -159,8 +138,7 @@ public class ResponseTests
     {
         var errorMessage = "Dave, I can't do that";
 
-        var sut = new Response<int>();
-        sut.InternalServerError(errorMessage);
+        var sut = Response<int>.InternalServerError(errorMessage);
 
         Assert.Throws<InvalidOperationException>(() => sut.GetRequestResponse());
     }

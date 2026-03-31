@@ -8,7 +8,7 @@ namespace FreeEnterprise.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RacersController(IRacerRepository racerRepository, IMemoryCache memoryCache, IHttpClientFactory httpClientFactory) : ControllerBase
+    public class RacersController(IRacerRepository racerRepository, IMemoryCache memoryCache, IRacetimeDataService racetimeDataService) : ControllerBase
     {
         private readonly IRacerRepository _racerRepository = racerRepository;
 
@@ -145,19 +145,13 @@ namespace FreeEnterprise.Api.Controllers
                 return Ok(cacheResponse);
             }
 
-            try
+            var response = await racetimeDataService.SearchRacetimeUserAsync(querystring);
+            if (response.Success)
             {
-                var client = httpClientFactory.CreateClient();
-                var response = await client.GetAsync($"http://racetime.gg/user/search{querystring}");
-                response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadAsStringAsync();
-                memoryCache.SetCache(querystring, result);
-                return Ok(result);
+                memoryCache.SetCache(querystring, response.Data);
             }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
+
+            return response.GetRequestResponse();
         }
     }
 }

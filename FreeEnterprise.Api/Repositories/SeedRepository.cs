@@ -59,11 +59,11 @@ RETURNING id;";
                 raceId
             });
 
-            return new Response<int>().SetSuccess(insertResponse);
+            return Response<int>.SetSuccess(insertResponse);
         }
         catch (Exception ex)
         {
-            return new Response<int>().InternalServerError(ex.Message);
+            return Response<int>.InternalServerError(ex.Message);
         }
     }
 
@@ -92,13 +92,13 @@ limit @limit
 ;";
             var seeds = await connection.QueryAsync<SeedDetail>(query, new { seedValue, flagset, binaryFlags, offset, limit, onlySavedHtml });
 
-            return new Response<IEnumerable<SeedDetail>>().SetSuccess(seeds);
+            return Response<IEnumerable<SeedDetail>>.SetSuccess(seeds);
 
         }
         catch (Exception ex)
         {
             logger.LogError("Exception when searching: \r\nflagset: {flagset}\r\nbinaryFlags {binaryFlags}\r\nseedValue: {seedValue}\r\n{ex}", flagset, binaryFlags, seedValue, ex.ToString());
-            return new Response<IEnumerable<SeedDetail>>().InternalServerError(ex.Message);
+            return Response<IEnumerable<SeedDetail>>.InternalServerError(ex.Message);
         }
     }
 
@@ -121,15 +121,15 @@ where id = @id
             var seedDetail = await connection.QuerySingleOrDefaultAsync<SeedDetail>(query, new { id });
             if (seedDetail is null)
             {
-                return new Response<SeedDetail>().NotFound($"Seed id {id} not found");
+                return Response<SeedDetail>.NotFound($"Seed id {id} not found");
             }
 
-            return new Response<SeedDetail>().SetSuccess(seedDetail);
+            return Response<SeedDetail>.SetSuccess(seedDetail);
         }
         catch (Exception ex)
         {
             logger.LogError("Exception when searching for {id}: \r\n{ex}", id, ex.ToString());
-            return new Response<SeedDetail>().InternalServerError(ex.Message);
+            return Response<SeedDetail>.InternalServerError(ex.Message);
         }
     }
 
@@ -142,15 +142,15 @@ where id = @id
             var patchHtml = await connection.QuerySingleOrDefaultAsync<string>(query, new { id });
             if (string.IsNullOrEmpty(patchHtml))
             {
-                return new Response<string>().NotFound($"No patch page found for seed {id}");
+                return Response<string>.NotFound($"No patch page found for seed {id}");
             }
 
-            return new Response<string>().SetSuccess(patchHtml);
+            return Response<string>.SetSuccess(patchHtml);
         }
         catch (Exception ex)
         {
             logger.LogError("Exception when getting patch for seed {id}: \r\n{ex}", id, ex.ToString());
-            return new Response<string>().InternalServerError(ex.Message);
+            return Response<string>.InternalServerError(ex.Message);
         }
     }
 

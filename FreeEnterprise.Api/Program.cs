@@ -30,6 +30,7 @@ builder.Services.Configure<RouteOptions>(opt =>
 // Add services to the container.
 builder.Services.AddSingleton<ISeedFetchService, SeedFetchSerivce>()
                 .AddSingleton<IConnectionProvider, ConnectionProvider>()
+                .AddSingleton<IRacetimeDataService, RacetimeDataService>()
                 .AddRepositories()
                 .AddHttpClient()
                 .AddControllers();
@@ -44,7 +45,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.AddOpenApi();
 builder.Services.AddMemoryCache();
-builder.Services.AddHostedService<RacetimeDataFetchService>();
+builder.Services.AddHostedService<RacetimeUpdateService>();
 
 SqlMapper.AddTypeHandler(new StringListHandler());
 SqlMapper.AddTypeHandler(new JsonStringDictionaryHandler());

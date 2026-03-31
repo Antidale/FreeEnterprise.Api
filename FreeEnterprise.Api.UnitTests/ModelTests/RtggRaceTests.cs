@@ -177,6 +177,7 @@ public class RtggRaceTests
     {
         sut = JsonSerializer.Deserialize<Race>(jsonText, JsonSerializerOptions.Web);
     }
+
     [Fact]
     public async Task RaceDeserialzesCorrectly()
     {
@@ -188,6 +189,23 @@ public class RtggRaceTests
         sut.Recordable.Should().Be(true);
         sut.Recorded.Should().Be(true);
         sut.Status.Value.Should().Be("finished");
+    }
+
+    [Fact]
+    public void ToRaceModel_StripsNamePrefixCorrectly()
+    {
+        var model = sut.ToRaceModel();
+        model.room_name.Should().NotBe(sut.Name);
+        model.room_name.Should().Be("hyper-silvera-5340");
+    }
+
+    [Fact]
+    public void ToRaceModel_StripsUrlFromInfo()
+    {
+        var model = sut.ToRaceModel();
+        model.metadata.TryGetValue("Description", out var description);
+        description.Should().NotContain("http");
+        description.Should().Be("doors pickup Tent/Star/Potion/Staff");
     }
 
     [Fact]

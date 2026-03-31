@@ -23,7 +23,7 @@ public class SeedFetchSerivce(IHttpClientFactory httpClientFactory, ILogger<Seed
             {
                 var errorMessage = await getResponse.Content.ReadAsStringAsync();
                 logger.LogError("Failed to get patch html {errorMessage}", errorMessage);
-                return new Response<string>().InternalServerError("Failed to get patch html");
+                return Response<string>.InternalServerError("Failed to get patch html");
             }
 
             var patchString = await getResponse.Content.ReadAsStringAsync();
@@ -31,7 +31,7 @@ public class SeedFetchSerivce(IHttpClientFactory httpClientFactory, ILogger<Seed
         }
         catch (Exception ex)
         {
-            return new Response<string>().InternalServerError(ex.Message);
+            return Response<string>.InternalServerError(ex.Message);
         }
     }
 
@@ -40,7 +40,7 @@ public class SeedFetchSerivce(IHttpClientFactory httpClientFactory, ILogger<Seed
         if (!Uri.TryCreate(seedUrl, UriKind.Absolute, out var seedUri))
         {
             logger.LogWarning("Got {url} as a seed url, which is not an absolute URI", seedUrl);
-            return new Response<Uri>().BadRequest("InvalidUri");
+            return Response<Uri>.BadRequest("InvalidUri");
         }
 
         return seedUri switch
@@ -50,14 +50,14 @@ public class SeedFetchSerivce(IHttpClientFactory httpClientFactory, ILogger<Seed
                 when
                     (h.Equals("localhost") ||
                      h.Equals("127.0.0.1")) &&
-                    p.Equals(8080) => new Response<Uri>().SetSuccess(seedUri),
+                    p.Equals(8080) => Response<Uri>.SetSuccess(seedUri),
 #endif
             { Host: var h } when
                 h.Equals("ff4fe.galeswift.com") ||
                 h.Equals("ff4fe.com") ||
-                h.Equals("alpha.ff4fe.com") => new Response<Uri>().SetSuccess(seedUri),
+                h.Equals("alpha.ff4fe.com") => Response<Uri>.SetSuccess(seedUri),
 
-            _ => new Response<Uri>().BadRequest("Invalid URI host")
+            _ => Response<Uri>.BadRequest("Invalid URI host")
         };
     }
 

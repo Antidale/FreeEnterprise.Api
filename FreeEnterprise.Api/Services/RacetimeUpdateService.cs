@@ -4,15 +4,15 @@ using Rtgg = FreeEnterprise.Api.RtggModels;
 
 namespace FreeEnterprise.Api.Services;
 
-public class RacetimeDataFetchService(
-    ILogger<RacetimeDataFetchService> logger,
-    IHttpClientFactory httpClientFactory,
+public class RacetimeUpdateService(
+    ILogger<RacetimeUpdateService> logger,
+    IRacetimeDataService racetimeDataService,
     IRaceRespository raceRespository,
     IRacerRepository racerRepository,
     IRaceEntrantRepository raceEntrantRepository
 ) : BackgroundService
 {
-    private readonly ILogger<RacetimeDataFetchService> _logger = logger;
+    private readonly ILogger<RacetimeUpdateService> _logger = logger;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -46,13 +46,15 @@ public class RacetimeDataFetchService(
         var rtggRaces = new List<Rtgg.Race>();
         try
         {
-            rtggRaces = await GetRecentRecordedRtggRaces();
+            var getResponse = await racetimeDataService.GetRecentRecordedRtggRaces();
 
-            if (rtggRaces.Count == 0)
-            {
-                _logger.LogInformation("No recent races found");
-                return;
-            }
+            if (!getResponse.Success)
+
+                if (rtggRaces.Count == 0)
+                {
+                    _logger.LogInformation("No recent races found");
+                    return;
+                }
         }
         catch (Exception ex)
         {
@@ -91,23 +93,5 @@ public class RacetimeDataFetchService(
         //Insert race_entrants
         await raceEntrantRepository.InsertRaceEntrants(entrants);
 
-    }
-
-    private async Task<List<Rtgg.Race>> GetRecentRecordedRtggRaces()
-    {
-        _logger.LogInformation("Fetching Races");
-        var client = httpClientFactory.CreateClient();
-        try
-        {
-            var recentRacesResponse = await client.GetAsync("https://racetime.gg/ff4fe/races/data?page=1&per_page=20&show_entrants=1");
-            recentRacesResponse.EnsureSuccessStatusCode();
-            var racesResponse = await recentRacesResponse.Content.ReadFromJsonAsync<Rtgg.RacesResponse>() ?? new();
-            return [.. racesResponse.Races.Where(x => x.Recorded)];
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError("Failed in updating data from racetime: {ex}", ex.Message);
-            return [];
-        }
     }
 }

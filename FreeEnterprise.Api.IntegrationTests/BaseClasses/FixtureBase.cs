@@ -1,11 +1,20 @@
+using Dapper;
+using FreeEnterprise.Api.TypeHandlers;
 using Testcontainers.PostgreSql;
 using Testcontainers.Xunit;
 
 namespace FreeEnterprise.Api.IntegrationTests.BaseClasses;
 
-public abstract class FixtureBase(IMessageSink messageSink) : ContainerFixture<PostgreSqlBuilder, PostgreSqlContainer>(messageSink), IAsyncDisposable
+public abstract class FixtureBase : ContainerFixture<PostgreSqlBuilder, PostgreSqlContainer>, IAsyncDisposable
 {
+
     public Mock<IConnectionProvider> ProviderMock = new(MockBehavior.Loose);
+
+    public FixtureBase(IMessageSink messageSink) : base(messageSink)
+    {
+        SqlMapper.AddTypeHandler(new StringListHandler());
+        SqlMapper.AddTypeHandler(new JsonStringDictionaryHandler());
+    }
 
     protected override PostgreSqlBuilder Configure(PostgreSqlBuilder builder)
     {

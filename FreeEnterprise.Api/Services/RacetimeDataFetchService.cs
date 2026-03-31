@@ -81,7 +81,11 @@ public class RacetimeDataFetchService(
         var races = rtggRaces.Select(x => x.ToRaceModel()).ToList();
 
         //merge races
-        await raceRespository.MergeRacesAsync(races);
+        var raceMergeResponse = await raceRespository.MergeRacesAsync(races);
+        if (!raceMergeResponse.Success)
+        {
+            _logger.LogError("Error in merging races from rt.gg into database");
+        }
 
         var entrants = rtggRaces.SelectMany(x => x.ToCreateEntrantModels()).ToList();
         //Insert race_entrants
@@ -91,7 +95,7 @@ public class RacetimeDataFetchService(
 
     private async Task<List<Rtgg.Race>> GetRecentRecordedRtggRaces()
     {
-        _logger.LogInformation("Doing stuff");
+        _logger.LogInformation("Fetching Races");
         var client = httpClientFactory.CreateClient();
         try
         {

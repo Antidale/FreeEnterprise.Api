@@ -179,7 +179,7 @@ using (select * from
 		values
 		(@room_name, @ended_at, @metadata, @race_type, @race_host)
 	)
- as t (incoming_id, ended_at, metadata)) inc
+ as t (incoming_id, ended_at, metadata, race_type, race_host)) inc
 on room_name = incoming_id
 when matched then
 	update set

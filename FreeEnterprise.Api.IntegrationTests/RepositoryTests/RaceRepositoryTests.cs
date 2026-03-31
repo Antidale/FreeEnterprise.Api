@@ -1,4 +1,5 @@
 using FeInfo.Common.Requests;
+using FluentAssertions.Execution;
 using FreeEnterprise.Api.IntegrationTests.BaseClasses;
 using FreeEnterprise.Api.Models;
 using FreeEnterprise.Api.Repositories;
@@ -87,5 +88,86 @@ public partial class RaceRepositoryTests(RaceRepositoryFixture fixture) : TestBa
         retrievedRace.RaceHost.Should().Be(race.race_host);
         retrievedRace.EndedAt.Should().Be(race.ended_at);
         retrievedRace.Metadata.Should().BeEquivalentTo(race.metadata);
+    }
+
+    [Fact]
+    public async Task MergeRacesAsync_InsertsANewRaceAndUpdatesAnExistingOne()
+    {
+        var sut = new RaceRepository(FixtureBase.ProviderMock.Object, fixture.LoggerMock.Object);
+
+        //Races get created initially with only goal/description set
+        var createRaceRequest = new CreateRaceRoom(
+            UserId: 1.ToString(),
+            RoomName: "TestRoom-UpdateMerge",
+            RaceType: "FFA",
+            RaceHost: "IntegrationTesting",
+            Metadata: new Dictionary<string, string>
+            {
+                ["Goal"] = "MergeAsync Testing",
+                ["Description"] = "Test Updating an Existing Race",
+            }
+        );
+
+        SetupProviderMock();
+        await sut.CreateRaceAsync(createRaceRequest);
+
+        var existingRace = new Race
+        {
+            race_host = createRaceRequest.RaceHost,
+            room_name = createRaceRequest.RoomName,
+            race_type = createRaceRequest.RaceType,
+            ended_at = DateTimeOffset.UtcNow.AddHours(-6),
+            metadata = createRaceRequest.Metadata
+        };
+        existingRace.metadata.Add("EntrantsCount", "5");
+        existingRace.metadata.Add("Status", "finished");
+
+
+        var newRace = new Race
+        {
+            race_host = "testHost",
+            race_type = "integration_test",
+            room_name = "integration_room",
+            ended_at = DateTimeOffset.UtcNow,
+            metadata = new Dictionary<string, string>
+            {
+                ["Goal"] = "Integration Testing",
+                ["Description"] = "Know Things Work",
+                ["Status"] = "finished",
+                ["EntrantsCount"] = "20"
+            }
+        };
+
+        //act 
+        SetupProviderMock();
+        var mergeResult = await sut.MergeRacesAsync([existingRace, newRace]);
+        mergeResult.Success.Should().BeTrue($"We should have successfully added the race, but found an error {mergeResult.ErrorMessage}");
+
+
+        using (new AssertionScope("Existing Race updates"))
+        {
+            SetupProviderMock();
+            var getExistingRaceResult = await sut.GetRaceAsync(existingRace.room_name);
+            getExistingRaceResult.Should().NotBeNull();
+            getExistingRaceResult.Success.Should().BeTrue();
+            var retrievedExistingRace = getExistingRaceResult.Data;
+            retrievedExistingRace.Should().NotBeNull();
+            retrievedExistingRace.RaceHost.Should().Be(existingRace.race_host);
+            retrievedExistingRace.EndedAt.Should().Be(existingRace.ended_at);
+            retrievedExistingRace.Metadata.Should().BeEquivalentTo(existingRace.metadata);
+        }
+
+        using (new AssertionScope("New Race Inserts"))
+        {
+            SetupProviderMock();
+            var getNewRaceResult = await sut.GetRaceAsync(newRace.room_name);
+            getNewRaceResult.Should().NotBeNull();
+            getNewRaceResult.Success.Should().BeTrue($"But we found an error message {getNewRaceResult.ErrorMessage}");
+            var retrievedNewRace = getNewRaceResult.Data;
+            retrievedNewRace.Should().NotBeNull();
+            retrievedNewRace.RaceHost.Should().Be(newRace.race_host);
+            retrievedNewRace.EndedAt.Should().Be(newRace.ended_at);
+            retrievedNewRace.Metadata.Should().BeEquivalentTo(newRace.metadata);
+        }
     }
 }

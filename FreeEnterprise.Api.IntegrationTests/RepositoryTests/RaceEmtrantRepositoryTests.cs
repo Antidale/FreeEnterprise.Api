@@ -8,14 +8,14 @@ using Microsoft.Extensions.Logging;
 
 namespace FreeEnterprise.Api.IntegrationTests.RepositoryTests;
 
-public class RaceEntramtRepositoryFixture(IMessageSink messageSink) : FixtureBase(messageSink)
+public class RaceEntrantRepositoryFixture(IMessageSink messageSink) : FixtureBase(messageSink)
 {
     public Mock<ILogger<SeedRepository>> SeedLoggerMock = new(MockBehavior.Loose);
     public Mock<ILogger<RacerRepository>> RacerLoggerMock = new(MockBehavior.Loose);
     public Mock<ILogger<RaceEntrantRepository>> LoggerMock = new(MockBehavior.Loose);
 }
 
-public partial class RaceEntrantRepositoryTests(RaceEntramtRepositoryFixture fixture) : TestBase(fixture), IClassFixture<RaceEntramtRepositoryFixture>
+public partial class RaceEntrantRepositoryTests(RaceEntrantRepositoryFixture fixture) : TestBase(fixture), IClassFixture<RaceEntrantRepositoryFixture>
 {
     //arrange
 

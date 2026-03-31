@@ -45,17 +45,22 @@ public record class Race
 
     public Models.Race ToRaceModel()
     {
+
+        //strip out links, at least. the hash can stay? Also, 
+        var info = string.Join(" ", Info.ReplaceLineEndings().Split(Environment.NewLine).Where(x => !x.StartsWith("http", StringComparison.InvariantCultureIgnoreCase)));
+
         return new Models.Race
         {
             race_type = "FFA",
-            room_name = Name,
+            room_name = Name.Split('/').Last(),
             race_host = "Racetime.gg",
             //a recorded race should have an Ended at, and we're pulling only recorded races to this point, so if for some reason RT.gg has borked, we'll just put something there.
             ended_at = EndedAt ?? DateTime.UtcNow,
             metadata = new Dictionary<string, string>
             {
                 ["Goal"] = Goal.Name,
-                ["Description"] = Info,
+                //Just take the first newline
+                ["Description"] = info,
                 ["Entrants"] = EntrantsCount.ToString(),
                 ["Status"] = Status.Value
             }

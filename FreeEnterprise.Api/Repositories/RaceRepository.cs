@@ -46,14 +46,14 @@ select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.
             var insertResult = await connection.QuerySingleAsync<int>(insertStatement, model);
 
             return insertResult <= 0
-                ? new Response<int>().InternalServerError("patch page was not saved")
+                ? Response<int>.InternalServerError("patch page was not saved")
                 : Response.SetSuccess(insertResult);
 
         }
         catch (Exception ex)
         {
             logger.LogError("Exception when saving patch page: {ex}", ex.ToString());
-            return new Response<int>().InternalServerError(ex.Message);
+            return Response<int>.InternalServerError(ex.Message);
         }
     }
 
@@ -98,7 +98,7 @@ select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.
         catch (Exception ex)
         {
             logger.LogError("When fetching races information {ex}", ex.ToString());
-            return new Response<IEnumerable<RaceDetail>>().InternalServerError(ex.Message);
+            return Response<IEnumerable<RaceDetail>>.InternalServerError(ex.Message);
         }
     }
 
@@ -122,7 +122,10 @@ select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.
                     splitOn: nameof(RaceEntrant.RacetimeId).ToLower()
                 );
 
-            if (raceDetail is null || !raceDetail.Any()) { return new Response<RaceDetail>().NotFound(idOrSlug); }
+            if (raceDetail is null || !raceDetail.Any())
+            {
+                return Response<RaceDetail>.NotFound(idOrSlug);
+            }
 
             raceDetail = raceDetail.GroupBy(x => x.RaceId)
                          .Select(r =>
@@ -133,13 +136,13 @@ select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.
                             }
                           );
 
-            return new Response<RaceDetail>().SetSuccess(raceDetail.First());
+            return Response<RaceDetail>.SetSuccess(raceDetail.First());
 
         }
         catch (Exception ex)
         {
             logger.LogError("When fetching races information for race {idOrSlug}: {ex}", idOrSlug, ex.ToString());
-            return new Response<RaceDetail>().InternalServerError(ex.Message);
+            return Response<RaceDetail>.InternalServerError(ex.Message);
         }
     }
 
@@ -155,15 +158,15 @@ select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.
                     new { id, roomName = idOrSlug });
 
             if (patchHtml is null)
-                return new Response<string>().NotFound(idOrSlug);
+                return Response<string>.NotFound(idOrSlug);
 
-            return new Response<string>().SetSuccess(patchHtml);
+            return Response<string>.SetSuccess(patchHtml);
 
         }
         catch (Exception ex)
         {
             logger.LogError("When fetching races information for race {idOrSlug}: {ex}", idOrSlug, ex.ToString());
-            return new Response<string>().InternalServerError(ex.Message);
+            return Response<string>.InternalServerError(ex.Message);
         }
     }
 

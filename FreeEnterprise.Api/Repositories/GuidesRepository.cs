@@ -33,11 +33,11 @@ order by rank desc";
                 var guides = await connection.QueryAsync<Guide>(sql
 , new { searchText, limit }
 );
-                return new Response<IEnumerable<Guide>>().SetSuccess(guides);
+                return Response<IEnumerable<Guide>>.SetSuccess(guides);
             }
             catch (Exception ex)
             {
-                return new Response<IEnumerable<Guide>>().InternalServerError(ex.Message);
+                return Response<IEnumerable<Guide>>.InternalServerError(ex.Message);
             }
 
         }

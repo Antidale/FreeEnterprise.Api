@@ -39,7 +39,7 @@ public class RacerRepository(IConnectionProvider connectionProvider, ILogger<Rac
         catch (Exception ex)
         {
             logger.LogError("Error when fetching Racer {idOrName}: {ex}", idOrName, ex.ToString());
-            return new Response<Racer>().InternalServerError(ex.Message);
+            return Response<Racer>.InternalServerError(ex.Message);
         }
     }
 

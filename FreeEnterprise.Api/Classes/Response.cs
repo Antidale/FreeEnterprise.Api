@@ -81,8 +81,10 @@ namespace FreeEnterprise.Api.Classes
         private string _errorMessage = string.Empty;
         private bool _success = false;
         private HttpStatusCode? _errorStatusCode;
+        public bool Success => _success;
+        public string ErrorMessage => _errorMessage;
 
-        private Response _getSuccess
+        private Response _setSuccess
         {
             get
             {
@@ -95,7 +97,7 @@ namespace FreeEnterprise.Api.Classes
 
         public static Response SetSuccess()
         {
-            return new Response()._getSuccess;
+            return new Response()._setSuccess;
         }
 
         public static Response<T> SetSuccess<T>(T data)
@@ -115,12 +117,14 @@ namespace FreeEnterprise.Api.Classes
         public Response Conflict(string errorMessage) => SetError(errorMessage, HttpStatusCode.Conflict);
         public Response InternalServerError(string errorMessage) => SetError(errorMessage, HttpStatusCode.InternalServerError);
 
-        private Response SetError(string errorMessage, HttpStatusCode errorStatusCode = HttpStatusCode.InternalServerError)
+        private static Response SetError(string errorMessage, HttpStatusCode errorStatusCode = HttpStatusCode.InternalServerError)
         {
-            _errorMessage = errorMessage;
-            _success = false;
-            _errorStatusCode = errorStatusCode;
-            return this;
+            return new Response
+            {
+                _errorMessage = errorMessage,
+                _success = false,
+                _errorStatusCode = errorStatusCode
+            };
         }
 
         public ActionResult GetRequestResponse() => (_success, _errorStatusCode) switch

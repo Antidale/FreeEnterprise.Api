@@ -66,6 +66,26 @@ select id from races.race_detail where {nameof(Race.room_name)} = @{nameof(Race.
     //     //add entrant to race.entrants
     // }
 
+    public async Task<Response<List<string>>> GetEndedRacetimeRoomNames()
+    {
+        using var connection = _connectionPrivoder.GetConnection();
+        try
+        {
+            connection.Open();
+            var query = @"select concat('ff4fe/', room_name) as room_name
+from races.race_detail where ended_at is not null and race_host = 'Racetime.gg'";
+            var raceNames = await connection.QueryAsync<string>(query);
+
+            return Response<List<string>>.SetSuccess([.. raceNames]);
+
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("When fetching race name information {ex}", ex.ToString());
+            return Response<List<string>>.InternalServerError(ex.Message);
+        }
+    }
+
     public async Task<Response<IEnumerable<RaceDetail>>> GetRacesAsync(int offset, int limit, bool includeCancelled, string? description, string? flagset)
     {
         using var connection = _connectionPrivoder.GetConnection();

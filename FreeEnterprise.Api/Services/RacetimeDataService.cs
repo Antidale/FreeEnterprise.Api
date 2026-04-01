@@ -6,7 +6,7 @@ namespace FreeEnterprise.Api.Services;
 
 public class RacetimeDataService(IHttpClientFactory httpClientFactory, ILogger<RacetimeDataService> logger) : IRacetimeDataService
 {
-    public async Task<Response<List<Race>>> GetRecentRecordedRtggRaces(int page = 1, int perPage = 30)
+    public async Task<Response<List<Race>>> GetRecentRecordedRtggRaces(int page = 1, int perPage = 100)
     {
         logger.LogInformation("Fetching Races");
         var client = httpClientFactory.CreateClient();

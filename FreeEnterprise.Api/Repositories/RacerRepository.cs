@@ -2,7 +2,6 @@ using Dapper;
 using FreeEnterprise.Api.Classes;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Repositories.Queries;
-using Models = FreeEnterprise.Api.Models;
 
 namespace FreeEnterprise.Api.Repositories;
 

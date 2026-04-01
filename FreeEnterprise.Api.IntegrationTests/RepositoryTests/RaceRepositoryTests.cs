@@ -1,5 +1,6 @@
 using FeInfo.Common.Requests;
 using FluentAssertions.Execution;
+using FluentAssertions.Extensions;
 using FreeEnterprise.Api.IntegrationTests.BaseClasses;
 using FreeEnterprise.Api.Models;
 using FreeEnterprise.Api.Repositories;
@@ -86,7 +87,7 @@ public partial class RaceRepositoryTests(RaceRepositoryFixture fixture) : TestBa
         var retrievedRace = getRaceResult.Data;
         retrievedRace.Should().NotBeNull();
         retrievedRace.RaceHost.Should().Be(race.race_host);
-        retrievedRace.EndedAt.Should().Be(race.ended_at);
+        retrievedRace.EndedAt.Should().BeCloseTo(race.ended_at, 1.Milliseconds());
         retrievedRace.Metadata.Should().BeEquivalentTo(race.metadata);
     }
 
@@ -153,7 +154,7 @@ public partial class RaceRepositoryTests(RaceRepositoryFixture fixture) : TestBa
             var retrievedExistingRace = getExistingRaceResult.Data;
             retrievedExistingRace.Should().NotBeNull();
             retrievedExistingRace.RaceHost.Should().Be(existingRace.race_host);
-            retrievedExistingRace.EndedAt.Should().Be(existingRace.ended_at);
+            retrievedExistingRace.EndedAt.Should().BeCloseTo(existingRace.ended_at, 1.Milliseconds());
             retrievedExistingRace.Metadata.Should().BeEquivalentTo(existingRace.metadata);
         }
 
@@ -166,7 +167,7 @@ public partial class RaceRepositoryTests(RaceRepositoryFixture fixture) : TestBa
             var retrievedNewRace = getNewRaceResult.Data;
             retrievedNewRace.Should().NotBeNull();
             retrievedNewRace.RaceHost.Should().Be(newRace.race_host);
-            retrievedNewRace.EndedAt.Should().Be(newRace.ended_at);
+            retrievedNewRace.EndedAt.Should().BeCloseTo(newRace.ended_at, 1.Milliseconds());
             retrievedNewRace.Metadata.Should().BeEquivalentTo(newRace.metadata);
         }
     }

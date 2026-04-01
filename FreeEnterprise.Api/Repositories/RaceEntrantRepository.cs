@@ -9,6 +9,11 @@ public class RaceEntrantRepository(IConnectionProvider connectionProvider, ILogg
 {
     public async Task<Response> InsertRaceEntrants(List<CreateRaceEntrantModel> entrants)
     {
+        if (entrants.Count < 1)
+        {
+            return Response.SetSuccess();
+        }
+
         using var connection = connectionProvider.GetConnection();
         try
         {
@@ -21,7 +26,11 @@ from(
 join races.race_detail rd on rd.room_name = ins.room_name
 join races.racers ra on ra.racetime_id = ins.racetime_id
 """;
-            await connection.ExecuteAsync(query, entrants);
+            var result = await connection.ExecuteAsync(query, entrants);
+            if (result == 0)
+            {
+                return new Response().InternalServerError("No records inserted");
+            }
             return Response.SetSuccess();
         }
         catch (Exception ex)

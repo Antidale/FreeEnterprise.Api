@@ -38,30 +38,46 @@ public class RacetimeRaceUpdateService(
 
     private async Task UpdateRtggRaceData()
     {
-        var rtggRaces = await GetRtggRacesAsync();
-
-        var racers = rtggRaces.SelectMany(x => x.Entrants.Select(x => x.User)).Distinct().Select(x => new Models.Racer
+        try
         {
-            racetime_display_name = x.Name,
-            racetime_id = x.Id,
-            twitch_name = x.TwitchDisplayName
-        }).ToList();
+            var rtggRaces = await GetRtggRacesAsync();
 
-        //upsert runner
-        await racerRepository.MergeRacersAsync(racers);
+            var racers = rtggRaces.SelectMany(x => x.Entrants.Select(x => x.User)).Distinct().Select(x => new Models.Racer
+            {
+                racetime_display_name = x.Name,
+                racetime_id = x.Id,
+                twitch_name = x.TwitchDisplayName
+            }).ToList();
 
-        //merge races
-        var races = rtggRaces.Select(x => x.ToRaceModel()).ToList();
-        var raceMergeResponse = await raceRespository.MergeRacesAsync(races);
-        if (!raceMergeResponse.Success)
+            //upsert runner
+            await racerRepository.MergeRacersAsync(racers);
+
+            //merge races
+            var races = rtggRaces.Select(x => x.ToRaceModel()).ToList();
+            var raceMergeResponse = await raceRespository.MergeRacesAsync(races);
+            if (!raceMergeResponse.Success)
+            {
+                _logger.LogError("Error in merging races from rt.gg into database");
+            }
+
+            var entrants = rtggRaces.SelectMany(x => x.ToCreateEntrantModels()).ToList();
+
+            //Insert race_entrants
+            var response = await raceEntrantRepository.InsertRaceEntrants(entrants);
+            if (response.Success)
+            {
+                _logger.LogInformation("Completed Race updates");
+            }
+            else
+            {
+                _logger.LogError("{error}", response.ErrorMessage);
+            }
+        }
+        catch (Exception ex)
         {
-            _logger.LogError("Error in merging races from rt.gg into database");
+            _logger.LogError("Unhandled Exception while updating race {ex}", ex.ToString());
         }
 
-        var entrants = rtggRaces.SelectMany(x => x.ToCreateEntrantModels()).ToList();
-
-        //Insert race_entrants
-        await raceEntrantRepository.InsertRaceEntrants(entrants);
     }
 
     public async Task<List<Rtgg.Race>> GetRtggRacesAsync()

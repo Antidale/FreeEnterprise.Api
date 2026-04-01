@@ -43,6 +43,8 @@ public record class Race
     public bool Recordable { get; set; }
     public bool Recorded { get; set; }
 
+    public string DbName => Name.Split('/').Last();
+
     public Models.Race ToRaceModel()
     {
 
@@ -52,7 +54,7 @@ public record class Race
         return new Models.Race
         {
             race_type = "FFA",
-            room_name = Name.Split('/').Last(),
+            room_name = DbName,
             race_host = "Racetime.gg",
             //a recorded race should have an Ended at, and we're pulling only recorded races to this point, so if for some reason RT.gg has borked, we'll just put something there, since we're using the presence of data in this field as the indication that the race is complete
             ended_at = EndedAt ?? DateTime.UtcNow,
@@ -69,6 +71,6 @@ public record class Race
 
     public List<Models.CreateRaceEntrantModel> ToCreateEntrantModels()
     {
-        return [.. Entrants.Select(x => x.ToRaceEntrant(roomName: Name))];
+        return [.. Entrants.Select(x => x.ToRaceEntrant(roomName: DbName))];
     }
 }

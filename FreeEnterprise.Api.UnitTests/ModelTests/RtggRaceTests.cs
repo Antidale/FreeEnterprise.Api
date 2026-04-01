@@ -214,6 +214,7 @@ public class RtggRaceTests
         var entrants = sut.ToCreateEntrantModels();
         entrants.Should().HaveCount(4);
         entrants.Select(x => x.room_name).Distinct().Should().HaveCount(1, "There should be a single room name associated with the race");
+        entrants.First().room_name.Should().NotStartWith("ff4fe/");
         entrants.Select(x => x.room_name).Distinct().Should().NotBeEmpty();
     }
 }

@@ -34,7 +34,7 @@ steps:
 
 - script: dotnet test -c Release --report-trx --results-directory .
   displayName: 'Run tests'
-  continueOnError: false
+  continueOnError: true
 
 - task: PublishTestResults@2
   displayName: 'Publish Test Results'

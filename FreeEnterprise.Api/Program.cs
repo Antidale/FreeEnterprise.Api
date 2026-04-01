@@ -45,7 +45,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.AddOpenApi();
 builder.Services.AddMemoryCache();
-builder.Services.AddHostedService<RacetimeUpdateService>();
+builder.Services.AddHostedService<RacetimeRaceUpdateService>();
 
 SqlMapper.AddTypeHandler(new StringListHandler());
 SqlMapper.AddTypeHandler(new JsonStringDictionaryHandler());

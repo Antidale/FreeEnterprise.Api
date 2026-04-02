@@ -53,7 +53,7 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.MapOpenApi().CacheOutput();
-app.MapScalarApiReference(options => options.WithOpenApiRoutePattern("/swagger/{documentName}/swagger.json").WithTitle("FeInfo API Documentation"));
+app.MapScalarApiReference(options => options.WithOpenApiRoutePattern("/swagger/{documentName}/swagger.json").WithTitle("FeInfo API Documentation").DisableAgent());
 
 app.UseHttpsRedirection();
 app.UseRouting();

@@ -20,6 +20,7 @@ with race_data as (
     {{GetRaceBySelect}}
     where (@description is null or metadata ->> 'Description' like @description)
     and (@flagset is null or rs.flagset_search @@ websearch_to_tsquery('english', @flagset))
+    and ended_at is not null
     and (
             @includeCancelled is true
             or metadata ->> 'Status' != 'cancelled'

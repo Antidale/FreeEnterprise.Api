@@ -16,6 +16,7 @@ public abstract class FixtureBase : ContainerFixture<PostgreSqlBuilder, PostgreS
         SqlMapper.AddTypeHandler(new JsonStringDictionaryHandler());
     }
 
+    [Obsolete("Base is marked obsolete, I have to research what it moved to")]
     protected override PostgreSqlBuilder Configure(PostgreSqlBuilder builder)
     {
         return builder.WithImage("postgres:17-alpine")

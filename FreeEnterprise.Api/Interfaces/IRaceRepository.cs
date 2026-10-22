@@ -4,7 +4,7 @@ using FreeEnterprise.Api.Models;
 
 namespace FreeEnterprise.Api.Interfaces;
 
-public interface IRaceRespository
+public interface IRaceRepository
 {
     Task<Response<int>> CreateRaceAsync(CreateRaceRoom createRequest);
     Task<Response<IEnumerable<RaceDetail>>> GetRacesAsync(int offset, int limit, bool includeCancelled, string? description, string? flagset);

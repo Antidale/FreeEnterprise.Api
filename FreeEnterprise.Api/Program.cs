@@ -1,12 +1,16 @@
 ﻿using System.Reflection;
 using Dapper;
 using FreeEnterprise.Api;
+using FreeEnterprise.Api.Auth;
 using FreeEnterprise.Api.Constraints;
+using FreeEnterprise.Api.Enpdoints;
+using FreeEnterprise.Api.Enpdoints.Test;
 using FreeEnterprise.Api.Extensions;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Providers;
 using FreeEnterprise.Api.Services;
 using FreeEnterprise.Api.TypeHandlers;
+using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +31,14 @@ builder.Services.Configure<RouteOptions>(opt =>
     opt.ConstraintMap.Add("bossNameEnum", typeof(BossNameRouteConstraint));
 });
 
+builder.Services.AddAuthentication(ApiKeyAuthOptions.DefaultScheme)
+                .AddScheme<ApiKeyAuthOptions, ApiKeyAuthenticationHandler>
+                (
+                    ApiKeyAuthOptions.DefaultScheme, _ => { }
+                );
+
+builder.Services.AddAuthorization();
+
 // Add services to the container.
 builder.Services.AddSingleton<ISeedFetchService, SeedFetchSerivce>()
                 .AddSingleton<IConnectionProvider, ConnectionProvider>()
@@ -35,7 +47,6 @@ builder.Services.AddSingleton<ISeedFetchService, SeedFetchSerivce>()
                 .AddHttpClient()
                 .AddControllers();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -43,8 +54,12 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
     options.SchemaFilter<EnumSchemaFilter>();
 });
-builder.Services.AddOpenApi();
-builder.Services.AddMemoryCache();
+builder.Services.AddOpenApi(
+//     opt =>
+// {
+//     opt.AddSchemaTransformer<EnumSchemaTransformer>();
+// }
+);
 builder.Services.AddHostedService<RacetimeRaceUpdateService>();
 
 SqlMapper.AddTypeHandler(new StringListHandler());
@@ -53,13 +68,26 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.MapOpenApi().CacheOutput();
-app.MapScalarApiReference(options => options.WithOpenApiRoutePattern("/swagger/{documentName}/swagger.json").WithTitle("FeInfo API Documentation").DisableAgent());
+app.MapScalarApiReference(opt =>
+{
+    opt.Title = "FeInfo API";
+    opt.WithOpenApiRoutePattern("/swagger/{documentName}/swagger.json");
+    opt.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+    opt.WithFeaturedClients
+    (
+        new(ScalarTarget.Node, ScalarClient.Fetch),
+        new(ScalarTarget.Shell, ScalarClient.Curl),
+        new(ScalarTarget.Python, ScalarClient.Requests)
+    );
+    opt.DisableAgent();
+});
 
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors();
 
 app.UseAuthorization();
-
+app.MapEndpoints();
 app.MapControllers();
+
 app.Run();

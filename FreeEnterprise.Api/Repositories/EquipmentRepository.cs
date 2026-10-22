@@ -4,17 +4,17 @@ using FreeEnterprise.Api.Interfaces;
 
 namespace FreeEnterprise.Api.Repositories
 {
-    public class EquipmentRepository(IConnectionProvider connectionProvider) : IEquipmentRepository
-    {
-        private readonly IConnectionProvider _connectionProvider = connectionProvider;
+	public class EquipmentRepository(IConnectionProvider connectionProvider) : IEquipmentRepository
+	{
+		private readonly IConnectionProvider _connectionProvider = connectionProvider;
 
-        public async Task<IEnumerable<Equipment>> GetEquipmentAsync()
-        {
-            using var connection = _connectionProvider.GetConnection();
-            connection.Open();
-            return await connection.QueryAsync<Equipment>
-            (
-                $@"select
+		public async Task<IEnumerable<Equipment>> GetEquipmentAsync()
+		{
+			using var connection = _connectionProvider.GetConnection();
+			connection.Open();
+			return await connection.QueryAsync<Equipment>
+			(
+				$@"select
 						id
 					, item_name as {nameof(Armor.Name)}
 					, equipment_type as {nameof(Armor.EquipmentType)}
@@ -30,16 +30,16 @@ namespace FreeEnterprise.Api.Repositories
 					, icon as {nameof(Armor.Icon)}
 					, notes as {nameof(Armor.Notes)}
 				from equipment.base"
-            );
-        }
+			);
+		}
 
-        public async Task<IEnumerable<Armor>> GetArmorAsync()
-        {
-            using var connection = _connectionProvider.GetConnection();
-            connection.Open();
-            return await connection.QueryAsync<Armor>
-            (
-                $@"select
+		public async Task<IEnumerable<Armor>> GetArmorAsync()
+		{
+			using var connection = _connectionProvider.GetConnection();
+			connection.Open();
+			return await connection.QueryAsync<Armor>
+			(
+				$@"select
 						id
 					, item_name as {nameof(Weapon.Name)}
 					, equipment_type as {nameof(Weapon.EquipmentType)}
@@ -60,16 +60,16 @@ namespace FreeEnterprise.Api.Repositories
 					, magic_evade as {nameof(Armor.MagicEvade)}
 					, status_protected as {nameof(Armor.StatusProtected)}
 				from equipment.armor"
-            );
-        }
+			);
+		}
 
-        public async Task<Armor?> GetArmorAsync(int armorId)
-        {
-            using var connection = _connectionProvider.GetConnection();
-            connection.Open();
-            return await connection.QueryFirstOrDefaultAsync<Armor>
-            (
-                $@"select
+		public async Task<Armor?> GetArmorAsync(int armorId)
+		{
+			using var connection = _connectionProvider.GetConnection();
+			connection.Open();
+			return await connection.QueryFirstOrDefaultAsync<Armor>
+			(
+				$@"select
 						id
 					, item_name as {nameof(Weapon.Name)}
 					, equipment_type as {nameof(Weapon.EquipmentType)}
@@ -91,16 +91,16 @@ namespace FreeEnterprise.Api.Repositories
 					, status_protected as {nameof(Armor.StatusProtected)}
 				from equipment.armor
 				where id = @id", new { id = armorId }
-            );
-        }
+			);
+		}
 
-        public async Task<IEnumerable<Weapon>> GetWeaponsAsync()
-        {
-            using var connection = _connectionProvider.GetConnection();
-            connection.Open();
-            return await connection.QueryAsync<Weapon>
-            (
-                $@"select
+		public async Task<IEnumerable<Weapon>> GetWeaponsAsync()
+		{
+			using var connection = _connectionProvider.GetConnection();
+			connection.Open();
+			return await connection.QueryAsync<Weapon>
+			(
+				$@"select
 						id
 					, item_name as {nameof(Equipment.Name)}
 					, equipment_type as {nameof(Equipment.EquipmentType)}
@@ -123,16 +123,16 @@ namespace FreeEnterprise.Api.Repositories
 					, long_range as {nameof(Weapon.LongRange)}
 					, two_handed as {nameof(Weapon.TwoHanded)}
 				from equipment.weapons"
-            );
-        }
+			);
+		}
 
-        public async Task<Weapon?> GetWeaponAsync(int weaponId)
-        {
-            using var connection = _connectionProvider.GetConnection();
-            connection.Open();
-            return await connection.QueryFirstOrDefaultAsync<Weapon>
-            (
-                $@"select
+		public async Task<Weapon?> GetWeaponAsync(int weaponId)
+		{
+			using var connection = _connectionProvider.GetConnection();
+			connection.Open();
+			return await connection.QueryFirstOrDefaultAsync<Weapon>
+			(
+				$@"select
 						id
 					, item_name as {nameof(Equipment.Name)}
 					, equipment_type as {nameof(Equipment.EquipmentType)}
@@ -147,9 +147,16 @@ namespace FreeEnterprise.Api.Repositories
 					, can_equip as {nameof(Equipment.CanEquip)}
 					, icon as {nameof(Equipment.Icon)}
 					, notes as {nameof(Equipment.Notes)}
+					, attack as {nameof(Weapon.Attack)}
+					, hit as {nameof(Weapon.Hit)}
+					, status_inflicted as {nameof(Weapon.Casts)}
+					, casts as {nameof(Weapon.StatusInflicted)}
+					, throwable as {nameof(Weapon.Throwable)}
+					, long_range as {nameof(Weapon.LongRange)}
+					, two_handed as {nameof(Weapon.TwoHanded)}
 				from equipment.weapons
 				where id = @id", new { id = weaponId }
-            );
-        }
-    }
+			);
+		}
+	}
 }

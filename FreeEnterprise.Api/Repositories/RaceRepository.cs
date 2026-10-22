@@ -7,7 +7,7 @@ using FreeEnterprise.Api.Repositories.Queries;
 
 namespace FreeEnterprise.Api.Repositories;
 
-public class RaceRepository(IConnectionProvider connectionProvider, ILogger<RaceRepository> logger) : IRaceRespository
+public class RaceRepository(IConnectionProvider connectionProvider, ILogger<RaceRepository> logger) : IRaceRepository
 {
     private readonly IConnectionProvider _connectionPrivoder = connectionProvider;
 

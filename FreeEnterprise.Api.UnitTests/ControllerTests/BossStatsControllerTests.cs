@@ -1,18 +1,16 @@
-using System.Net;
 using System.Threading.Tasks;
-using FeInfo.Common.DTOs;
 using FluentAssertions;
-using FreeEnterprise.Api.Controllers;
+using FreeEnterprise.Api.Enpdoints.BossInfo;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Requests;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace FreeEnterprise.Api.UnitTests.ControllerTests
 {
     public class BossStatsControllerTests
     {
-        Mock<IBossStatsRepository> bossStatsRepositoryMock;
-
+        readonly Mock<IBossStatsRepository> bossStatsRepositoryMock;
 
         public BossStatsControllerTests()
         {
@@ -20,14 +18,12 @@ namespace FreeEnterprise.Api.UnitTests.ControllerTests
         }
 
         [Theory]
-        [InlineData(0, 0, HttpStatusCode.BadRequest)]
-        public async Task BossStatsController_Requires_ValidRequest(int locationId, int battleId, HttpStatusCode responseCode)
+        [InlineData(0, 0, StatusCodes.Status400BadRequest)]
+        public async Task BossStatsController_Requires_ValidRequest(int locationId, int battleId, int statusCode)
         {
             bossStatsRepositoryMock
                 .Setup(x => x.SearchAsync(It.IsAny<BossStatsSearchRequest>()))
-                .ReturnsAsync(new List<BossStat>());
-
-            var sut = new BossStatsController(bossStatsRepositoryMock.Object);
+                .ReturnsAsync([]);
 
             var request = new BossStatsSearchRequest
             {
@@ -35,10 +31,11 @@ namespace FreeEnterprise.Api.UnitTests.ControllerTests
                 BattleId = battleId
             };
 
-            var response = await sut.Search(request);
-            var statusCode = (HttpStatusCode)(response.Result as StatusCodeResult).StatusCode;
-            statusCode.Should().Be(responseCode);
+            var response = await GetBossStatsEndpoint.GetBossStatsAsync(bossStatsRepositoryMock.Object, request);
 
+            var responseProblem = response as ProblemHttpResult;
+            responseProblem.StatusCode.Should().Be(statusCode);
+            responseProblem.ContentType.Should().Be("application/problem+json");
         }
     }
 }

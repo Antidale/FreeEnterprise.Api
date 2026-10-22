@@ -14,7 +14,7 @@ public class RacetimeRaceUpdateServiceTests
 
     Mock<ILogger<RacetimeRaceUpdateService>> loggerMock;
     Mock<IRacetimeDataService> racetimeDataServiceMock;
-    Mock<IRaceRespository> raceRespositoryMock;
+    Mock<IRaceRepository> raceRespositoryMock;
     Mock<IRacerRepository> racerRepositoryMock;
     Mock<IRaceEntrantRepository> raceEntrantRepositoryMock;
 

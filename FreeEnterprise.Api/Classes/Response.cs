@@ -78,6 +78,13 @@ namespace FreeEnterprise.Api.Classes
             (false, HttpStatusCode.InternalServerError) => throw new InvalidOperationException(ErrorMessage),
             _ => new UnprocessableEntityObjectResult(ErrorMessage),
         };
+
+        public IResult ToResult() => (Success, ErrorStatusCode) switch
+        {
+            (true, _) => TypedResults.Ok(Data),
+            (false, HttpStatusCode.BadRequest) => Results.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status400BadRequest),
+            _ => Results.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status500InternalServerError)
+        };
     }
 
     public class Response
@@ -132,6 +139,13 @@ namespace FreeEnterprise.Api.Classes
             (false, HttpStatusCode.Conflict) => new ConflictObjectResult(ErrorMessage),
             (false, HttpStatusCode.InternalServerError) => throw new InvalidOperationException(ErrorMessage),
             _ => new UnprocessableEntityObjectResult(ErrorMessage),
+        };
+
+        public IResult GetResult() => (Success, _errorStatusCode) switch
+        {
+            (true, _) => Results.NoContent(),
+            (false, HttpStatusCode.BadRequest) => Results.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status400BadRequest),
+            _ => Results.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status500InternalServerError)
         };
     }
 }

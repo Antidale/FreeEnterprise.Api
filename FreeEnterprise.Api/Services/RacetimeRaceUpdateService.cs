@@ -6,7 +6,7 @@ namespace FreeEnterprise.Api.Services;
 public class RacetimeRaceUpdateService(
     ILogger<RacetimeRaceUpdateService> logger,
     IRacetimeDataService racetimeDataService,
-    IRaceRespository raceRespository,
+    IRaceRepository raceRespository,
     IRacerRepository racerRepository,
     IRaceEntrantRepository raceEntrantRepository
 ) : BackgroundService
@@ -19,7 +19,7 @@ public class RacetimeRaceUpdateService(
 
 
 #if DEBUG
-        timeSpan = TimeSpan.FromMinutes(1);
+        timeSpan = TimeSpan.FromHours(1);
 #endif
 
         using PeriodicTimer timer = new(timeSpan);

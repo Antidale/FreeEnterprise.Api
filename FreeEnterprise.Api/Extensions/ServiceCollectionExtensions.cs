@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
             collection.AddSingleton<IEntrantRepository, EntrantRepository>();
             collection.AddSingleton<IGuidesRepository, GuidesRepository>();
             collection.AddSingleton<ISeedRepository, SeedRepository>();
-            collection.AddSingleton<IRaceRespository, RaceRepository>();
+            collection.AddSingleton<IRaceRepository, RaceRepository>();
             collection.AddSingleton<IRacerRepository, RacerRepository>();
             collection.AddSingleton<IRaceEntrantRepository, RaceEntrantRepository>();
 

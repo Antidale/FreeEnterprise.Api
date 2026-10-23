@@ -42,7 +42,7 @@ public partial class SeedRepositoryTests(SeedRespistoryFixture fixture) : TestBa
 
         var getResponse = await sut.GetSeedByIdAsync(fixture.seedId);
         getResponse.Should().NotBeNull();
-        getResponse.Success.Should().BeTrue();
+        getResponse.Success.Should().BeTrue($"but found error: {getResponse.ErrorMessage}.");
         getResponse.ErrorMessage.Should().BeNullOrWhiteSpace();
         getResponse.Data.Should().NotBeNull();
         getResponse.Data.Verification.Should().Be(seed.Info.Verification);

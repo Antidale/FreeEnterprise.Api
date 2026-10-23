@@ -20,7 +20,7 @@ public static class GetSeedHtmlEndpoint
             {
                 var response = await repository.GetPatchBySeedIdAsync(id);
 
-                return response.ToResult();
+                return response.ToContentResult();
             })
             .WithTags(OpenApiMetadata.Seeds.ToString())
             .WithOrder((int)OpenApiMetadata.Seeds)

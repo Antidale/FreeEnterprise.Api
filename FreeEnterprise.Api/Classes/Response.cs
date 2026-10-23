@@ -89,6 +89,13 @@ namespace FreeEnterprise.Api.Classes
             (false, HttpStatusCode.InternalServerError) => Results.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status500InternalServerError),
             _ => Results.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status500InternalServerError)
         };
+
+        public IResult ToContentResult() => (Success, ErrorStatusCode) switch
+        {
+            (true, _) => TypedResults.Content(Data!.ToString()),
+            _ => this.ToResult()
+        };
+
     }
 
     public class Response

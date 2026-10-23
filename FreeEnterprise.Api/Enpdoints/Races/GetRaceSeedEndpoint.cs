@@ -18,7 +18,7 @@ public static class GetRaceSeedEndpoint
             ) =>
             {
                 var raceResponse = await repository.GetRaceSeedHtmlAsync(idOrSlug);
-                return raceResponse.ToResult();
+                return raceResponse.ToContentResult();
             })
             .ProducesProblem(StatusCodes.Status404NotFound)
             .WithDescription("Returns the entire html document to reconstruct the patch page, suitable for putting into an iframe")

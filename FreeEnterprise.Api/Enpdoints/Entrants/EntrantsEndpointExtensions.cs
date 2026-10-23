@@ -49,7 +49,7 @@ public static class EntrantsEndpointExtensions
     )
     {
         var response = await repository.UpdateTwitchAsync(request);
-        return response.GetResult();
+        return response.ToResult();
     }
 
     private static async Task<IResult> UpdatePronounsAsync
@@ -61,7 +61,7 @@ public static class EntrantsEndpointExtensions
     )
     {
         var response = await repository.UpdatePronounsAsync(request);
-        return response.GetResult();
+        return response.ToResult();
     }
 
     private static async Task<IResult> UpdateAliasAsync
@@ -73,6 +73,6 @@ public static class EntrantsEndpointExtensions
     )
     {
         var response = await repository.UpdateAliasAsync(request);
-        return response.GetResult();
+        return response.ToResult();
     }
 }

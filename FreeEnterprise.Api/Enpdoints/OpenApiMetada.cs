@@ -7,6 +7,7 @@ public enum OpenApiMetadata
     Guide,
     Racers,
     Races,
+    Seeds,
     TournamentAdmin,
     TournamentEntrants,
     Testing,

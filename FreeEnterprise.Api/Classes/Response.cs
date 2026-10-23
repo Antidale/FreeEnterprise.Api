@@ -82,7 +82,11 @@ namespace FreeEnterprise.Api.Classes
         public IResult ToResult() => (Success, ErrorStatusCode) switch
         {
             (true, _) => TypedResults.Ok(Data),
-            (false, HttpStatusCode.BadRequest) => Results.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status400BadRequest),
+            (false, HttpStatusCode.BadRequest) => TypedResults.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status400BadRequest),
+            (false, HttpStatusCode.Unauthorized) => Results.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status401Unauthorized),
+            (false, HttpStatusCode.NotFound) => Results.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status404NotFound),
+            (false, HttpStatusCode.Conflict) => Results.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status409Conflict),
+            (false, HttpStatusCode.InternalServerError) => Results.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status500InternalServerError),
             _ => Results.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status500InternalServerError)
         };
     }
@@ -141,10 +145,14 @@ namespace FreeEnterprise.Api.Classes
             _ => new UnprocessableEntityObjectResult(ErrorMessage),
         };
 
-        public IResult GetResult() => (Success, _errorStatusCode) switch
+        public IResult ToResult() => (Success, _errorStatusCode) switch
         {
             (true, _) => Results.NoContent(),
             (false, HttpStatusCode.BadRequest) => Results.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status400BadRequest),
+            (false, HttpStatusCode.Unauthorized) => Results.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status401Unauthorized),
+            (false, HttpStatusCode.NotFound) => Results.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status404NotFound),
+            (false, HttpStatusCode.Conflict) => Results.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status409Conflict),
+            (false, HttpStatusCode.InternalServerError) => Results.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status500InternalServerError),
             _ => Results.Problem(detail: ErrorMessage, statusCode: StatusCodes.Status500InternalServerError)
         };
     }

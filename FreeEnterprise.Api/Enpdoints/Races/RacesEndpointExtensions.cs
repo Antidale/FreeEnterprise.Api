@@ -9,7 +9,9 @@ public static class RacesEndpointExtensions
         public IEndpointRouteBuilder MapRacesEndpoints()
         {
             app.MapCreateRace()
-               .MapGetRaces();
+               .MapGetRaces()
+               .MapGetRaceEndpoint()
+               .MapGetRaceSeedEndpoint();
             return app;
         }
     }

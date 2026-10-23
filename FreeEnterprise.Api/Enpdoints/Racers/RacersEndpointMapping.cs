@@ -9,7 +9,11 @@ public static class RacersEndpointMapping
         public IEndpointRouteBuilder MapRacersEndpoints()
         {
             //add individual route mappings here
-
+            app.MapGetRacersEndpoint();
+            app.MapGetRacerByIdOrName();
+            app.MapGetRacerRacesEndpoint();
+            app.MapGetHeadToHeadEndpoint();
+            app.MapSearchRacetimeUser();
             return app;
         }
     }

@@ -1,6 +1,4 @@
-using System;
 using FeInfo.Common.Requests;
-using FeInfo.Common.Responses;
 using FreeEnterprise.Api.Interfaces;
 
 namespace FreeEnterprise.Api.Enpdoints.Tournaments;
@@ -19,7 +17,10 @@ public static class TournamentRegistrationEndpoints
             {
                 var result = await repository.RegisterPlayerAsync(registration);
                 return result.ToResult();
-            });
+            })
+            .WithTags(OpenApiMetadata.TournamentAdmin.ToString())
+            .WithOrder((int)OpenApiMetadata.TournamentAdmin)
+            .RequireAuthorization();
             return app;
         }
 
@@ -33,7 +34,10 @@ public static class TournamentRegistrationEndpoints
             {
                 var result = await repository.DropPlayerAsync(registration);
                 return result.ToResult();
-            });
+            })
+            .WithTags(OpenApiMetadata.TournamentAdmin.ToString())
+            .WithOrder((int)OpenApiMetadata.TournamentAdmin)
+            .RequireAuthorization();
             return app;
         }
     }

@@ -35,6 +35,21 @@ public static class GetSeedsEndpoint
         [FromQuery] bool? onlySavedHtml = false
     )
     {
+        if (flagSearch == string.Empty)
+        {
+            flagSearch = null;
+        }
+
+        if (seedString == string.Empty)
+        {
+            seedString = null;
+        }
+
+        if (binaryFlags == string.Empty)
+        {
+            binaryFlags = null;
+        }
+
         var response = await repository.SearchSeedDetails(offset: offset, limit: limit, flagset: flagSearch, seedValue: seedString, binaryFlags: binaryFlags, onlySavedHtml: onlySavedHtml ?? false);
 
         return response.ToResult();

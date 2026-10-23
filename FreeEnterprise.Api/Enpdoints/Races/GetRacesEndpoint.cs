@@ -38,6 +38,17 @@ public static class GetRacesEndpoint
             return Results.Problem("Cannot ask for more than 500 races", statusCode: StatusCodes.Status400BadRequest);
         }
 
+        //Super quick and dirty to get eveything working again very quickly. Address in a better way tomorrow.
+        if (flagset == string.Empty)
+        {
+            flagset = null;
+        }
+
+        if (description == string.Empty)
+        {
+            description = null;
+        }
+
         var cacheKey = $"Races_o{offset}_l{limit}_d{description}_f{flagset}_{includeCancelled}";
 
         if (memoryCache.TryGetValue<IEnumerable<RaceDetail>>(cacheKey, out var raceDetails) && raceDetails is not null)

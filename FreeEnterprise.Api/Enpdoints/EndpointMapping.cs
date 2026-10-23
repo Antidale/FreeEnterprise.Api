@@ -4,7 +4,9 @@ using FreeEnterprise.Api.Enpdoints.Equipment;
 using FreeEnterprise.Api.Enpdoints.Guides;
 using FreeEnterprise.Api.Enpdoints.Racers;
 using FreeEnterprise.Api.Enpdoints.Races;
+using FreeEnterprise.Api.Enpdoints.Seeds;
 using FreeEnterprise.Api.Enpdoints.Test;
+using FreeEnterprise.Api.Enpdoints.Tournaments;
 
 namespace FreeEnterprise.Api.Enpdoints;
 
@@ -18,10 +20,11 @@ public static class EndpointMapping
                .MapBossInfoEndpoints()
                .MapEntrantEndpoints()
                .MapEquipmentEnpoints()
-               .MapTestEndpoints()
                .MapGuideEndpoints()
                .MapRacesEndpoints()
-               .MapRacersEndpoints();
+               .MapRacersEndpoints()
+               .MapSeedsEndpoints()
+               .MapTournamentEndpoints();
 
             return app;
         }

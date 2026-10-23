@@ -23,7 +23,8 @@ public static class CreateRaceEndpoint
 
             return Results.Problem(detail: insertResponse.ErrorMessage, statusCode: (int)insertResponse.ErrorStatusCode!);
         })
-        .WithName("Create");
+        .WithTags(OpenApiMetadata.Races.ToString())
+        .WithOrder((int)OpenApiMetadata.Races);
 
         return app;
     }

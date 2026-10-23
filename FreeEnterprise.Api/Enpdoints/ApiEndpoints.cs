@@ -15,7 +15,7 @@ public class ApiEndpoints
         private const string Base = $"{ApiBase}/races";
         public const string Create = Base;
         public const string GetAll = Base;
-        public const string Get = $"Base/{{idOrSlug}}";
+        public const string Get = $"{Base}/{{idOrSlug}}";
         public const string GetRaceSeed = $"{Get}/seed";
     }
 
@@ -66,10 +66,29 @@ public class ApiEndpoints
     {
         private const string Base = $"{ApiBase}/Racers";
         public const string GetAll = Base;
-        public const string GetByIdOrName = $"{Base}/{{idOrName:string}}";
+        public const string GetByIdOrName = $"{Base}/{{idOrName}}";
         public const string GetRacerRaces = $"{GetByIdOrName}/races";
-        public const string CompareRacers = $"{GetByIdOrName}/head-to-head/{{opponentIdOrName:string}}";
+        public const string CompareRacers = $"{GetByIdOrName}/head-to-head/{{opponentIdOrName}}";
         public const string SearchRacetimeUser = $"{Base}/racetime-search";
+    }
+
+    public static class Seeds
+    {
+        private const string Base = $"{ApiBase}/Seed";
+        public const string SearchSeeds = Base;
+        public const string GetById = $"{Base}/{{id:int}}";
+        public const string GetSeedHtml = $"{GetById}/html";
+    }
+
+    public static class Tournament
+    {
+        private const string Base = "Tournament";
+        public const string GetAll = Base;
+        public const string GetTournamentRegistrations = $"{Base}/{{id:int}}/registrants";
+        public const string Create = Base;
+        public const string UpdateRegistrationWindow = $"{Base}/UpdateRegistrationWindow";
+        public const string Register = $"{Base}/Register";
+        public const string Drop = $"{Base}/Drop";
     }
 
     public static class Test

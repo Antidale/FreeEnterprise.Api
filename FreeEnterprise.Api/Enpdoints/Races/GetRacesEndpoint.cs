@@ -11,7 +11,8 @@ public static class GetRacesEndpoint
     public static IEndpointRouteBuilder MapGetRaces(this IEndpointRouteBuilder app)
     {
         app.MapGet(ApiEndpoints.Races.GetAll, GetRacesAsync)
-            .WithTags(nameof(ApiEndpoints.Races))
+            .WithTags(OpenApiMetadata.Races.ToString())
+            .WithOrder((int)OpenApiMetadata.Races)
             .WithDescription("Returns a collection of RaceDetail objects. Unrecorded races are returned first, then in descending order of the race's finish time")
             .Produces(StatusCodes.Status400BadRequest);
 

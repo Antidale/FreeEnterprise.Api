@@ -82,7 +82,7 @@ public class ApiEndpoints
 
     public static class Tournament
     {
-        private const string Base = "Tournament";
+        private const string Base = $"{ApiBase}/Tournament";
         public const string GetAll = Base;
         public const string GetTournamentRegistrations = $"{Base}/{{id:int}}/registrants";
         public const string Create = Base;

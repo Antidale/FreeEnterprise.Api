@@ -4,13 +4,11 @@ using FreeEnterprise.Api;
 using FreeEnterprise.Api.Auth;
 using FreeEnterprise.Api.Constraints;
 using FreeEnterprise.Api.Enpdoints;
-using FreeEnterprise.Api.Enpdoints.Test;
 using FreeEnterprise.Api.Extensions;
 using FreeEnterprise.Api.Interfaces;
 using FreeEnterprise.Api.Providers;
 using FreeEnterprise.Api.Services;
 using FreeEnterprise.Api.TypeHandlers;
-using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,7 +35,9 @@ builder.Services.AddAuthentication(ApiKeyAuthOptions.DefaultScheme)
                     ApiKeyAuthOptions.DefaultScheme, _ => { }
                 );
 
-builder.Services.AddAuthorization();
+//TODO: renable if/when I actually add any sort of authorization.
+//builder.Services.AddAuthorization();
+builder.Services.AddProblemDetails();
 
 // Add services to the container.
 builder.Services.AddSingleton<ISeedFetchService, SeedFetchSerivce>()
@@ -88,6 +88,5 @@ app.UseCors();
 
 app.UseAuthorization();
 app.MapEndpoints();
-app.MapControllers();
 
 app.Run();

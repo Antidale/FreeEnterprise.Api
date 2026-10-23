@@ -33,6 +33,11 @@ public static class GetRacersEndpoint
         [FromQuery] string? name = null
     )
     {
+        if (name == string.Empty)
+        {
+            name = null;
+        }
+
         var cacheKey = $"Races_o{offset}_l{limit}_n{name}";
 
         if (memoryCache.TryGetValue<IEnumerable<Racer>>(cacheKey, out var raceDetails) && raceDetails is not null)

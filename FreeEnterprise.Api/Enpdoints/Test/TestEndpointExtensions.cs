@@ -9,6 +9,7 @@ public static class TestEndpointExtensions
         public IEndpointRouteBuilder MapTestEndpoints()
         {
             app.MapGetTests();
+            app.MapPostTestEndpoint();
             return app;
         }
     }

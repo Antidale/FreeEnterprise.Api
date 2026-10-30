@@ -1,6 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Text.Json.Serialization;
 using Dapper;
-using FreeEnterprise.Api;
 using FreeEnterprise.Api.Auth;
 using FreeEnterprise.Api.Constraints;
 using FreeEnterprise.Api.Enpdoints;
@@ -13,6 +12,9 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMemoryCache();
+builder.Services.ConfigureHttpJsonOptions(opt =>
+    opt.SerializerOptions.Converters.Add(new JsonStringEnumConverter())
+);
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -37,6 +39,7 @@ builder.Services.AddAuthentication(ApiKeyAuthOptions.DefaultScheme)
 
 //TODO: renable if/when I actually add any sort of authorization.
 //builder.Services.AddAuthorization();
+
 builder.Services.AddProblemDetails();
 
 // Add services to the container.
@@ -45,33 +48,22 @@ builder.Services.AddSingleton<ISeedFetchService, SeedFetchSerivce>()
                 .AddSingleton<IRacetimeDataService, RacetimeDataService>()
                 .AddRepositories()
                 .AddHttpClient()
+                //TODO: Track down what is still using this at all, this should not be needed anymore
                 .AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-    options.SchemaFilter<EnumSchemaFilter>();
-});
-builder.Services.AddOpenApi(
-//     opt =>
-// {
-//     opt.AddSchemaTransformer<EnumSchemaTransformer>();
-// }
-);
+
+builder.Services.AddOpenApi();
 builder.Services.AddHostedService<RacetimeRaceUpdateService>();
 
 SqlMapper.AddTypeHandler(new StringListHandler());
 SqlMapper.AddTypeHandler(new JsonStringDictionaryHandler());
 var app = builder.Build();
 
-app.UseSwagger();
 app.MapOpenApi().CacheOutput();
 app.MapScalarApiReference(opt =>
 {
     opt.Title = "FeInfo API";
-    opt.WithOpenApiRoutePattern("/swagger/{documentName}/swagger.json");
     opt.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
     opt.WithFeaturedClients
     (

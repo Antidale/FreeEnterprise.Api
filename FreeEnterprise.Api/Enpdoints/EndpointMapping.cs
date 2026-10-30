@@ -26,6 +26,10 @@ public static class EndpointMapping
                .MapSeedsEndpoints()
                .MapTournamentEndpoints();
 
+#if DEBUG
+            app.MapTestEndpoints();
+#endif
+
             return app;
         }
     }

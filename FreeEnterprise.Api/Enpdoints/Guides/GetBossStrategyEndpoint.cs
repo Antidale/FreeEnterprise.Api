@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using FeInfo.Common.Enums;
 using FreeEnterprise.Api.Interfaces;
 

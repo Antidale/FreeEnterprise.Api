@@ -11,7 +11,7 @@ public static class GetBossStatsEndpoint
     {
         public IEndpointRouteBuilder MapGetBossStats()
         {
-            app.MapGet(ApiEndpoints.BossStats.GetAll, GetBossStatsAsync)
+            app.MapPost(ApiEndpoints.BossStats.GetAll, GetBossStatsAsync)
                .WithTags("BossInfo")
                .Produces(StatusCodes.Status400BadRequest)
                .Produces<IEnumerable<BossStat>>();
@@ -31,7 +31,7 @@ public static class GetBossStatsEndpoint
                 $"both {nameof(request.BattleId)} and {nameof(request.LocationId)} cannot be zero",
                 statusCode: StatusCodes.Status400BadRequest);
 
-        var result = repository.SearchAsync(request);
+        var result = await repository.SearchAsync(request);
         return TypedResults.Ok(result);
     }
 }
